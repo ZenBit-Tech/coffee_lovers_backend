@@ -25,6 +25,7 @@ To run app you must create env files in root directory
 * **DB_PORT** - database port
 * **DB_USERNAME** - database username
 * **DB_PASSWORD** - database password
+* **JWT_SECRET** - secret key for JWT
 
 ## Running the app
 
