@@ -32,26 +32,13 @@ export class UserService {
     try {
       const data = await this.userRepository
         .createQueryBuilder()
-        .select('id, email')
-        .from(User, 'id, email')
+        .select('id, email, first_name, last_name, profile_image, is_google')
+        .from(
+          User,
+          'id, email, first_name, last_name, profile_image, is_google',
+        )
         .where({ email })
         .getOne();
-      return data;
-    } catch (error) {
-      throw new HttpException(
-        'Internal error',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
-  }
-
-  async findAll(): Promise<User[]> {
-    try {
-      const data = await this.userRepository
-        .createQueryBuilder()
-        .select('id, email')
-        .from(User, 'id, email')
-        .getMany();
       return data;
     } catch (error) {
       throw new HttpException(
