@@ -13,6 +13,7 @@ import { UserModule } from '@/modules/user/user.module';
   imports: [
     ConfigModule.forRoot({
       envFilePath: `.${process.env.NODE_ENV}.env`,
+      isGlobal: true,
     }),
     TypeOrmModule.forRoot({
       type: 'mysql',

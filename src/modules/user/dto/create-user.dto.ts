@@ -17,13 +17,13 @@ export default class CreateUserDto {
 
   @IsNotEmpty()
   @IsString()
-  readonly firstName: string;
+  readonly first_name: string;
 
   @IsNotEmpty()
   @IsString()
-  readonly lastName: string;
+  readonly last_name: string;
 
   @IsBoolean()
   @IsOptional()
-  readonly isGoogle?: boolean;
+  readonly is_google?: boolean;
 }

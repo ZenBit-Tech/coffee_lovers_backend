@@ -5,10 +5,10 @@ export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ unique: true })
   email: string;
 
-  @Column()
+  @Column({ default: '' })
   password: string;
 
   @Column()
@@ -17,7 +17,7 @@ export class User {
   @Column()
   last_name: string;
 
-  @Column()
+  @Column({ default: '' })
   profile_image: string;
 
   @Column({ default: false })
