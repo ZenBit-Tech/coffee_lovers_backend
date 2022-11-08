@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { RefreshToken } from '@entities/RefreshToken.entity';
 
 @Entity()
 export class User {
@@ -11,10 +12,10 @@ export class User {
   @Column({ default: '' })
   password: string;
 
-  @Column()
+  @Column({ nullable: true })
   first_name: string;
 
-  @Column()
+  @Column({ nullable: true })
   last_name: string;
 
   @Column({ default: '' })
@@ -22,4 +23,7 @@ export class User {
 
   @Column({ default: false })
   is_google: boolean;
+
+  @OneToMany(() => RefreshToken, (token) => token.user_id)
+  tokens: RefreshToken[];
 }
