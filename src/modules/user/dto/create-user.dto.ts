@@ -5,28 +5,32 @@ import {
   IsNotEmpty,
   IsBoolean,
   IsOptional,
+  Length,
 } from 'class-validator';
 
 export default class CreateUserDto {
   @ApiProperty({ example: 'test@test.com' })
-  @IsEmail()
+  @IsEmail({ message: 'invalid email' })
   readonly email: string;
 
   @ApiProperty({ example: 'qwerty123' })
   @IsNotEmpty()
   @IsString()
   @IsOptional()
+  @Length(4, 32)
   readonly password?: string;
 
   @ApiProperty({ example: 'John' })
   @IsNotEmpty()
   @IsString()
-  readonly first_name: string;
+  @IsOptional()
+  readonly first_name?: string;
 
   @ApiProperty({ example: 'Doe' })
   @IsNotEmpty()
   @IsString()
-  readonly last_name: string;
+  @IsOptional()
+  readonly last_name?: string;
 
   @IsBoolean()
   @IsOptional()

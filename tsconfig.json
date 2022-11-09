@@ -19,7 +19,7 @@
     "noFallthroughCasesInSwitch": false,
     "paths": {
       "@/*": ["src/*"],
-      "@entities/*": ["src/common/entities/*"]
+      "@entities/*": ["src/common/entities/*"],
     }
   }
 }
