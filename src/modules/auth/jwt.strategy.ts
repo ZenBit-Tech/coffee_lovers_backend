@@ -26,10 +26,10 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
   async validate(payload: TokenDto): Promise<RequestUser> {
     try {
-      if (payload.isRefresh) {
+      const user = await this.userService.findByEmail(payload.email);
+      if (!user) {
         throw new UnauthorizedException();
       }
-      const user = await this.userService.findByEmail(payload.email);
       return {
         email: user.email,
         first_name: user.first_name,
