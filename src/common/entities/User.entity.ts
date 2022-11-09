@@ -8,7 +8,7 @@ export class User {
   @Column({ unique: true })
   email: string;
 
-  @Column({ default: '', nullable: false })
+  @Column({ default: '', nullable: true })
   password: string;
 
   @Column({ nullable: true })
@@ -17,9 +17,9 @@ export class User {
   @Column({ nullable: true })
   last_name: string;
 
-  @Column({ default: '', nullable: true })
+  @Column({ default: null, nullable: true })
   profile_image: string;
 
-  @Column({ default: false, nullable: false })
+  @Column({ default: false, nullable: true })
   is_google: boolean;
 }
