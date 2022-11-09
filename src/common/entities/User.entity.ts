@@ -8,13 +8,13 @@ export class User {
   @Column({ unique: true })
   email: string;
 
-  @Column({ default: '', nullable: true })
+  @Column({ default: null, nullable: true })
   password: string;
 
-  @Column({ nullable: true })
+  @Column({ default: null, nullable: true })
   first_name: string;
 
-  @Column({ nullable: true })
+  @Column({ default: null, nullable: true })
   last_name: string;
 
   @Column({ default: null, nullable: true })
