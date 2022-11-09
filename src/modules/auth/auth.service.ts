@@ -28,6 +28,7 @@ export class AuthService {
         throw new BadRequestException('User is already exist');
       }
       await this.userService.create(dto);
+
       return this.createTokens(dto.email);
     } catch (error) {
       if (error instanceof HttpException) {
@@ -49,6 +50,7 @@ export class AuthService {
           throw new BadRequestException('invalid password');
         }
       }
+
       return this.createTokens(dto.email);
     } catch (error) {
       if (error instanceof HttpException) {
@@ -60,6 +62,7 @@ export class AuthService {
 
   private createTokens(email: string): AuthResponseDto {
     const payload: TokenDto = { email };
+
     return {
       access_token: this.jwtService.sign(payload),
     };

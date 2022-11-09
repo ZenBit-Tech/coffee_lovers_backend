@@ -30,6 +30,7 @@ export class UserService {
         .into(User)
         .values([user])
         .execute();
+
       return data;
     } catch (error) {
       throw new HttpException(
@@ -47,6 +48,7 @@ export class UserService {
         .from(User, 'id')
         .where({ email })
         .getOne();
+
       return data;
     } catch (error) {
       throw new HttpException(
