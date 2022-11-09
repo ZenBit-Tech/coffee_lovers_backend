@@ -1,18 +1,18 @@
-interface Emails {
+interface EmailsDto {
   value: string;
 }
 
-interface Photos {
+interface PhotosDto {
   value: string;
 }
 
-interface Name {
+interface NameDto {
   givenName: string;
   familyName: string;
 }
 
-export interface Prof {
-  name: Name;
-  emails: Array<Emails>;
-  photos: Array<Photos>;
+export interface ProfileDto {
+  name: NameDto;
+  emails: Array<EmailsDto>;
+  photos: Array<PhotosDto>;
 }

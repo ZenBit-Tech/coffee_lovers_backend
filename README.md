@@ -26,8 +26,6 @@ To run app you must create env files in root directory
 - **DB_PORT** - database port
 - **DB_USERNAME** - database username
 - **DB_PASSWORD** - database password
-- **GOOGLE_CLIENT_ID** - "71848933982-oc9dn519u5k0dp3pp0a8h20maaokdap8.apps.googleusercontent.com"
-- **GOOGLE_CLIENT_SECRET** - "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"
 
 ## Running the app
 
