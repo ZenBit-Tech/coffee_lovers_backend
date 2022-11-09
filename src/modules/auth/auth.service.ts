@@ -11,7 +11,7 @@ import { UserService } from '@/modules/user/user.service';
 import CreateUserDto from '@/modules/user/dto/create-user.dto';
 import SignInDto from '@/modules/auth/dto/signIn.dto';
 import TokenDto from '@/modules/auth/dto/token.dto';
-import { AuthResponse } from '@/modules/auth/types';
+import AuthResponseDto from '@/modules/auth/dto/auth-response.dto';
 
 @Injectable()
 export class AuthService {
@@ -21,7 +21,7 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async signUp(dto: CreateUserDto): Promise<AuthResponse> {
+  async signUp(dto: CreateUserDto): Promise<AuthResponseDto> {
     try {
       const user = await this.userService.findByEmail(dto.email);
       if (user) {
@@ -37,7 +37,7 @@ export class AuthService {
     }
   }
 
-  async signIn(dto: SignInDto): Promise<AuthResponse> {
+  async signIn(dto: SignInDto): Promise<AuthResponseDto> {
     try {
       const user = await this.userService.findByEmail(dto.email);
       if (!user) {
@@ -58,7 +58,7 @@ export class AuthService {
     }
   }
 
-  private createTokens(email: string): AuthResponse {
+  private createTokens(email: string): AuthResponseDto {
     const payload: TokenDto = { email };
     return {
       access_token: this.jwtService.sign(payload),

@@ -9,7 +9,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { UserService } from '@/modules/user/user.service';
 import TokenDto from '@/modules/auth/dto/token.dto';
-import { RequestUser } from '@/modules/auth/types';
+import UserDto from '@/modules/user/dto/user.dto';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -24,7 +24,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(payload: TokenDto): Promise<RequestUser> {
+  async validate(payload: TokenDto): Promise<UserDto> {
     try {
       const user = await this.userService.findByEmail(payload.email);
       if (!user) {
