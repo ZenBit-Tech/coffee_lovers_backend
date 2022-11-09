@@ -5,7 +5,8 @@ import {
   IsNotEmpty,
   IsBoolean,
   IsOptional,
-  Length,
+  MinLength,
+  Matches,
 } from 'class-validator';
 
 export default class CreateUserDto {
@@ -17,7 +18,10 @@ export default class CreateUserDto {
   @IsNotEmpty()
   @IsString()
   @IsOptional()
-  @Length(4, 32)
+  @MinLength(4)
+  @Matches(/(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, {
+    message: 'password must contain uppercase and lowercase letters',
+  })
   readonly password?: string;
 
   @ApiProperty({ example: 'John' })
