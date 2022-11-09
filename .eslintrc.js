@@ -39,5 +39,9 @@ module.exports = {
       { endOfLine: 'auto' },
       { usePrettierrc: true },
     ],
+    '@typescript-eslint/padding-line-between-statements': [
+      'error',
+      { blankLine: "always", prev: "*", next: "return" }
+    ]
   },
 };

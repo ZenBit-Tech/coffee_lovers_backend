@@ -1,16 +1,19 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { Test } from '@entities/Test.entity';
+import { User } from '@entities/User.entity';
 import { AppController } from '@/app.controller';
 import { AppService } from '@/app.service';
 import { AuthModule } from '@/modules/auth/auth.module';
 import { TestModule } from '@/modules/test/test.module';
-import { Test } from '@/common/entities/Test.entity';
+import { UserModule } from '@/modules/user/user.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       envFilePath: `.${process.env.NODE_ENV}.env`,
+      isGlobal: true,
     }),
     TypeOrmModule.forRoot({
       type: 'mysql',
@@ -19,11 +22,12 @@ import { Test } from '@/common/entities/Test.entity';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: [Test],
+      entities: [Test, User],
       synchronize: true,
     }),
     AuthModule,
     TestModule,
+    UserModule,
   ],
   controllers: [AppController],
   providers: [AppService],
