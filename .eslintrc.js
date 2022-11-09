@@ -24,6 +24,7 @@ module.exports = {
     '@typescript-eslint/explicit-module-boundary-types': 'off',
     '@typescript-eslint/no-explicit-any': 'off',
     '@typescript-eslint/no-unused-vars': 'off',
+    'class-methods-use-this': 'off',
     'import/extensions': [
       'error',
       'ignorePackages',
@@ -37,5 +38,9 @@ module.exports = {
       { 'endOfLine': 'auto'}, 
       { usePrettierrc: true }
     ],
+    '@typescript-eslint/padding-line-between-statements': [
+      'error',
+      { blankLine: "always", prev: "*", next: "return" }
+    ]
   },
 };

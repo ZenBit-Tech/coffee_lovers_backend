@@ -19,6 +19,7 @@ export class TestService {
         .into(Test)
         .values([dto])
         .execute();
+
       return data;
     } catch (error) {
       throw new HttpException(
@@ -35,6 +36,7 @@ export class TestService {
         .select('id, name')
         .from(Test, 'id, name')
         .getMany();
+
       return data;
     } catch (error) {
       throw new HttpException(

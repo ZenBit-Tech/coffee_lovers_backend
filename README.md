@@ -19,13 +19,6 @@ To run app you must create env files in root directory
 .development.env
 ```
 
-* **PORT** - port to run app
-* **DB_NAME** - database name
-* **DB_HOST** - database host
-* **DB_PORT** - database port
-* **DB_USERNAME** - database username
-* **DB_PASSWORD** - database password
-
 ## Running the app
 
 ```bash
