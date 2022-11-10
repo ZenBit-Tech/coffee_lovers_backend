@@ -4,17 +4,22 @@ import {
   Inject,
   Injectable,
   BadRequestException,
-  Req,
+  Body,
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
+import { OAuth2Client } from 'google-auth-library';
 import { UserService } from '@/modules/user/user.service';
 import CreateUserDto from '@/modules/user/dto/create-user.dto';
 import SignInDto from '@/modules/auth/dto/signIn.dto';
 import TokenDto from '@/modules/auth/dto/token.dto';
 import AuthResponseDto from '@/modules/auth/dto/auth-response.dto';
+import { CredentialDto } from '@/modules/auth/googleauth/dto/credential';
 
-import { RequestUserDto } from '@/modules/auth/googleauth/dto/requestUser.dto';
+const client = new OAuth2Client(
+  process.env.GOOGLE_CLIENT_ID,
+  process.env.GOOGLE_CLIENT_SECRET,
+);
 
 @Injectable()
 export class AuthService {
@@ -24,15 +29,32 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  googleLogin(@Req() req: RequestUserDto) {
-    if (!req.user) {
-      return 'No user from google';
-    }
+  async googleLogin(@Body() body: CredentialDto) {
+    const ticket = await client.verifyIdToken({
+      idToken: body.credential,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
 
-    return {
-      message: 'User information from google',
-      user: req.user,
+    const userData = ticket.getPayload();
+    if (!userData.email) {
+      throw new HttpException('Please check user data', HttpStatus.BAD_REQUEST);
+    }
+    const dataLogin = {
+      email: userData.email,
+      first_name: userData.given_name,
+      second_name: userData.family_name,
+      is_google: true,
     };
+
+    const user = await this.userService.findByEmail(dataLogin.email);
+    if (!user) {
+      const signupResponse = await this.signUp(dataLogin);
+
+      return signupResponse;
+    }
+    const loginResponse = await this.signIn(dataLogin);
+
+    return loginResponse;
   }
 
   async signUp(dto: CreateUserDto): Promise<AuthResponseDto> {
@@ -60,6 +82,7 @@ export class AuthService {
       }
       if (!user.is_google) {
         const isPassEquals = await bcrypt.compare(dto.password, user.password);
+
         if (!isPassEquals) {
           throw new BadRequestException('invalid password');
         }

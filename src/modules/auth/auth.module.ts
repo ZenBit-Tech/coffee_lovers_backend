@@ -4,7 +4,6 @@ import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule } from '@nestjs/config';
 import { AuthController } from '@/modules/auth/auth.controller';
 import { AuthService } from '@/modules/auth/auth.service';
-import { GoogleStrategy } from '@/modules/auth/googleauth/google.service';
 import { UserModule } from '@/modules/user/user.module';
 import { JwtStrategy } from '@/modules/auth/jwt.strategy';
 
@@ -21,6 +20,6 @@ import { JwtStrategy } from '@/modules/auth/jwt.strategy';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy, GoogleStrategy],
+  providers: [AuthService, JwtStrategy],
 })
 export class AuthModule {}
