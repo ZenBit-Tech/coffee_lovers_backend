@@ -1,11 +1,7 @@
-import { join } from 'path';
 import { MailerModule } from '@nestjs-modules/mailer';
-import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { Module, forwardRef } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { UserModule } from '@/modules/user/user.module';
-import { mailFromAddress, mailFromName } from '@/modules/mail/constants';
-import { templatesDir } from './constants';
 import { MailService } from './mail.service';
 
 @Module({
@@ -23,7 +19,7 @@ import { MailService } from './mail.service';
           },
         },
         defaults: {
-          from: `"${mailFromName}" <${mailFromAddress}>`,
+          from: `"${config.get('MAIL_NAME')}" <${config.get('MAIL_ADDRESS')}>`,
         },
       }),
       inject: [ConfigService],
