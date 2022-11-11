@@ -5,6 +5,8 @@ import {
   Request,
   Body,
   UseGuards,
+  HttpCode,
+  HttpStatus,
 } from '@nestjs/common';
 import { ApiHeader, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UserService } from '@/modules/user/user.service';
@@ -32,11 +34,14 @@ export class UserController {
 
   @ApiOperation({ summary: 'send mail for password reset' })
   @Post('passwordresetrequest')
+  @HttpCode(HttpStatus.OK)
   passwordResetRequest(@Body() dto: PasswordResetRequestDto) {
     return this.userService.sendPasswordResetMail(dto);
   }
 
+  @ApiOperation({ summary: "reset user's password" })
   @Post('passwordreset')
+  @HttpCode(HttpStatus.OK)
   passwordReset(@Body() dto: PasswordResetDto) {
     return this.userService.resetPassword(dto);
   }

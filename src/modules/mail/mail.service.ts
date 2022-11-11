@@ -3,6 +3,7 @@ import {
   Injectable,
   Inject,
   InternalServerErrorException,
+  HttpException,
   forwardRef,
 } from '@nestjs/common';
 import { MailerService } from '@nestjs-modules/mailer';
@@ -21,7 +22,7 @@ export class MailService {
     private userService: UserService,
   ) {}
 
-  async sendResetPassword(user: User) {
+  async sendResetPassword(user: User): Promise<void> {
     try {
       const key = uuidv4();
       this.userService.updateUserByEmail(user.email, {
@@ -36,6 +37,9 @@ export class MailService {
         resetPasswordTemplate(url),
       );
     } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
       throw new InternalServerErrorException();
     }
   }
@@ -52,6 +56,9 @@ export class MailService {
         html,
       });
     } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
       throw new InternalServerErrorException();
     }
   }
