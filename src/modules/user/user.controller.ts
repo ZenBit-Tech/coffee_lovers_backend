@@ -28,21 +28,21 @@ export class UserController {
   })
   @UseGuards(JwtAuthGuard)
   @Get('')
-  getUserInformation(@Request() req) {
+  getUserInformation(@Request() req): UserDto {
     return req.user;
   }
 
   @ApiOperation({ summary: 'send mail for password reset' })
   @Post('passwordresetrequest')
   @HttpCode(HttpStatus.OK)
-  passwordResetRequest(@Body() dto: PasswordResetRequestDto) {
+  passwordResetRequest(@Body() dto: PasswordResetRequestDto): Promise<void> {
     return this.userService.sendPasswordResetMail(dto);
   }
 
   @ApiOperation({ summary: "reset user's password" })
   @Post('passwordreset')
   @HttpCode(HttpStatus.OK)
-  passwordReset(@Body() dto: PasswordResetDto) {
+  passwordReset(@Body() dto: PasswordResetDto): Promise<void> {
     return this.userService.resetPassword(dto);
   }
 }
