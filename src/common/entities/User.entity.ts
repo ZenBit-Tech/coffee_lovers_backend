@@ -22,4 +22,7 @@ export class User {
 
   @Column({ default: false, nullable: true })
   is_google: boolean;
+
+  @Column({ default: null, nullable: true })
+  reset_password_key: string;
 }
