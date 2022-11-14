@@ -8,6 +8,11 @@ import {
   MinLength,
   Matches,
 } from 'class-validator';
+import {
+  passwordMinLength,
+  passwordValidationMessage,
+  passwordValidationRexExp,
+} from '@/modules/user/constants';
 
 export default class CreateUserDto {
   @ApiProperty({ example: 'test@test.com' })
@@ -18,9 +23,9 @@ export default class CreateUserDto {
   @IsNotEmpty()
   @IsString()
   @IsOptional()
-  @MinLength(4)
-  @Matches(/(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, {
-    message: 'password must contain uppercase and lowercase letters',
+  @MinLength(passwordMinLength)
+  @Matches(passwordValidationRexExp, {
+    message: passwordValidationMessage,
   })
   readonly password?: string;
 

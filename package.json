@@ -23,6 +23,7 @@
   },
   "dependencies": {
     "@googleapis/docs": "^2.0.0",
+    "@nestjs-modules/mailer": "^1.8.1",
     "@nestjs/common": "^8.0.0",
     "@nestjs/config": "^2.2.0",
     "@nestjs/core": "^8.0.0",
@@ -39,6 +40,7 @@
     "google-auth-library": "^8.7.0",
     "googleapis": "^109.0.1",
     "mysql2": "^2.3.3",
+    "nodemailer": "^6.8.0",
     "passport": "^0.6.0",
     "passport-google-oauth20": "^2.0.0",
     "passport-jwt": "^4.0.0",
@@ -46,7 +48,8 @@
     "rimraf": "^3.0.2",
     "rxjs": "^7.2.0",
     "swagger-ui-express": "^4.6.0",
-    "typeorm": "^0.3.10"
+    "typeorm": "^0.3.10",
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@nestjs/cli": "^8.0.0",
@@ -56,6 +59,7 @@
     "@types/jest": "27.5.0",
     "@types/node": "^16.0.0",
     "@types/passport-google-oauth20": "^2.0.11",
+    "@types/nodemailer": "^6.4.6",
     "@types/passport-jwt": "^3.0.7",
     "@types/supertest": "^2.0.11",
     "@typescript-eslint/eslint-plugin": "^5.13.0",

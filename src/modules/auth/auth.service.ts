@@ -30,31 +30,41 @@ export class AuthService {
   ) {}
 
   async googleLogin(@Body() body: CredentialDto) {
-    const ticket = await client.verifyIdToken({
-      idToken: body.credential,
-      audience: process.env.GOOGLE_CLIENT_ID,
-    });
+    try {
+      const ticket = await client.verifyIdToken({
+        idToken: body.credential,
+        audience: process.env.GOOGLE_CLIENT_ID,
+      });
 
-    const userData = ticket.getPayload();
-    if (!userData.email) {
-      throw new HttpException('Please check user data', HttpStatus.BAD_REQUEST);
+      const userData = ticket.getPayload();
+      if (!userData.email) {
+        throw new HttpException(
+          'Please check user data',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+      const dataLogin = {
+        email: userData.email,
+        first_name: userData.given_name,
+        second_name: userData.family_name,
+        is_google: true,
+      };
+
+      const user = await this.userService.findByEmail(dataLogin.email);
+      if (!user) {
+        const signupResponse = await this.signUp(dataLogin);
+
+        return signupResponse;
+      }
+      const loginResponse = await this.signIn(dataLogin);
+
+      return loginResponse;
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException('', HttpStatus.INTERNAL_SERVER_ERROR);
     }
-    const dataLogin = {
-      email: userData.email,
-      first_name: userData.given_name,
-      second_name: userData.family_name,
-      is_google: true,
-    };
-
-    const user = await this.userService.findByEmail(dataLogin.email);
-    if (!user) {
-      const signupResponse = await this.signUp(dataLogin);
-
-      return signupResponse;
-    }
-    const loginResponse = await this.signIn(dataLogin);
-
-    return loginResponse;
   }
 
   async signUp(dto: CreateUserDto): Promise<AuthResponseDto> {
