@@ -8,6 +8,8 @@ import { AppService } from '@/app.service';
 import { AuthModule } from '@/modules/auth/auth.module';
 import { TestModule } from '@/modules/test/test.module';
 import { UserModule } from '@/modules/user/user.module';
+import { WorkHistory } from './common/entities/WorkHistory.entity';
+import { Education } from './common/entities/Education.entity';
 
 @Module({
   imports: [
@@ -22,7 +24,7 @@ import { UserModule } from '@/modules/user/user.module';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: [Test, User],
+      entities: [Test, User, WorkHistory, Education],
       synchronize: true,
     }),
     AuthModule,
