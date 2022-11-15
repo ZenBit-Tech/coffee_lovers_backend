@@ -3,13 +3,13 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Test } from '@entities/Test.entity';
 import { User } from '@entities/User.entity';
+import { WorkHistory } from '@entities/WorkHistory.entity';
+import { Education } from '@entities/Education.entity';
 import { AppController } from '@/app.controller';
 import { AppService } from '@/app.service';
 import { AuthModule } from '@/modules/auth/auth.module';
 import { TestModule } from '@/modules/test/test.module';
 import { UserModule } from '@/modules/user/user.module';
-import { WorkHistory } from './common/entities/WorkHistory.entity';
-import { Education } from './common/entities/Education.entity';
 
 @Module({
   imports: [
