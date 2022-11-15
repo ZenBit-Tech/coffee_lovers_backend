@@ -100,7 +100,7 @@ export class UserService {
     try {
       const user = await this.findOne({ reset_password_key: dto.key });
       if (!user) {
-        throw new BadRequestException('User not found');
+        throw new BadRequestException('Invalid key');
       }
       const payload = await this.hashPassword({ password: dto.password });
       payload.reset_password_key = null;
