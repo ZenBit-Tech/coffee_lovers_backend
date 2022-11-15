@@ -9,6 +9,7 @@ import {
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { OAuth2Client } from 'google-auth-library';
+import { ConfigService } from '@nestjs/config';
 import { UserService } from '@/modules/user/user.service';
 import CreateUserDto from '@/modules/user/dto/create-user.dto';
 import SignInDto from '@/modules/auth/dto/signIn.dto';
@@ -16,24 +17,24 @@ import TokenDto from '@/modules/auth/dto/token.dto';
 import AuthResponseDto from '@/modules/auth/dto/auth-response.dto';
 import { CredentialDto } from '@/modules/auth/googleauth/dto/credential';
 
-const client = new OAuth2Client(
-  process.env.GOOGLE_CLIENT_ID,
-  process.env.GOOGLE_CLIENT_SECRET,
-);
-
 @Injectable()
 export class AuthService {
   constructor(
     @Inject(UserService)
     private userService: UserService,
     private jwtService: JwtService,
+    private readonly configService: ConfigService,
   ) {}
 
   async googleLogin(@Body() body: CredentialDto) {
     try {
+      const client = new OAuth2Client(
+        this.configService.get<string>('GOOGLE_CLIENT_ID'),
+        this.configService.get<string>('GOOGLE_CLIENT_SECRET'),
+      );
       const ticket = await client.verifyIdToken({
         idToken: body.credential,
-        audience: process.env.GOOGLE_CLIENT_ID,
+        audience: this.configService.get<string>('GOOGLE_CLIENT_ID'),
       });
 
       const userData = ticket.getPayload();
