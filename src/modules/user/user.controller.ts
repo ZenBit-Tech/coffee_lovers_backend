@@ -14,6 +14,7 @@ import { JwtAuthGuard } from '@/modules/auth/guards/jwt-auth.guard';
 import UserDto from './dto/user.dto';
 import PasswordResetDto from './dto/password-reset.dto';
 import PasswordResetRequestDto from './dto/password-reset-request.dto';
+import ProfileQuestionsDto from './dto/profile-questions.dto';
 
 @ApiTags('user')
 @Controller('user')
@@ -44,5 +45,17 @@ export class UserController {
   @HttpCode(HttpStatus.OK)
   passwordReset(@Body() dto: PasswordResetDto): Promise<void> {
     return this.userService.resetPassword(dto);
+  }
+
+  @ApiOperation({ summary: 'sent information about user' })
+  @ApiHeader({
+    name: 'Authorization',
+    description: 'Bearer token',
+  })
+  @UseGuards(JwtAuthGuard)
+  @Post('profile-questions-1')
+  @HttpCode(HttpStatus.OK)
+  ProfileQuestions(@Body() dto: ProfileQuestionsDto): Promise<void> {
+    return this.userService.createUserProfile(dto);
   }
 }

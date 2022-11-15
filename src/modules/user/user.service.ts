@@ -10,10 +10,13 @@ import { Repository, InsertResult } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { User } from '@entities/User.entity';
 import { MailService } from '@/modules/mail/mail.service';
+import { Education } from '@/common/entities/Education.entity';
+import { WorkHistory } from '@/common/entities/WorkHistory.entity';
 import CreateUserDto from './dto/create-user.dto';
 import UpdateUserDto from './dto/update-user.dto';
 import PasswordResetRequestDto from './dto/password-reset-request.dto';
 import PasswordResetDto from './dto/password-reset.dto';
+import ProfileQuestionsDto from './dto/profile-questions.dto';
 
 @Injectable()
 export class UserService {
@@ -21,7 +24,13 @@ export class UserService {
     @InjectRepository(User)
     private userRepository: Repository<User>,
     private configService: ConfigService,
-    private mailService: MailService, // @InjectRepository(Work) // private userRepository: Repository<Work>, // @InjectRepository(ed) // private userRepository: Repository<Work>,
+    private mailService: MailService,
+
+    @InjectRepository(Education)
+    private educationRepository: Repository<Education>,
+
+    @InjectRepository(WorkHistory)
+    private workHistoryRepository: Repository<WorkHistory>,
   ) {}
 
   async create(dto: CreateUserDto): Promise<InsertResult> {
@@ -125,6 +134,14 @@ export class UserService {
       }
 
       return user;
+    } catch (error) {
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async createUserProfile(payload: ProfileQuestionsDto): Promise<void> {
+    try {
+      const userProfilePayload = { ...payload };
     } catch (error) {
       throw new InternalServerErrorException();
     }
