@@ -21,7 +21,7 @@ export class UserService {
     @InjectRepository(User)
     private userRepository: Repository<User>,
     private configService: ConfigService,
-    private mailService: MailService, // @InjectRepository(Work) // private userRepository: Repository<Work>, // @InjectRepository(ed) // private userRepository: Repository<Work>,
+    private mailService: MailService,
   ) {}
 
   async create(dto: CreateUserDto): Promise<InsertResult> {
