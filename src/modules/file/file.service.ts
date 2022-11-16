@@ -12,6 +12,7 @@ export class FileService {
       const fileExtension = file.originalname.split('.').pop();
       const fileName = `${uuid.v4()}.${fileExtension}`;
       const typedFilePath = path.resolve(filePath, fileType);
+
       if (!fs.existsSync(typedFilePath)) {
         fs.mkdirSync(typedFilePath, { recursive: true });
       }
@@ -29,6 +30,7 @@ export class FileService {
         return;
       }
       const avatarPath = path.resolve(filePath, fileName);
+
       if (fs.existsSync(avatarPath)) {
         fs.unlinkSync(avatarPath);
       }
