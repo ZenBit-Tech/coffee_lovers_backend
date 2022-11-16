@@ -26,18 +26,20 @@ export class AuthService {
     private readonly configService: ConfigService,
   ) {}
 
-  async googleLogin(@Body() body: CredentialDto) {
+  async googleLogin(@Body() body: CredentialDto): Promise<AuthResponseDto> {
     try {
       const client = new OAuth2Client(
         this.configService.get<string>('GOOGLE_CLIENT_ID'),
         this.configService.get<string>('GOOGLE_CLIENT_SECRET'),
       );
+
       const ticket = await client.verifyIdToken({
         idToken: body.credential,
         audience: this.configService.get<string>('GOOGLE_CLIENT_ID'),
       });
 
       const userData = ticket.getPayload();
+
       if (!userData.email) {
         throw new HttpException(
           'Please check user data',
