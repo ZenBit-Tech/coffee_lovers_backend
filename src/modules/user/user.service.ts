@@ -139,9 +139,9 @@ export class UserService {
     }
   }
 
-  async createUserProfile(payload: ProfileQuestionsDto): Promise<void> {
+  async createUserProfile(payload: ProfileQuestionsDto): Promise<string> {
     try {
-      const userProfilePayload = { ...payload };
+      return `${JSON.stringify(payload)}`;
     } catch (error) {
       throw new InternalServerErrorException();
     }

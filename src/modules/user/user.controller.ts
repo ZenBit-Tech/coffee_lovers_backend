@@ -55,7 +55,7 @@ export class UserController {
   @UseGuards(JwtAuthGuard)
   @Post('profile-questions-1')
   @HttpCode(HttpStatus.OK)
-  ProfileQuestions(@Body() dto: ProfileQuestionsDto): Promise<void> {
-    return this.userService.createUserProfile(dto);
+  ProfileQuestions(@Body() payload: ProfileQuestionsDto): Promise<string> {
+    return this.userService.createUserProfile(payload);
   }
 }
