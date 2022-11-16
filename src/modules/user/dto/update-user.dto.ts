@@ -1,4 +1,10 @@
-import { IsOptional, IsString, Matches, MinLength } from 'class-validator';
+import {
+  IsOptional,
+  IsString,
+  Matches,
+  MinLength,
+  IsNumber,
+} from 'class-validator';
 import {
   passwordMinLength,
   passwordValidationMessage,
@@ -28,4 +34,20 @@ export default class UpdateUserDto {
   @IsOptional()
   @IsString()
   reset_password_key?: string;
+
+  @IsOptional()
+  @IsString()
+  available_time?: string;
+
+  @IsOptional()
+  @IsString()
+  description?: string;
+
+  @IsOptional()
+  @IsNumber()
+  hourly_rate?: number;
+
+  @IsOptional()
+  @IsString()
+  position?: string;
 }

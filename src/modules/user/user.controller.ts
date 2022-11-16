@@ -52,10 +52,13 @@ export class UserController {
     name: 'Authorization',
     description: 'Bearer token',
   })
-  @UseGuards(JwtAuthGuard)
   @Post('profile-questions-1')
+  @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
-  ProfileQuestions(@Body() payload: ProfileQuestionsDto): Promise<string> {
-    return this.userService.createUserProfile(payload);
+  ProfileQuestions(
+    @Request() req,
+    @Body() payload: ProfileQuestionsDto,
+  ): Promise<void> {
+    return this.userService.createUserProfile(payload, req.user);
   }
 }

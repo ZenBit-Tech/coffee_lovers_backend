@@ -9,14 +9,15 @@ import { ConfigService } from '@nestjs/config';
 import { Repository, InsertResult } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { User } from '@entities/User.entity';
+import { Education } from '@entities/Education.entity';
+import { WorkHistory } from '@entities/WorkHistory.entity';
 import { MailService } from '@/modules/mail/mail.service';
-import { Education } from '@/common/entities/Education.entity';
-import { WorkHistory } from '@/common/entities/WorkHistory.entity';
 import CreateUserDto from './dto/create-user.dto';
 import UpdateUserDto from './dto/update-user.dto';
 import PasswordResetRequestDto from './dto/password-reset-request.dto';
 import PasswordResetDto from './dto/password-reset.dto';
 import ProfileQuestionsDto from './dto/profile-questions.dto';
+import UserDto from './dto/user.dto';
 
 @Injectable()
 export class UserService {
@@ -45,6 +46,41 @@ export class UserService {
 
       return data;
     } catch (error) {
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async addEducationToUser(
+    user: User,
+    payload: ProfileQuestionsDto,
+  ): Promise<void> {
+    try {
+      await this.educationRepository
+        .createQueryBuilder()
+        .insert()
+        .into(Education)
+        .values([{ ...payload, user }])
+        .execute();
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async addWorkToUser(user: User, payload: ProfileQuestionsDto): Promise<void> {
+    try {
+      await this.workHistoryRepository
+        .createQueryBuilder()
+        .insert()
+        .into(WorkHistory)
+        .values([{ ...payload, user }])
+        .execute();
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
       throw new InternalServerErrorException();
     }
   }
@@ -139,10 +175,35 @@ export class UserService {
     }
   }
 
-  async createUserProfile(payload: ProfileQuestionsDto): Promise<string> {
+  async createUserProfile(
+    payload: ProfileQuestionsDto,
+    user: UserDto,
+  ): Promise<void> {
+    const userPayload = {
+      available_time: payload.available_time,
+      description: payload.description,
+      hourly_rate: payload.hourly_rate,
+      position: payload.position,
+    };
+    const workPayload = {
+      work_history_descr: payload.work_history_descr,
+      work_history_from: payload.work_history_from,
+      work_history_to: payload.work_history_to,
+    };
+    const eduPayload = {
+      education_descr: payload.education_descr,
+      education_from: payload.education_from,
+      education_to: payload.education_to,
+    };
     try {
-      return `${JSON.stringify(payload)}`;
+      const currentUser = await this.findByEmail(user.email);
+      await this.updateUserByEmail(user.email, userPayload);
+      await this.addEducationToUser(currentUser, eduPayload);
+      await this.addWorkToUser(currentUser, workPayload);
     } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
       throw new InternalServerErrorException();
     }
   }
