@@ -1,4 +1,7 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+
+import { Education } from './Education.entity';
+import { WorkHistory } from './WorkHistory.entity';
 
 @Entity()
 export class User {
@@ -25,4 +28,22 @@ export class User {
 
   @Column({ default: null, nullable: true })
   reset_password_key: string;
+
+  @Column({ default: null, nullable: true })
+  available_time: string;
+
+  @Column({ default: null, nullable: true })
+  description: string;
+
+  @Column({ default: null, nullable: true })
+  hourly_rate: number;
+
+  @Column({ default: null, nullable: true })
+  position: string;
+
+  @OneToMany(() => WorkHistory, (history) => history.user)
+  workHistory: WorkHistory[];
+
+  @OneToMany(() => Education, (education) => education.user)
+  educations: Education[];
 }
