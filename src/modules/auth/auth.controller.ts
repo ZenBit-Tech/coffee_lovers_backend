@@ -4,6 +4,7 @@ import { AuthService } from '@/modules/auth/auth.service';
 import CreateUserDto from '@/modules/user/dto/create-user.dto';
 import SignInDto from '@/modules/auth/dto/signIn.dto';
 import AuthResponseDto from '@/modules/auth/dto/auth-response.dto';
+import { CredentialDto } from '@/modules/auth/googleauth/dto/credential';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -22,5 +23,10 @@ export class AuthController {
   @Post('/signin')
   signIn(@Body() dto: SignInDto) {
     return this.authService.signIn(dto);
+  }
+
+  @Post('/google')
+  async googleAuth(@Body() body: CredentialDto) {
+    return this.authService.googleLogin(body);
   }
 }
