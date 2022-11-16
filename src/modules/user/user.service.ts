@@ -10,10 +10,14 @@ import { Repository, InsertResult } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { User } from '@entities/User.entity';
 import { MailService } from '@/modules/mail/mail.service';
+import { FileService } from '@/modules/file/file.service';
+import { FileType } from '@/modules/file/types';
 import CreateUserDto from './dto/create-user.dto';
 import UpdateUserDto from './dto/update-user.dto';
 import PasswordResetRequestDto from './dto/password-reset-request.dto';
 import PasswordResetDto from './dto/password-reset.dto';
+import SetProfileImageDto from './dto/set-profile-image.dto';
+import UserDto from './dto/user.dto';
 
 @Injectable()
 export class UserService {
@@ -22,6 +26,7 @@ export class UserService {
     private userRepository: Repository<User>,
     private configService: ConfigService,
     private mailService: MailService,
+    private fileService: FileService,
   ) {}
 
   async create(dto: CreateUserDto): Promise<InsertResult> {
@@ -109,6 +114,21 @@ export class UserService {
       if (error instanceof HttpException) {
         throw error;
       }
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async setProfileImage(
+    avatar: Express.Multer.File,
+    user: UserDto,
+  ): Promise<SetProfileImageDto> {
+    try {
+      const file = this.fileService.createFile(FileType.image, avatar);
+      this.fileService.removeFile(user.profile_image);
+      await this.updateUserByEmail(user.email, { profile_image: file });
+
+      return { file };
+    } catch (error) {
       throw new InternalServerErrorException();
     }
   }

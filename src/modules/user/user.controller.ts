@@ -7,13 +7,17 @@ import {
   UseGuards,
   HttpCode,
   HttpStatus,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
 import { ApiHeader, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { UserService } from '@/modules/user/user.service';
 import { JwtAuthGuard } from '@/modules/auth/guards/jwt-auth.guard';
 import UserDto from './dto/user.dto';
 import PasswordResetDto from './dto/password-reset.dto';
 import PasswordResetRequestDto from './dto/password-reset-request.dto';
+import SetProfileImageDto from './dto/set-profile-image.dto';
 
 @ApiTags('user')
 @Controller('user')
@@ -44,5 +48,22 @@ export class UserController {
   @HttpCode(HttpStatus.OK)
   passwordReset(@Body() dto: PasswordResetDto): Promise<void> {
     return this.userService.resetPassword(dto);
+  }
+
+  @ApiOperation({ summary: 'set profile image for user' })
+  @ApiResponse({ type: SetProfileImageDto })
+  @ApiHeader({
+    name: 'Authorization',
+    description: 'Bearer token',
+  })
+  @Post('setprofileimage')
+  @UseGuards(JwtAuthGuard)
+  @UseInterceptors(FileInterceptor('avatar'))
+  @HttpCode(HttpStatus.OK)
+  setProfileImage(
+    @UploadedFile() avatar: Express.Multer.File,
+    @Request() req,
+  ): Promise<SetProfileImageDto> {
+    return this.userService.setProfileImage(avatar, req.user);
   }
 }

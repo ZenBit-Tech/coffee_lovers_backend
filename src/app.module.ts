@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ServeStaticModule } from '@nestjs/serve-static';
 import { Test } from '@entities/Test.entity';
 import { User } from '@entities/User.entity';
 import { WorkHistory } from '@entities/WorkHistory.entity';
@@ -10,6 +11,7 @@ import { AppService } from '@/app.service';
 import { AuthModule } from '@/modules/auth/auth.module';
 import { TestModule } from '@/modules/test/test.module';
 import { UserModule } from '@/modules/user/user.module';
+import { filePath } from '@/modules/file/constants';
 
 @Module({
   imports: [
@@ -26,6 +28,9 @@ import { UserModule } from '@/modules/user/user.module';
       database: process.env.DB_NAME,
       entities: [Test, User, WorkHistory, Education],
       synchronize: true,
+    }),
+    ServeStaticModule.forRoot({
+      rootPath: filePath,
     }),
     AuthModule,
     TestModule,
