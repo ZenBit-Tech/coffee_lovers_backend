@@ -12,12 +12,16 @@ import { User } from '@entities/User.entity';
 import { Education } from '@entities/Education.entity';
 import { WorkHistory } from '@entities/WorkHistory.entity';
 import { MailService } from '@/modules/mail/mail.service';
+import { FileService } from '@/modules/file/file.service';
+import { FileType } from '@/modules/file/types';
 import CreateUserDto from './dto/create-user.dto';
 import UpdateUserDto from './dto/update-user.dto';
 import PasswordResetRequestDto from './dto/password-reset-request.dto';
 import PasswordResetDto from './dto/password-reset.dto';
 import ProfileQuestionsDto from './dto/profile-questions.dto';
 import UserDto from './dto/user.dto';
+import SetProfileImageDto from './dto/set-profile-image.dto';
+import { createUserProfilePayload } from './utils/payloads';
 
 @Injectable()
 export class UserService {
@@ -32,6 +36,7 @@ export class UserService {
 
     @InjectRepository(WorkHistory)
     private workHistoryRepository: Repository<WorkHistory>,
+    private fileService: FileService,
   ) {}
 
   async create(dto: CreateUserDto): Promise<InsertResult> {
@@ -158,6 +163,21 @@ export class UserService {
     }
   }
 
+  async setProfileImage(
+    avatar: Express.Multer.File,
+    user: UserDto,
+  ): Promise<SetProfileImageDto> {
+    try {
+      const file = this.fileService.createFile(FileType.image, avatar);
+      this.fileService.removeFile(user.profile_image);
+      await this.updateUserByEmail(user.email, { profile_image: file });
+
+      return { file };
+    } catch (error) {
+      throw new InternalServerErrorException();
+    }
+  }
+
   private async hashPassword(payload: UpdateUserDto): Promise<UpdateUserDto> {
     try {
       const user = { ...payload };
@@ -179,22 +199,8 @@ export class UserService {
     payload: ProfileQuestionsDto,
     user: UserDto,
   ): Promise<void> {
-    const userPayload = {
-      available_time: payload.available_time,
-      description: payload.description,
-      hourly_rate: payload.hourly_rate,
-      position: payload.position,
-    };
-    const workPayload = {
-      work_history_descr: payload.work_history_descr,
-      work_history_from: payload.work_history_from,
-      work_history_to: payload.work_history_to,
-    };
-    const eduPayload = {
-      education_descr: payload.education_descr,
-      education_from: payload.education_from,
-      education_to: payload.education_to,
-    };
+    const { eduPayload, workPayload, userPayload } =
+      createUserProfilePayload(payload);
     try {
       const currentUser = await this.findByEmail(user.email);
       await this.updateUserByEmail(user.email, userPayload);

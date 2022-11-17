@@ -6,11 +6,13 @@ import { Education } from '@/common/entities/Education.entity';
 import { UserService } from '@/modules/user/user.service';
 import { UserController } from '@/modules/user/user.controller';
 import { MailModule } from '@/modules/mail/mail.module';
+import { FileModule } from '@/modules/file/file.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([User, WorkHistory, Education]),
     MailModule,
+    FileModule,
   ],
   controllers: [UserController],
   providers: [UserService],

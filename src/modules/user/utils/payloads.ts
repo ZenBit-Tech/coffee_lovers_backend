@@ -1,6 +1,6 @@
 import ProfileQuestionsDto from '@/modules/user/dto/profile-questions.dto';
 
-const createUserProfilePayload = (
+export const createUserProfilePayload = (
   payload: ProfileQuestionsDto,
 ): { userPayload: object; workPayload: object; eduPayload: object } => {
   const userPayload = {
