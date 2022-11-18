@@ -6,6 +6,10 @@ import { Test } from '@entities/Test.entity';
 import { User } from '@entities/User.entity';
 import { WorkHistory } from '@entities/WorkHistory.entity';
 import { Education } from '@entities/Education.entity';
+import { Category } from '@entities/Category.entity';
+import { Job } from '@entities/Job.entity';
+import { Skill } from '@entities/Skill.entity';
+import { EnglishLevel } from '@entities/EnglishLevel.entity';
 import { AppController } from '@/app.controller';
 import { AppService } from '@/app.service';
 import { AuthModule } from '@/modules/auth/auth.module';
@@ -26,7 +30,16 @@ import { filePath } from '@/modules/file/constants';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: [Test, User, WorkHistory, Education],
+      entities: [
+        Test,
+        User,
+        WorkHistory,
+        Education,
+        Category,
+        Job,
+        Skill,
+        EnglishLevel,
+      ],
       synchronize: true,
     }),
     ServeStaticModule.forRoot({
