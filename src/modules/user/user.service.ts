@@ -30,13 +30,13 @@ export class UserService {
     private userRepository: Repository<User>,
     private configService: ConfigService,
     private mailService: MailService,
+    private fileService: FileService,
 
     @InjectRepository(Education)
     private educationRepository: Repository<Education>,
 
     @InjectRepository(WorkHistory)
     private workHistoryRepository: Repository<WorkHistory>,
-    private fileService: FileService,
   ) {}
 
   async create(dto: CreateUserDto): Promise<InsertResult> {
