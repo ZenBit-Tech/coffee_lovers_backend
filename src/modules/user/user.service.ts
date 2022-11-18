@@ -18,10 +18,10 @@ import CreateUserDto from './dto/create-user.dto';
 import UpdateUserDto from './dto/update-user.dto';
 import PasswordResetRequestDto from './dto/password-reset-request.dto';
 import PasswordResetDto from './dto/password-reset.dto';
-import ProfileQuestionsDto from './dto/profile-questions.dto';
 import UserDto from './dto/user.dto';
 import SetProfileImageDto from './dto/set-profile-image.dto';
-import { createUserProfilePayload } from './utils/payloads';
+import AddUserWorkhistoryDto from './dto/add-user-workhistory.dto';
+import AddUserEducationDto from './dto/add-user-education.dto';
 
 @Injectable()
 export class UserService {
@@ -57,7 +57,7 @@ export class UserService {
 
   async addEducationToUser(
     user: User,
-    payload: ProfileQuestionsDto,
+    payload: AddUserEducationDto,
   ): Promise<void> {
     try {
       await this.educationRepository
@@ -74,7 +74,10 @@ export class UserService {
     }
   }
 
-  async addWorkToUser(user: User, payload: ProfileQuestionsDto): Promise<void> {
+  async addWorkToUser(
+    user: User,
+    payload: AddUserWorkhistoryDto,
+  ): Promise<void> {
     try {
       await this.workHistoryRepository
         .createQueryBuilder()
@@ -195,17 +198,39 @@ export class UserService {
     }
   }
 
-  async createUserProfile(
-    payload: ProfileQuestionsDto,
+  async addUserInfo(payload: UpdateUserDto, user: UserDto): Promise<void> {
+    try {
+      await this.updateUserByEmail(user.email, payload);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async addEducationInfo(
+    payload: AddUserEducationDto,
     user: UserDto,
   ): Promise<void> {
-    const { eduPayload, workPayload, userPayload } =
-      createUserProfilePayload(payload);
     try {
       const currentUser = await this.findByEmail(user.email);
-      await this.updateUserByEmail(user.email, userPayload);
-      await this.addEducationToUser(currentUser, eduPayload);
-      await this.addWorkToUser(currentUser, workPayload);
+      await this.addEducationToUser(currentUser, payload);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async addWorkhistoryInfo(
+    payload: AddUserWorkhistoryDto,
+    user: UserDto,
+  ): Promise<void> {
+    try {
+      const currentUser = await this.findByEmail(user.email);
+      await this.addWorkToUser(currentUser, payload);
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
