@@ -1,6 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 
 import { Education } from './Education.entity';
+import { Job } from './Job.entity';
 import { WorkHistory } from './WorkHistory.entity';
 
 @Entity()
@@ -46,4 +47,7 @@ export class User {
 
   @OneToMany(() => Education, (education) => education.user)
   educations: Education[];
+
+  @OneToMany(() => Job, (job) => job.owner)
+  jobs: Job[];
 }
