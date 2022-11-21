@@ -9,6 +9,8 @@ import { ConfigService } from '@nestjs/config';
 import { Repository, InsertResult } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { User } from '@entities/User.entity';
+import { Education } from '@entities/Education.entity';
+import { WorkHistory } from '@entities/WorkHistory.entity';
 import { MailService } from '@/modules/mail/mail.service';
 import { FileService } from '@/modules/file/file.service';
 import { FileType } from '@/modules/file/types';
@@ -16,8 +18,10 @@ import CreateUserDto from './dto/create-user.dto';
 import UpdateUserDto from './dto/update-user.dto';
 import PasswordResetRequestDto from './dto/password-reset-request.dto';
 import PasswordResetDto from './dto/password-reset.dto';
-import SetProfileImageDto from './dto/set-profile-image.dto';
 import UserDto from './dto/user.dto';
+import SetProfileImageDto from './dto/set-profile-image.dto';
+import AddUserWorkhistoryDto from './dto/add-user-workhistory.dto';
+import AddUserEducationDto from './dto/add-user-education.dto';
 
 @Injectable()
 export class UserService {
@@ -27,6 +31,12 @@ export class UserService {
     private configService: ConfigService,
     private mailService: MailService,
     private fileService: FileService,
+
+    @InjectRepository(Education)
+    private educationRepository: Repository<Education>,
+
+    @InjectRepository(WorkHistory)
+    private workHistoryRepository: Repository<WorkHistory>,
   ) {}
 
   async create(dto: CreateUserDto): Promise<InsertResult> {
@@ -41,6 +51,44 @@ export class UserService {
 
       return data;
     } catch (error) {
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async addEducationToUser(
+    user: User,
+    payload: AddUserEducationDto,
+  ): Promise<void> {
+    try {
+      await this.educationRepository
+        .createQueryBuilder()
+        .insert()
+        .into(Education)
+        .values([{ ...payload, user }])
+        .execute();
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async addWorkToUser(
+    user: User,
+    payload: AddUserWorkhistoryDto,
+  ): Promise<void> {
+    try {
+      await this.workHistoryRepository
+        .createQueryBuilder()
+        .insert()
+        .into(WorkHistory)
+        .values([{ ...payload, user }])
+        .execute();
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
       throw new InternalServerErrorException();
     }
   }
@@ -146,6 +194,47 @@ export class UserService {
 
       return user;
     } catch (error) {
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async addUserInfo(payload: UpdateUserDto, user: UserDto): Promise<void> {
+    try {
+      await this.updateUserByEmail(user.email, payload);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async addEducationInfo(
+    payload: AddUserEducationDto,
+    user: UserDto,
+  ): Promise<void> {
+    try {
+      const currentUser = await this.findByEmail(user.email);
+      await this.addEducationToUser(currentUser, payload);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async addWorkhistoryInfo(
+    payload: AddUserWorkhistoryDto,
+    user: UserDto,
+  ): Promise<void> {
+    try {
+      const currentUser = await this.findByEmail(user.email);
+      await this.addWorkToUser(currentUser, payload);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
       throw new InternalServerErrorException();
     }
   }

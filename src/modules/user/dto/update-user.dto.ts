@@ -1,4 +1,11 @@
-import { IsOptional, IsString, Matches, MinLength } from 'class-validator';
+import {
+  IsOptional,
+  IsString,
+  Matches,
+  MinLength,
+  IsNumber,
+} from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
 import {
   passwordMinLength,
   passwordValidationMessage,
@@ -28,4 +35,24 @@ export default class UpdateUserDto {
   @IsOptional()
   @IsString()
   reset_password_key?: string;
+
+  @ApiProperty({ example: 'Full-Time' })
+  @IsOptional()
+  @IsString()
+  available_time?: string;
+
+  @ApiProperty({ example: 'I am hard-working person, like reading' })
+  @IsOptional()
+  @IsString()
+  description?: string;
+
+  @ApiProperty({ example: 12 })
+  @IsOptional()
+  @IsNumber()
+  hourly_rate?: number;
+
+  @ApiProperty({ example: 'Full-Stack Developer' })
+  @IsOptional()
+  @IsString()
+  position?: string;
 }
