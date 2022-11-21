@@ -17,7 +17,7 @@ export class PropertiesController {
   })
   @Get('')
   @UseGuards(JwtAuthGuard)
-  getAll() {
+  getAll(): Promise<GetAllPropertiesDto> {
     return this.propertiesService.getAllProperties();
   }
 }
