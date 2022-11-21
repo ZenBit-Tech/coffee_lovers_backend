@@ -1,5 +1,5 @@
 import { Controller, Get, UseGuards } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiHeader, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '@/modules/auth/guards/jwt-auth.guard';
 import GetAllPropertiesDto from './dto/get-all-properties.dto';
 import { PropertiesService } from './properties.service';
@@ -11,6 +11,10 @@ export class PropertiesController {
 
   @ApiOperation({ summary: 'get all properties' })
   @ApiResponse({ type: GetAllPropertiesDto })
+  @ApiHeader({
+    name: 'Authorization',
+    description: 'Bearer token',
+  })
   @Get('')
   @UseGuards(JwtAuthGuard)
   getAll() {
