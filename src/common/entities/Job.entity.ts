@@ -9,7 +9,7 @@ import {
 import { User } from '@entities/User.entity';
 import { Category } from '@entities/Category.entity';
 import { Skill } from '@entities/Skill.entity';
-import { EnglishLevel } from '@entities/EnglishLevel.entity';
+import { EnglishLevel } from '@constants/entities';
 
 @Entity()
 export class Job {
@@ -28,17 +28,21 @@ export class Job {
   @Column({ default: null, nullable: true })
   available_time: number;
 
+  @Column({
+    type: 'enum',
+    enum: EnglishLevel,
+    nullable: true,
+    default: null,
+  })
+  english_level: EnglishLevel;
+
   @ManyToOne(() => User, (user) => user.jobs)
   owner: User;
 
-  @ManyToMany(() => Category)
-  @JoinTable()
-  categories: Category[];
+  @ManyToOne(() => Category, (category) => category.jobs)
+  category: Category;
 
   @ManyToMany(() => Skill)
   @JoinTable()
   skills: Skill[];
-
-  @ManyToOne(() => EnglishLevel, (level) => level.jobs)
-  english_level: EnglishLevel;
 }

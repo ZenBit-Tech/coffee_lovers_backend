@@ -9,13 +9,13 @@ import { Education } from '@entities/Education.entity';
 import { Category } from '@entities/Category.entity';
 import { Job } from '@entities/Job.entity';
 import { Skill } from '@entities/Skill.entity';
-import { EnglishLevel } from '@entities/EnglishLevel.entity';
 import { AppController } from '@/app.controller';
 import { AppService } from '@/app.service';
 import { AuthModule } from '@/modules/auth/auth.module';
 import { TestModule } from '@/modules/test/test.module';
 import { UserModule } from '@/modules/user/user.module';
 import { filePath } from '@/modules/file/constants';
+import { PropertiesModule } from '@/modules/properties/properties.module';
 
 @Module({
   imports: [
@@ -30,16 +30,7 @@ import { filePath } from '@/modules/file/constants';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: [
-        Test,
-        User,
-        WorkHistory,
-        Education,
-        Category,
-        Job,
-        Skill,
-        EnglishLevel,
-      ],
+      entities: [Test, User, WorkHistory, Education, Category, Job, Skill],
       synchronize: true,
     }),
     ServeStaticModule.forRoot({
@@ -48,6 +39,7 @@ import { filePath } from '@/modules/file/constants';
     AuthModule,
     TestModule,
     UserModule,
+    PropertiesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
