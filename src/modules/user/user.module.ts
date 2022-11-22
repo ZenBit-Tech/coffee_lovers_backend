@@ -7,14 +7,13 @@ import { UserService } from '@/modules/user/user.service';
 import { UserController } from '@/modules/user/user.controller';
 import { MailModule } from '@/modules/mail/mail.module';
 import { FileModule } from '@/modules/file/file.module';
-import { JobsModule } from '../jobs/job.module';
+import { Job } from '@/common/entities/Job.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, WorkHistory, Education]),
+    TypeOrmModule.forFeature([User, WorkHistory, Education, Job]),
     MailModule,
     FileModule,
-    JobsModule,
   ],
   controllers: [UserController],
   providers: [UserService],

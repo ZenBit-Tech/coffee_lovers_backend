@@ -6,6 +6,7 @@ import { Job } from '@/common/entities/Job.entity';
 import { JobsController } from './job.controller';
 import { JobsService } from './job.service';
 import { User } from '@/common/entities/User.entity';
+import { UserModule } from '@/modules/user/user.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { User } from '@/common/entities/User.entity';
       envFilePath: `.${process.env.NODE_ENV}.env`,
     }),
     TypeOrmModule.forFeature([Job, User]),
+    UserModule,
   ],
   controllers: [JobsController],
   providers: [JobsService],

@@ -1,35 +1,30 @@
 import {
   Injectable,
-  Body,
   HttpException,
   InternalServerErrorException,
+  Inject,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '@entities/User.entity';
 import { Job } from '@entities/Job.entity';
-import { ConfigService } from '@nestjs/config';
 import AddJobDescriptionDto from './dto/add-user-job.dto';
-import UserDto from '../user/dto/user.dto';
-import { MailService } from '../mail/mail.service';
-import { UserService } from '../user/user.service';
+import UserDto from '@/modules/user/dto/user.dto';
+import { UserService } from '@/modules/user/user.service';
 
 @Injectable()
 export class JobsService {
   constructor(
-    @InjectRepository(User)
-    private userRepository: Repository<User>,
+    @Inject(UserService)
     private userService: UserService,
 
     @InjectRepository(Job)
     private jobRepository: Repository<Job>,
   ) {}
 
-  async getAllJobs() {
+  async getAllJobs(): Promise<Job[]> {
     try {
-      const data = await this.userRepository.createQueryBuilder().getMany();
-
-      return data;
+      return await this.jobRepository.createQueryBuilder().getMany();
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
@@ -63,6 +58,7 @@ export class JobsService {
   ): Promise<void> {
     try {
       const currentUser = await this.userService.findByEmail(user.email);
+
       await this.addJobToUser(currentUser, payload);
     } catch (error) {
       if (error instanceof HttpException) {
