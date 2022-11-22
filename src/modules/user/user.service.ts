@@ -9,6 +9,7 @@ import { ConfigService } from '@nestjs/config';
 import { Repository, InsertResult } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { User } from '@entities/User.entity';
+import { Education } from '@entities/Education.entity';
 import { MailService } from '@/modules/mail/mail.service';
 import { FileService } from '@/modules/file/file.service';
 import { FileType } from '@/modules/file/types';
@@ -22,6 +23,9 @@ import UserDto from './dto/user.dto';
 @Injectable()
 export class UserService {
   constructor(
+    @InjectRepository(Education)
+    private educationRepository: Repository<Education>,
+
     @InjectRepository(User)
     private userRepository: Repository<User>,
     private configService: ConfigService,
@@ -145,6 +149,16 @@ export class UserService {
       }
 
       return user;
+    } catch (error) {
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async getAllFreelancers() {
+    try {
+      const data = await this.educationRepository.find();
+
+      return data;
     } catch (error) {
       throw new InternalServerErrorException();
     }
