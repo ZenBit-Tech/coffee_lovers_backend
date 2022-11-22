@@ -25,6 +25,9 @@ import UserDto from './dto/user.dto';
 import PasswordResetDto from './dto/password-reset.dto';
 import PasswordResetRequestDto from './dto/password-reset-request.dto';
 import SetProfileImageDto from './dto/set-profile-image.dto';
+import UpdateUserDto from './dto/update-user.dto';
+import AddUserEducationDto from './dto/add-user-education.dto';
+import AddUserWorkhistoryDto from './dto/add-user-workhistory.dto';
 
 @ApiTags('user')
 @Controller('user')
@@ -93,5 +96,47 @@ export class UserController {
   @HttpCode(HttpStatus.OK)
   getFrilansers() {
     return this.userService.getAllFreelancers();
+  }
+
+  @ApiOperation({ summary: 'sent user information' })
+  @ApiHeader({
+    name: 'Authorization',
+    description: 'Bearer token',
+  })
+  @Post('user-info')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  addUserInfo(@Request() req, @Body() payload: UpdateUserDto): Promise<void> {
+    return this.userService.addUserInfo(payload, req.user);
+  }
+
+  @ApiOperation({ summary: 'sent education information' })
+  @ApiHeader({
+    name: 'Authorization',
+    description: 'Bearer token',
+  })
+  @Post('education-info')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  addEducationInfo(
+    @Request() req,
+    @Body() payload: AddUserEducationDto,
+  ): Promise<void> {
+    return this.userService.addEducationInfo(payload, req.user);
+  }
+
+  @ApiOperation({ summary: 'sent workhistory information' })
+  @ApiHeader({
+    name: 'Authorization',
+    description: 'Bearer token',
+  })
+  @Post('workhistory-info')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  addWorkhistoryInfo(
+    @Request() req,
+    @Body() payload: AddUserWorkhistoryDto,
+  ): Promise<void> {
+    return this.userService.addWorkhistoryInfo(payload, req.user);
   }
 }
