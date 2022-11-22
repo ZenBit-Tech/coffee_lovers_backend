@@ -91,13 +91,6 @@ export class UserController {
     return this.userService.setProfileImage(avatar, req.user);
   }
 
-  @ApiOperation({ summary: 'get all freelansers' })
-  @Get('freelancers')
-  @HttpCode(HttpStatus.OK)
-  getFrilansers() {
-    return this.userService.getAllFreelancers();
-  }
-
   @ApiOperation({ summary: 'sent user information' })
   @ApiHeader({
     name: 'Authorization',

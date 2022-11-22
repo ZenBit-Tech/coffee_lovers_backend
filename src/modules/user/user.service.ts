@@ -198,16 +198,6 @@ export class UserService {
     }
   }
 
-  async getAllFreelancers() {
-    try {
-      const data = await this.educationRepository.find();
-
-      return data;
-    } catch (error) {
-      return { error };
-    }
-  }
-
   async addUserInfo(payload: UpdateUserDto, user: UserDto): Promise<void> {
     try {
       await this.updateUserByEmail(user.email, payload);
