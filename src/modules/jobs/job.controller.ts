@@ -27,6 +27,6 @@ export class JobsController {
   @Post('/')
   @HttpCode(HttpStatus.OK)
   addnewJob(@Request() req, @Body() payload: AddJobDescriptionDto) {
-    return this.jobsService.addJobToUser(req.user, payload);
+    return this.jobsService.addJobInfo(payload, req.user);
   }
 }
