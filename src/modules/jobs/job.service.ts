@@ -38,13 +38,16 @@ export class JobsService {
     }
   }
 
-  async addJobToUser(user: User, payload: AddJobDescriptionDto): Promise<void> {
+  async addJobToUser(
+    owner: User,
+    payload: AddJobDescriptionDto,
+  ): Promise<void> {
     try {
       await this.jobRepository
         .createQueryBuilder()
         .insert()
         .into(Job)
-        .values([{ ...payload }])
+        .values([{ ...payload, owner }])
         .execute();
     } catch (error) {
       if (error instanceof HttpException) {
