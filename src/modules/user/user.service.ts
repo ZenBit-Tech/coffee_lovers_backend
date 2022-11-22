@@ -26,14 +26,14 @@ import AddUserEducationDto from './dto/add-user-education.dto';
 @Injectable()
 export class UserService {
   constructor(
+    @InjectRepository(Education)
+    private educationRepository: Repository<Education>,
+
     @InjectRepository(User)
     private userRepository: Repository<User>,
     private configService: ConfigService,
     private mailService: MailService,
     private fileService: FileService,
-
-    @InjectRepository(Education)
-    private educationRepository: Repository<Education>,
 
     @InjectRepository(WorkHistory)
     private workHistoryRepository: Repository<WorkHistory>,
