@@ -16,6 +16,7 @@ import { TestModule } from '@/modules/test/test.module';
 import { UserModule } from '@/modules/user/user.module';
 import { filePath } from '@/modules/file/constants';
 import { PropertiesModule } from '@/modules/properties/properties.module';
+import { JobsModule } from './modules/jobs/job.module';
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { PropertiesModule } from '@/modules/properties/properties.module';
     AuthModule,
     TestModule,
     UserModule,
+    JobsModule,
     PropertiesModule,
   ],
   controllers: [AppController],
