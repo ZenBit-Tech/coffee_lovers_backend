@@ -1,7 +1,17 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToMany,
+  ManyToMany,
+  ManyToOne,
+  JoinTable,
+} from 'typeorm';
+import { Category } from '@entities/Category.entity';
 
 import { Education } from './Education.entity';
 import { Job } from './Job.entity';
+import { Skill } from './Skill.entity';
 import { WorkHistory } from './WorkHistory.entity';
 
 @Entity()
@@ -50,4 +60,11 @@ export class User {
 
   @OneToMany(() => Job, (job) => job.owner)
   jobs: Job[];
+
+  @ManyToMany(() => Skill)
+  @JoinTable()
+  skills: Skill[];
+
+  @ManyToOne(() => Category, (category) => category.user)
+  category: Category;
 }

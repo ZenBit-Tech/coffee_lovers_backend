@@ -55,4 +55,19 @@ export default class UpdateUserDto {
   @IsOptional()
   @IsString()
   position?: string;
+
+  @ApiProperty({ example: '1C Development, UX/UI educational exp' })
+  @IsOptional()
+  @IsString()
+  other_experience?: string;
+
+  @ApiProperty({ example: 'Intermediate' })
+  @IsOptional()
+  @IsString()
+  english_level?: string;
+
+  @ApiProperty({ example: 10 })
+  @IsOptional()
+  @IsNumber()
+  category_id?: number;
 }
