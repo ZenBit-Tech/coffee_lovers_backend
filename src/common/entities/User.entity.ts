@@ -1,7 +1,18 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToMany,
+  ManyToMany,
+  ManyToOne,
+  JoinTable,
+} from 'typeorm';
+import { Category } from '@entities/Category.entity';
 
+import { EnglishLevel } from '@constants/entities';
 import { Education } from './Education.entity';
 import { Job } from './Job.entity';
+import { Skill } from './Skill.entity';
 import { WorkHistory } from './WorkHistory.entity';
 
 @Entity()
@@ -42,6 +53,20 @@ export class User {
   @Column({ default: null, nullable: true })
   position: string;
 
+  @Column({ default: null, nullable: true })
+  other_experience: string;
+
+  @Column({
+    type: 'enum',
+    enum: EnglishLevel,
+    nullable: true,
+    default: null,
+  })
+  english_level: EnglishLevel;
+
+  @Column({ default: null, nullable: true })
+  category_id?: number;
+
   @OneToMany(() => WorkHistory, (history) => history.user)
   workHistory: WorkHistory[];
 
@@ -50,4 +75,11 @@ export class User {
 
   @OneToMany(() => Job, (job) => job.owner)
   jobs: Job[];
+
+  @ManyToMany(() => Skill)
+  @JoinTable()
+  skills: Skill[];
+
+  @ManyToOne(() => Category, (category) => category.user)
+  category: Category;
 }
