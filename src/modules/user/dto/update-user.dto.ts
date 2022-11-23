@@ -6,6 +6,7 @@ import {
   IsNumber,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { EnglishLevel } from '@constants/entities';
 import {
   passwordMinLength,
   passwordValidationMessage,
@@ -64,7 +65,7 @@ export default class UpdateUserDto {
   @ApiProperty({ example: 'Intermediate' })
   @IsOptional()
   @IsString()
-  english_level?: string;
+  english_level?: EnglishLevel;
 
   @ApiProperty({ example: 10 })
   @IsOptional()
