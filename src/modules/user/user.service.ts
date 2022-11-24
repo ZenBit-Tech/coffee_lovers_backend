@@ -203,12 +203,11 @@ export class UserService {
 
   async addUserInfo(payload: AddUserInfoDto, user: UserDto): Promise<void> {
     try {
-      const test = await this.propertyService.convertIdToSkills(payload.skills);
-      const noSkills = { ...payload };
-      delete noSkills.skills;
-      await this.updateUserByEmail(user.email, noSkills);
+      const { skills, ...payloadNoSkills } = payload;
+      const userSkills = await this.propertyService.convertIdToSkills(skills);
+      await this.updateUserByEmail(user.email, payloadNoSkills);
       const currentUser = await this.findByEmail(user.email);
-      currentUser.skills = test;
+      currentUser.skills = userSkills;
       await this.userRepository.save(currentUser);
     } catch (error) {
       if (error instanceof HttpException) {
