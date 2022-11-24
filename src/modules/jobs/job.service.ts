@@ -5,12 +5,13 @@ import {
   Inject,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { FindManyOptions, Repository } from 'typeorm';
 import { User } from '@entities/User.entity';
 import { Job } from '@entities/Job.entity';
 import AddJobDescriptionDto from './dto/add-user-job.dto';
 import UserDto from '@/modules/user/dto/user.dto';
 import { UserService } from '@/modules/user/user.service';
+import JobParamsDto from './dto/job-params.dto.ts';
 
 @Injectable()
 export class JobsService {
@@ -22,15 +23,24 @@ export class JobsService {
     private jobRepository: Repository<Job>,
   ) {}
 
-  async getAllJobs(): Promise<Job[]> {
-    try {
-      return await this.jobRepository.createQueryBuilder().getMany();
-    } catch (error) {
-      if (error instanceof HttpException) {
-        throw error;
-      }
-      throw new InternalServerErrorException();
-    }
+  async getAllJobs(
+    data: JobParamsDto,
+    limit: number,
+    skip: number,
+  ): Promise<Job[]> {
+    const [res] = await this.jobRepository
+      .findAndCount({
+        where: data,
+        take: limit,
+        skip,
+      })
+      .then((json) => json);
+
+    return res;
+  }
+
+  async getOneJob(data: number): Promise<AddJobDescriptionDto> {
+    return this.jobRepository.findOneBy({ id: data }).then((job) => job);
   }
 
   async addJobToUser(

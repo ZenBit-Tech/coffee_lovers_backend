@@ -41,6 +41,7 @@
     "google-auth-library": "^8.7.0",
     "googleapis": "^109.0.1",
     "mysql2": "^2.3.3",
+    "nestjs-typeorm-paginate": "^4.0.2",
     "nodemailer": "^6.8.0",
     "passport": "^0.6.0",
     "passport-google-oauth20": "^2.0.0",

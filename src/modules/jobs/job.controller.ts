@@ -7,12 +7,16 @@ import {
   Request,
   Body,
   UseGuards,
+  Query,
+  Param,
 } from '@nestjs/common';
-import { ApiHeader, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiHeader, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '@/modules/auth/guards/jwt-auth.guard';
 import AddJobDescriptionDto from './dto/add-user-job.dto';
 import { JobsService } from './job.service';
 import { Job } from '@/common/entities/Job.entity';
+import JobIdDto from './dto/user-id.dto';
+import { EnglishLevel } from '@/common/constants/entities';
 
 @ApiTags('jobs')
 @Controller('jobs')
@@ -27,8 +31,16 @@ export class JobsController {
   @UseGuards(JwtAuthGuard)
   @Get('/')
   @HttpCode(HttpStatus.OK)
-  getAllJobs(): Promise<Job[]> {
-    return this.jobsService.getAllJobs();
+  getAllJobs(
+    @Query('time') available_time: number,
+    @Query('hourly') hourly_rate: number,
+    @Query('english_level') english_level: EnglishLevel,
+    @Query('limit') limit: number = 10,
+    @Query('skip') skip: number = 0,
+  ): Promise<Job[]> {
+    const data = { available_time, hourly_rate, english_level };
+
+    return this.jobsService.getAllJobs(data, limit, skip);
   }
 
   @ApiOperation({ summary: 'Add job' })
@@ -44,5 +56,19 @@ export class JobsController {
     @Body() payload: AddJobDescriptionDto,
   ): Promise<void> {
     return this.jobsService.addJobInfo(payload, req.user);
+  }
+
+  @ApiOperation({ summary: 'get information about current user' })
+  @ApiResponse({ type: Job })
+  @ApiHeader({
+    name: 'Authorization',
+    description: 'Bearer token',
+  })
+  @UseGuards(JwtAuthGuard)
+  @Get('/:id')
+  getOneJob(@Param() id: JobIdDto): Promise<AddJobDescriptionDto> {
+    const data = parseInt(id.id, 10);
+
+    return this.jobsService.getOneJob(data);
   }
 }
