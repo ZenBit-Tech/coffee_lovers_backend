@@ -58,7 +58,7 @@ export class JobsController {
     return this.jobsService.addJobInfo(payload, req.user);
   }
 
-  @ApiOperation({ summary: 'get information about current user' })
+  @ApiOperation({ summary: 'get job by id' })
   @ApiResponse({ type: Job })
   @ApiHeader({
     name: 'Authorization',
