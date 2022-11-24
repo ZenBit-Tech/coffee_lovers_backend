@@ -1,4 +1,8 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  HttpException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Category } from '@entities/Category.entity';
@@ -51,6 +55,22 @@ export class PropertiesService {
         englishLevels: Object.values(EnglishLevel),
       };
     } catch (error) {
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async convertIdToSkills(skills: number[]): Promise<Skill[]> {
+    try {
+      return await this.skillsRepository
+        .createQueryBuilder('skill')
+        .where('skill.id IN (:...skills)', {
+          skills,
+        })
+        .getMany();
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
       throw new InternalServerErrorException();
     }
   }

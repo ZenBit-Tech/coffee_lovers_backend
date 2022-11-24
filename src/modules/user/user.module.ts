@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { PropertiesModule } from '@/modules/properties/properties.module';
 import { User } from '@/common/entities/User.entity';
 import { WorkHistory } from '@/common/entities/WorkHistory.entity';
 import { Education } from '@/common/entities/Education.entity';
@@ -14,6 +15,7 @@ import { Job } from '@/common/entities/Job.entity';
     TypeOrmModule.forFeature([User, WorkHistory, Education, Job]),
     MailModule,
     FileModule,
+    PropertiesModule,
   ],
   controllers: [UserController],
   providers: [UserService],
