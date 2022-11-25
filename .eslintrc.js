@@ -27,6 +27,7 @@ module.exports = {
     'class-methods-use-this': 'off',
     'padding-line-between-statements': 'off',
     'import/prefer-default-export': 'off',
+    '@typescript-eslint/naming-convention': 'off',
     'import/extensions': [
       'error',
       'ignorePackages',

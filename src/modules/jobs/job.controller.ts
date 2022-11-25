@@ -7,28 +7,30 @@ import {
   Request,
   Body,
   UseGuards,
+  Query,
 } from '@nestjs/common';
-import { ApiHeader, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiHeader, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '@/modules/auth/guards/jwt-auth.guard';
-import AddJobDescriptionDto from './dto/add-user-job.dto';
 import { JobsService } from './job.service';
-import { Job } from '@/common/entities/Job.entity';
+import AddJobDescriptionDto from './dto/create-job.dto';
+import GetJobsDto from './dto/get-jobs.dto';
+import FindJobsResponse from './dto/find-jobs-response.dto';
 
 @ApiTags('jobs')
 @Controller('jobs')
 export class JobsController {
   constructor(private readonly jobsService: JobsService) {}
 
-  @ApiOperation({ summary: 'Get all jobs' })
+  @ApiOperation({ summary: 'Find jobs' })
   @ApiHeader({
     name: 'Authorization',
     description: 'Bearer token',
   })
+  @ApiResponse({ type: FindJobsResponse })
   @UseGuards(JwtAuthGuard)
   @Get('/')
-  @HttpCode(HttpStatus.OK)
-  getAllJobs(): Promise<Job[]> {
-    return this.jobsService.getAllJobs();
+  async findJobs(@Query() params: GetJobsDto): Promise<FindJobsResponse> {
+    return this.jobsService.findJobs(params);
   }
 
   @ApiOperation({ summary: 'Add job' })
@@ -39,10 +41,10 @@ export class JobsController {
   @Post('/')
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
-  addnewJob(
+  createJob(
     @Request() req,
     @Body() payload: AddJobDescriptionDto,
   ): Promise<void> {
-    return this.jobsService.addJobInfo(payload, req.user);
+    return this.jobsService.createJob(payload, req.user);
   }
 }
