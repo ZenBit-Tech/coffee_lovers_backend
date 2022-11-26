@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ConfigService } from '@nestjs/config';
-import { Repository, InsertResult } from 'typeorm';
+import { Repository, InsertResult, getConnection } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { User } from '@entities/User.entity';
 import { Education } from '@entities/Education.entity';
@@ -22,7 +22,6 @@ import UserDto from './dto/user.dto';
 import SetProfileImageDto from './dto/set-profile-image.dto';
 import AddUserWorkhistoryDto from './dto/add-user-workhistory.dto';
 import AddUserEducationDto from './dto/add-user-education.dto';
-import { PropertiesService } from '@/modules/properties/properties.service';
 import AddUserInfoDto from './dto/add-user-info.dto';
 
 @Injectable()
@@ -36,7 +35,6 @@ export class UserService {
     private configService: ConfigService,
     private mailService: MailService,
     private fileService: FileService,
-    private propertyService: PropertiesService,
 
     @InjectRepository(WorkHistory)
     private workHistoryRepository: Repository<WorkHistory>,
@@ -203,16 +201,20 @@ export class UserService {
 
   async addUserInfo(payload: AddUserInfoDto, user: UserDto): Promise<void> {
     try {
-      if (payload.skills) {
-        const { skills, ...payloadNoSkills } = payload;
-        const userSkills = await this.propertyService.convertIdToSkills(skills);
-        const currentUser = await this.findByEmail(user.email);
-        currentUser.skills = userSkills;
-        await this.userRepository.save(currentUser);
-        await this.updateUserByEmail(user.email, payloadNoSkills);
-      } else {
-        await this.updateUserByEmail(user.email, payload);
+      const { skills, ...payloadNoSkills } = payload;
+      if (skills) {
+        const userWithSkills = await this.userRepository
+          .createQueryBuilder('user')
+          .leftJoinAndSelect('user.skills', 'skills')
+          .where('user.id = :id', { id: user.id })
+          .getOne();
+        await this.userRepository
+          .createQueryBuilder()
+          .relation(User, 'skills')
+          .of(user.id)
+          .addAndRemove(skills, userWithSkills.skills);
       }
+      await this.updateUserByEmail(user.email, payloadNoSkills);
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;

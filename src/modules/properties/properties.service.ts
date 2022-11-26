@@ -58,20 +58,4 @@ export class PropertiesService {
       throw new InternalServerErrorException();
     }
   }
-
-  async convertIdToSkills(skills: number[]): Promise<Skill[]> {
-    try {
-      return await this.skillsRepository
-        .createQueryBuilder('skill')
-        .where('skill.id IN (:...skills)', {
-          skills,
-        })
-        .getMany();
-    } catch (error) {
-      if (error instanceof HttpException) {
-        throw error;
-      }
-      throw new InternalServerErrorException();
-    }
-  }
 }

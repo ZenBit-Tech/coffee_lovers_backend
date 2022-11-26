@@ -15,7 +15,6 @@ import { Job } from '@/common/entities/Job.entity';
     TypeOrmModule.forFeature([User, WorkHistory, Education, Job]),
     MailModule,
     FileModule,
-    PropertiesModule,
   ],
   controllers: [UserController],
   providers: [UserService],
