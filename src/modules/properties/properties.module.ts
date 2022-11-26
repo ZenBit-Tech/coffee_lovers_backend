@@ -4,10 +4,9 @@ import { Skill } from '@entities/Skill.entity';
 import { Category } from '@entities/Category.entity';
 import { PropertiesService } from './properties.service';
 import { PropertiesController } from './properties.controller';
-import { User } from '@/common/entities/User.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Category, Skill, User])],
+  imports: [TypeOrmModule.forFeature([Category, Skill])],
   controllers: [PropertiesController],
   providers: [PropertiesService],
   exports: [],
