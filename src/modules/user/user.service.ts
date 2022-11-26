@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ConfigService } from '@nestjs/config';
-import { Repository, InsertResult } from 'typeorm';
+import { Repository, InsertResult, createQueryBuilder } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { User } from '@entities/User.entity';
 import { Education } from '@entities/Education.entity';
@@ -22,12 +22,16 @@ import UserDto from './dto/user.dto';
 import SetProfileImageDto from './dto/set-profile-image.dto';
 import AddUserWorkhistoryDto from './dto/add-user-workhistory.dto';
 import AddUserEducationDto from './dto/add-user-education.dto';
+import { Category } from '@/common/entities/Category.entity';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(Education)
     private educationRepository: Repository<Education>,
+
+    @InjectRepository(Category)
+    private categoryRepository: Repository<Category>,
 
     @InjectRepository(User)
     private userRepository: Repository<User>,
@@ -231,6 +235,52 @@ export class UserService {
     try {
       const currentUser = await this.findByEmail(user.email);
       await this.addWorkToUser(currentUser, payload);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async getFheelancerInformation(): Promise<User[]> {
+    try {
+      const currentUser = await this.userRepository.find({
+        relations: {
+          category: true,
+        },
+      });
+
+      return currentUser;
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async addCategoryInfo(payload: Category, user: User): Promise<void> {
+    try {
+      const currentUser = await this.findByEmail(user.email);
+      await this.userRepository
+        .createQueryBuilder()
+        .relation(User, 'category')
+        .of({ id: currentUser.id })
+        .set({ id: payload.id });
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async getCategoryInfo(): Promise<Category[]> {
+    try {
+      const Categories = await this.categoryRepository.find();
+
+      return Categories;
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;

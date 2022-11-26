@@ -12,4 +12,16 @@ export default class UserDto {
 
   @ApiProperty({ example: '' })
   profile_image: string;
+
+  @ApiProperty({ example: '' })
+  available_time: string;
+
+  @ApiProperty({ example: '' })
+  position: string;
+
+  @ApiProperty({ example: '' })
+  hourly_rate: number;
+
+  @ApiProperty({ example: '' })
+  category_id?: number;
 }

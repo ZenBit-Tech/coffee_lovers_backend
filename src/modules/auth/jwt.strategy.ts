@@ -36,6 +36,10 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         first_name: user.first_name,
         last_name: user.last_name,
         profile_image: user.profile_image,
+        available_time: user.available_time,
+        position: user.position,
+        hourly_rate: user.hourly_rate,
+        category_id: user.category_id,
       };
     } catch (error) {
       if (error instanceof HttpException) {
