@@ -42,4 +42,9 @@ export default class GetJobsDto {
   @IsOptional()
   @IsString()
   english_level?: EnglishLevel;
+
+  @ApiProperty({ example: 'Website' })
+  @IsOptional()
+  @IsString()
+  search?: string;
 }

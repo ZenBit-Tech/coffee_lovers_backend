@@ -4,7 +4,7 @@ import {
   InternalServerErrorException,
   Inject,
 } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import { Brackets, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Job } from '@entities/Job.entity';
 import { findJobsDefaultLimit, findJobsDefaultOffset } from '@constants/jobs';
@@ -46,6 +46,7 @@ export class JobsService {
         categories,
         hourly_rate_start,
         hourly_rate_end,
+        search,
         ...jobPayload
       } = params;
 
@@ -68,6 +69,19 @@ export class JobsService {
         query.andWhere('job.hourly_rate <= :hourly_rate_end', {
           hourly_rate_end,
         });
+      }
+
+      if (search) {
+        query.andWhere(
+          new Brackets((qb) => {
+            qb.where('job.title LIKE :search').orWhere(
+              'job.description LIKE :search',
+              {
+                search: `%${search}%`,
+              },
+            );
+          }),
+        );
       }
 
       if (categories) {
