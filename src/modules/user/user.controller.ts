@@ -10,6 +10,9 @@ import {
   UseInterceptors,
   UploadedFile,
   Patch,
+  Query,
+  DefaultValuePipe,
+  ParseIntPipe,
 } from '@nestjs/common';
 import {
   ApiBody,
@@ -148,8 +151,11 @@ export class UserController {
   })
   @UseGuards(JwtAuthGuard)
   @Get('/freelancer')
-  getFreelancerInformation(): Promise<User[]> {
-    return this.userService.getFheelancerInformation();
+  getFreelancerInformation(
+    @Query('take', new DefaultValuePipe(10), ParseIntPipe) take: number = 10,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number = 1,
+  ): Promise<[User[], number]> {
+    return this.userService.getFheelancerInformation(take, page);
   }
 
   @ApiOperation({ summary: 'Add new category for user or set category' })

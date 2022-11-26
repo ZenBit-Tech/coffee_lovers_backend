@@ -243,12 +243,17 @@ export class UserService {
     }
   }
 
-  async getFheelancerInformation(): Promise<User[]> {
+  async getFheelancerInformation(
+    take: number,
+    page: number,
+  ): Promise<[User[], number]> {
     try {
-      const currentUser = await this.userRepository.find({
+      const currentUser = await this.userRepository.findAndCount({
         relations: {
           category: true,
         },
+        take,
+        skip: (page - 1) * take,
       });
 
       return currentUser;
