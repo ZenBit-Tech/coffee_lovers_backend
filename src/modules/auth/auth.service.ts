@@ -93,7 +93,7 @@ export class AuthService {
       if (!user) {
         throw new BadRequestException('invalid email');
       }
-      if (!user.is_google) {
+      if (!dto.is_google) {
         const isPassEquals = await bcrypt.compare(dto.password, user.password);
 
         if (!isPassEquals) {
