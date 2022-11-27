@@ -2,15 +2,12 @@ import {
   Injectable,
   HttpException,
   InternalServerErrorException,
-  Inject,
 } from '@nestjs/common';
 import { Brackets, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Job } from '@entities/Job.entity';
 import { findJobsDefaultLimit, findJobsDefaultOffset } from '@constants/jobs';
 import UserDto from '@/modules/user/dto/user.dto';
-import { UserService } from '@/modules/user/user.service';
-import { PropertiesService } from '@/modules/properties/properties.service';
 import GetJobsDto from './dto/get-jobs.dto';
 import CreateJobDto from './dto/create-job.dto';
 import FindJobsResponse from './dto/find-jobs-response.dto';
@@ -18,12 +15,8 @@ import FindJobsResponse from './dto/find-jobs-response.dto';
 @Injectable()
 export class JobsService {
   constructor(
-    @Inject(UserService)
-    private userService: UserService,
-
     @InjectRepository(Job)
     private jobRepository: Repository<Job>,
-    private propertiesService: PropertiesService,
   ) {}
 
   async getAllJobs(): Promise<Job[]> {
@@ -109,7 +102,6 @@ export class JobsService {
 
   async createJob(payload: CreateJobDto, user: UserDto): Promise<void> {
     try {
-      const owner = await this.userService.findByEmail(user.email);
       const { category, skills, ...data } = payload;
       const insertResult = await this.jobRepository
         .createQueryBuilder()
@@ -118,21 +110,23 @@ export class JobsService {
         .values([
           {
             ...data,
-            owner,
+            owner: user,
             ...(category && {
-              category: await this.propertiesService.findCategoryById(category),
+              category: { id: category },
             }),
           },
         ])
         .execute();
 
       if (skills) {
-        const { id } = insertResult.identifiers.at(0);
-        await this.jobRepository
-          .createQueryBuilder()
-          .relation(Job, 'skills')
-          .of(id)
-          .add(skills);
+        const { id } = insertResult.identifiers.shift();
+        if (id) {
+          await this.jobRepository
+            .createQueryBuilder()
+            .relation(Job, 'skills')
+            .of(id)
+            .add(skills);
+        }
       }
     } catch (error) {
       if (error instanceof HttpException) {
