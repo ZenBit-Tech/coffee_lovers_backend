@@ -9,7 +9,7 @@ import {
 } from 'typeorm';
 import { Category } from '@entities/Category.entity';
 
-import { EnglishLevel } from '@constants/entities';
+import { EnglishLevel, Role } from '@constants/entities';
 import { Education } from './Education.entity';
 import { Job } from './Job.entity';
 import { Skill } from './Skill.entity';
@@ -66,6 +66,14 @@ export class User {
 
   @Column({ default: null, nullable: true })
   category_id?: number;
+
+  @Column({
+    type: 'enum',
+    enum: Role,
+    nullable: true,
+    default: null,
+  })
+  role: Role;
 
   @OneToMany(() => WorkHistory, (history) => history.user)
   workHistory: WorkHistory[];
