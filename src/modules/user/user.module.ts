@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { PropertiesModule } from '@/modules/properties/properties.module';
 import { User } from '@/common/entities/User.entity';
 import { WorkHistory } from '@/common/entities/WorkHistory.entity';
 import { Education } from '@/common/entities/Education.entity';
