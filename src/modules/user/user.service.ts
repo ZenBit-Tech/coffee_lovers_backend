@@ -22,6 +22,7 @@ import UserDto from './dto/user.dto';
 import SetProfileImageDto from './dto/set-profile-image.dto';
 import AddUserWorkhistoryDto from './dto/add-user-workhistory.dto';
 import AddUserEducationDto from './dto/add-user-education.dto';
+import AddUserInfoDto from './dto/add-user-info.dto';
 
 @Injectable()
 export class UserService {
@@ -198,9 +199,22 @@ export class UserService {
     }
   }
 
-  async addUserInfo(payload: UpdateUserDto, user: UserDto): Promise<void> {
+  async addUserInfo(payload: AddUserInfoDto, user: UserDto): Promise<void> {
     try {
-      await this.updateUserByEmail(user.email, payload);
+      const { skills, ...payloadNoSkills } = payload;
+      if (skills) {
+        const userWithSkills = await this.userRepository
+          .createQueryBuilder('user')
+          .leftJoinAndSelect('user.skills', 'skills')
+          .where('user.id = :id', { id: user.id })
+          .getOne();
+        await this.userRepository
+          .createQueryBuilder()
+          .relation(User, 'skills')
+          .of(user.id)
+          .addAndRemove(skills, userWithSkills.skills);
+      }
+      await this.updateUserByEmail(user.email, payloadNoSkills);
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
