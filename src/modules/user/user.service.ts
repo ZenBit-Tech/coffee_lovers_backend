@@ -248,13 +248,12 @@ export class UserService {
     page: number,
   ): Promise<[User[], number]> {
     try {
-      const currentUser = await this.userRepository.findAndCount({
-        relations: {
-          category: true,
-        },
-        take,
-        skip: (page - 1) * take,
-      });
+      const currentUser = await this.userRepository
+        .createQueryBuilder('user')
+        .leftJoinAndSelect('user.category', 'category')
+        .skip((page - 1) * take)
+        .take(take)
+        .getManyAndCount();
 
       return currentUser;
     } catch (error) {
@@ -283,7 +282,9 @@ export class UserService {
 
   async getCategoryInfo(): Promise<Category[]> {
     try {
-      const Categories = await this.categoryRepository.find();
+      const Categories = await this.categoryRepository
+        .createQueryBuilder('category')
+        .getMany();
 
       return Categories;
     } catch (error) {

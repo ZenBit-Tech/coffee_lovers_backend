@@ -38,9 +38,13 @@ export class JobsController {
     @Query('limit') limit: number = 10,
     @Query('skip') skip: number = 0,
   ): Promise<Job[]> {
-    const data = { available_time, hourly_rate, english_level };
-
-    return this.jobsService.getAllJobs(data, limit, skip);
+    return this.jobsService.getAllJobs(
+      available_time,
+      hourly_rate,
+      english_level,
+      limit,
+      skip,
+    );
   }
 
   @ApiOperation({ summary: 'Add job' })
@@ -67,8 +71,6 @@ export class JobsController {
   @UseGuards(JwtAuthGuard)
   @Get('/:id')
   getOneJob(@Param() id: JobIdDto): Promise<AddJobDescriptionDto> {
-    const data = parseInt(id.id, 10);
-
-    return this.jobsService.getOneJob(data);
+    return this.jobsService.getOneJob(id);
   }
 }

@@ -11,7 +11,8 @@ import { Job } from '@entities/Job.entity';
 import AddJobDescriptionDto from './dto/add-user-job.dto';
 import UserDto from '@/modules/user/dto/user.dto';
 import { UserService } from '@/modules/user/user.service';
-import JobParamsDto from './dto/job-params.dto.ts';
+import JobIdDto from './dto/user-id.dto';
+import { EnglishLevel } from '@/common/constants/entities';
 
 @Injectable()
 export class JobsService {
@@ -24,23 +25,44 @@ export class JobsService {
   ) {}
 
   async getAllJobs(
-    data: JobParamsDto,
+    available_time: number,
+    hourly_rate: number,
+    english_level: EnglishLevel,
     limit: number,
     skip: number,
   ): Promise<Job[]> {
-    const [res] = await this.jobRepository
-      .findAndCount({
-        where: data,
-        take: limit,
-        skip,
-      })
-      .then((json) => json);
+    try {
+      const data = { available_time, hourly_rate, english_level };
+      const [res] = await this.jobRepository
+        .findAndCount({
+          where: data,
+          take: limit,
+          skip,
+        })
+        .then((json) => json);
 
-    return res;
+      return res;
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new InternalServerErrorException();
+    }
   }
 
-  async getOneJob(data: number): Promise<AddJobDescriptionDto> {
-    return this.jobRepository.findOneBy({ id: data }).then((job) => job);
+  async getOneJob(id: JobIdDto): Promise<AddJobDescriptionDto> {
+    try {
+      const data = parseInt(id.id, 10);
+
+      return await this.jobRepository
+        .findOneBy({ id: data })
+        .then((job) => job);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new InternalServerErrorException();
+    }
   }
 
   async addJobToUser(

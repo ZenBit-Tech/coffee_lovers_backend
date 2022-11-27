@@ -1,21 +1,21 @@
-import { IsArray, IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsNumber, IsOptional } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { FindOperator } from 'typeorm';
 import { Skill } from '@/common/entities/Skill.entity';
 import { EnglishLevel } from '@/common/constants/entities';
 
 export default class JobParamsDto {
-  @ApiProperty({ example: 3 })
+  @ApiProperty({ example: 30 })
   @IsOptional()
   @IsNumber()
   hourly_rate?: number;
 
-  @ApiProperty({ example: 3 })
+  @ApiProperty({ example: 10 })
   @IsOptional()
   @IsArray()
   available_time?: number;
 
-  @ApiProperty({ example: 3 })
+  @ApiProperty({ example: [{ id: 345, name: 'Css' }] })
   @IsOptional()
   @IsArray()
   skills?: Skill[];

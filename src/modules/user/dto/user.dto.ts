@@ -10,18 +10,18 @@ export default class UserDto {
   @ApiProperty({ example: 'Doe' })
   last_name: string;
 
-  @ApiProperty({ example: '' })
+  @ApiProperty({ example: 'https://www.google.com/url' })
   profile_image: string;
 
-  @ApiProperty({ example: '' })
+  @ApiProperty({ example: '4' })
   available_time: string;
 
-  @ApiProperty({ example: '' })
+  @ApiProperty({ example: 'Front-end developer' })
   position: string;
 
-  @ApiProperty({ example: '' })
+  @ApiProperty({ example: 30 })
   hourly_rate: number;
 
-  @ApiProperty({ example: '' })
+  @ApiProperty({ example: 377 })
   category_id?: number;
 }
