@@ -28,6 +28,7 @@ import SetProfileImageDto from './dto/set-profile-image.dto';
 import UpdateUserDto from './dto/update-user.dto';
 import AddUserEducationDto from './dto/add-user-education.dto';
 import AddUserWorkhistoryDto from './dto/add-user-workhistory.dto';
+import AddUserInfoDto from './dto/add-user-info.dto';
 
 @ApiTags('user')
 @Controller('user')
@@ -99,7 +100,7 @@ export class UserController {
   @Post('user-info')
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
-  addUserInfo(@Request() req, @Body() payload: UpdateUserDto): Promise<void> {
+  addUserInfo(@Request() req, @Body() payload: AddUserInfoDto): Promise<void> {
     return this.userService.addUserInfo(payload, req.user);
   }
 

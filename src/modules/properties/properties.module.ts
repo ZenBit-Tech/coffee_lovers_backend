@@ -9,6 +9,7 @@ import { PropertiesController } from './properties.controller';
   imports: [TypeOrmModule.forFeature([Category, Skill])],
   controllers: [PropertiesController],
   providers: [PropertiesService],
+  exports: [],
   exports: [PropertiesService],
 })
 export class PropertiesModule {}

@@ -1,6 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Role } from '@constants/entities';
 
 export default class UserDto {
+  @ApiProperty({ example: 123 })
+  id: number;
+
   @ApiProperty({ example: 'test@test.com' })
   email: string;
 
@@ -12,4 +16,7 @@ export default class UserDto {
 
   @ApiProperty({ example: '' })
   profile_image: string;
+
+  @ApiProperty({ example: 'Freelancer' })
+  role: Role;
 }

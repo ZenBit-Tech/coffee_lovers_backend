@@ -4,3 +4,8 @@ export enum EnglishLevel {
   INTERMEDIATE = 'Intermediate',
   UPPER_INTERMEDIATE = 'Upper-Intermediate',
 }
+
+export enum Role {
+  FREELANCER = 'Freelancer',
+  JOBOWNER = 'JobOwner',
+}
