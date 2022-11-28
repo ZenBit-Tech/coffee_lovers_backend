@@ -114,7 +114,7 @@ export class UserController {
   @HttpCode(HttpStatus.OK)
   addEducationInfo(
     @Request() req,
-    @Body() payload: AddUserEducationDto,
+    @Body() payload: AddUserEducationDto[],
   ): Promise<void> {
     return this.userService.addEducationInfo(payload, req.user);
   }
