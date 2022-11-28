@@ -114,7 +114,7 @@ export class UserController {
   @HttpCode(HttpStatus.OK)
   addEducationInfo(
     @Request() req,
-    @Body() payload: AddUserEducationDto,
+    @Body() payload: AddUserEducationDto[],
   ): Promise<void> {
     return this.userService.addEducationInfo(payload, req.user);
   }
@@ -129,7 +129,7 @@ export class UserController {
   @HttpCode(HttpStatus.OK)
   addWorkhistoryInfo(
     @Request() req,
-    @Body() payload: AddUserWorkhistoryDto,
+    @Body() payload: AddUserWorkhistoryDto[],
   ): Promise<void> {
     return this.userService.addWorkhistoryInfo(payload, req.user);
   }
