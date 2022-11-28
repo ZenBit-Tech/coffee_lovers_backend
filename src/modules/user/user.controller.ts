@@ -129,7 +129,7 @@ export class UserController {
   @HttpCode(HttpStatus.OK)
   addWorkhistoryInfo(
     @Request() req,
-    @Body() payload: AddUserWorkhistoryDto,
+    @Body() payload: AddUserWorkhistoryDto[],
   ): Promise<void> {
     return this.userService.addWorkhistoryInfo(payload, req.user);
   }

@@ -77,14 +77,19 @@ export class UserService {
 
   async addWorkToUser(
     user: User,
-    payload: AddUserWorkhistoryDto,
+    payload: AddUserWorkhistoryDto[],
   ): Promise<void> {
     try {
       await this.workHistoryRepository
         .createQueryBuilder()
         .insert()
         .into(WorkHistory)
-        .values([{ ...payload, user }])
+        .values(
+          payload.map((el) => ({
+            ...el,
+            user,
+          })),
+        )
         .execute();
     } catch (error) {
       if (error instanceof HttpException) {
@@ -239,7 +244,7 @@ export class UserService {
   }
 
   async addWorkhistoryInfo(
-    payload: AddUserWorkhistoryDto,
+    payload: AddUserWorkhistoryDto[],
     user: UserDto,
   ): Promise<void> {
     try {
