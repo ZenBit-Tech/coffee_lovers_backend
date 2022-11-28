@@ -32,6 +32,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       }
 
       return {
+        id: user.id,
         email: user.email,
         first_name: user.first_name,
         last_name: user.last_name,
@@ -40,6 +41,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         position: user.position,
         hourly_rate: user.hourly_rate,
         category_id: user.category_id,
+        role: user.role,
       };
     } catch (error) {
       if (error instanceof HttpException) {

@@ -35,6 +35,7 @@ import AddUserWorkhistoryDto from './dto/add-user-workhistory.dto';
 import { User } from '@/common/entities/User.entity';
 import { Category } from '@/common/entities/Category.entity';
 import { ReqUser } from './dto/get-user-dto.dto';
+import AddUserInfoDto from './dto/add-user-info.dto';
 
 @ApiTags('user')
 @Controller('user')
@@ -106,10 +107,7 @@ export class UserController {
   @Post('user-info')
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
-  addUserInfo(
-    @Request() req: ReqUser,
-    @Body() payload: UpdateUserDto,
-  ): Promise<void> {
+  addUserInfo(@Request() req, @Body() payload: AddUserInfoDto): Promise<void> {
     return this.userService.addUserInfo(payload, req.user);
   }
 
