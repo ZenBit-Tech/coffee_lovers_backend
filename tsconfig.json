@@ -20,7 +20,7 @@
     "paths": {
       "@/*": ["src/*"],
       "@entities/*": ["src/common/entities/*"],
-      "@constants/*": ["src/common/constants/*"],
+      "@constants/*": ["src/common/constants/*"]
     }
   }
 }

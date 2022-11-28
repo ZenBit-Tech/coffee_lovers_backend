@@ -7,7 +7,6 @@ import {
   Request,
   Body,
   UseGuards,
-  Query,
   Param,
 } from '@nestjs/common';
 import { ApiHeader, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
@@ -16,7 +15,6 @@ import AddJobDescriptionDto from './dto/add-user-job.dto';
 import { JobsService } from './job.service';
 import { Job } from '@/common/entities/Job.entity';
 import JobIdDto from './dto/user-id.dto';
-import { EnglishLevel } from '@/common/constants/entities';
 
 @ApiTags('jobs')
 @Controller('jobs')
@@ -31,20 +29,8 @@ export class JobsController {
   @UseGuards(JwtAuthGuard)
   @Get('/')
   @HttpCode(HttpStatus.OK)
-  getAllJobs(
-    @Query('time') available_time: number,
-    @Query('hourly') hourly_rate: number,
-    @Query('english_level') english_level: EnglishLevel,
-    @Query('limit') limit: number = 10,
-    @Query('skip') skip: number = 0,
-  ): Promise<Job[]> {
-    return this.jobsService.getAllJobs(
-      available_time,
-      hourly_rate,
-      english_level,
-      limit,
-      skip,
-    );
+  getAllJobs(): Promise<Job[]> {
+    return this.jobsService.getAllJobs();
   }
 
   @ApiOperation({ summary: 'Add job' })

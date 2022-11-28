@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ConfigService } from '@nestjs/config';
-import { Repository, InsertResult, createQueryBuilder } from 'typeorm';
+import { Repository, InsertResult } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { User } from '@entities/User.entity';
 import { Education } from '@entities/Education.entity';

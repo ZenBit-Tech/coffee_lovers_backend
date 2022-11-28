@@ -12,7 +12,6 @@ import AddJobDescriptionDto from './dto/add-user-job.dto';
 import UserDto from '@/modules/user/dto/user.dto';
 import { UserService } from '@/modules/user/user.service';
 import JobIdDto from './dto/user-id.dto';
-import { EnglishLevel } from '@/common/constants/entities';
 
 @Injectable()
 export class JobsService {
@@ -24,22 +23,9 @@ export class JobsService {
     private jobRepository: Repository<Job>,
   ) {}
 
-  async getAllJobs(
-    available_time: number,
-    hourly_rate: number,
-    english_level: EnglishLevel,
-    limit: number,
-    skip: number,
-  ): Promise<Job[]> {
+  async getAllJobs(): Promise<Job[]> {
     try {
-      const data = { available_time, hourly_rate, english_level };
-      const [res] = await this.jobRepository
-        .findAndCount({
-          where: data,
-          take: limit,
-          skip,
-        })
-        .then((json) => json);
+      const res = await this.jobRepository.find();
 
       return res;
     } catch (error) {
