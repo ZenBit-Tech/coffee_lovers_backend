@@ -118,8 +118,8 @@ export class UserController {
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
   addEducationInfo(
-    @Request() req: ReqUser,
-    @Body() payload: AddUserEducationDto,
+    @Request() req,
+    @Body() payload: AddUserEducationDto[],
   ): Promise<void> {
     return this.userService.addEducationInfo(payload, req.user);
   }
@@ -133,8 +133,8 @@ export class UserController {
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
   addWorkhistoryInfo(
-    @Request() req: ReqUser,
-    @Body() payload: AddUserWorkhistoryDto,
+    @Request() req,
+    @Body() payload: AddUserWorkhistoryDto[],
   ): Promise<void> {
     return this.userService.addWorkhistoryInfo(payload, req.user);
   }
