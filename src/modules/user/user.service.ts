@@ -260,6 +260,7 @@ export class UserService {
   async getFheelancerInformation(
     take: number,
     page: number,
+    search: string,
   ): Promise<[User[], number]> {
     try {
       const currentUser = await this.userRepository
@@ -280,11 +281,10 @@ export class UserService {
 
   async addCategoryInfo(payload: Category, user: User): Promise<void> {
     try {
-      const currentUser = await this.findByEmail(user.email);
       await this.userRepository
         .createQueryBuilder()
         .relation(User, 'category')
-        .of({ id: currentUser.id })
+        .of({ id: user.id })
         .set({ id: payload.id });
     } catch (error) {
       if (error instanceof HttpException) {

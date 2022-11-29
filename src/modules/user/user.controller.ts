@@ -9,7 +9,6 @@ import {
   HttpStatus,
   UseInterceptors,
   UploadedFile,
-  Patch,
   Query,
   DefaultValuePipe,
   ParseIntPipe,
@@ -29,7 +28,6 @@ import UserDto from './dto/user.dto';
 import PasswordResetDto from './dto/password-reset.dto';
 import PasswordResetRequestDto from './dto/password-reset-request.dto';
 import SetProfileImageDto from './dto/set-profile-image.dto';
-import UpdateUserDto from './dto/update-user.dto';
 import AddUserEducationDto from './dto/add-user-education.dto';
 import AddUserWorkhistoryDto from './dto/add-user-workhistory.dto';
 import { User } from '@/common/entities/User.entity';
@@ -150,10 +148,11 @@ export class UserController {
   @UseGuards(JwtAuthGuard)
   @Get('/freelancer')
   getFreelancerInformation(
+    @Query('search') search: string,
     @Query('take', new DefaultValuePipe(10), ParseIntPipe) take: number = 10,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number = 1,
   ): Promise<[User[], number]> {
-    return this.userService.getFheelancerInformation(take, page);
+    return this.userService.getFheelancerInformation(take, page, search);
   }
 
   @ApiOperation({ summary: 'Add new category for user or set category' })

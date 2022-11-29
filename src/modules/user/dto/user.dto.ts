@@ -14,7 +14,7 @@ export default class UserDto {
   @ApiProperty({ example: 'Doe' })
   last_name: string;
 
-  @ApiProperty({ example: 'https://www.google.com/url' })
+  @ApiProperty({ example: 'https://localhost:4200/image.img' })
   profile_image: string;
 
   @ApiProperty({ example: 'Freelancer' })

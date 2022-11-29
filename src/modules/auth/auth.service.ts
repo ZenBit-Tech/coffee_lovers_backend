@@ -50,7 +50,6 @@ export class AuthService {
         email: userData.email,
         first_name: userData.given_name,
         second_name: userData.family_name,
-        is_google: true,
       };
 
       const user = await this.userService.findByEmail(dataLogin.email);
@@ -93,7 +92,7 @@ export class AuthService {
       if (!user) {
         throw new BadRequestException('invalid email');
       }
-      if (!dto.is_google) {
+      if (!user.is_google) {
         const isPassEquals = await bcrypt.compare(dto.password, user.password);
 
         if (!isPassEquals) {

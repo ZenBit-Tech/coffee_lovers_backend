@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsEmail, IsOptional, IsString } from 'class-validator';
+import { IsEmail, IsOptional, IsString } from 'class-validator';
 
 export default class SignInDto {
   @ApiProperty({ example: 'test@test.com' })
@@ -10,8 +10,4 @@ export default class SignInDto {
   @IsOptional()
   @IsString()
   readonly password?: string;
-
-  @IsBoolean()
-  @IsOptional()
-  readonly is_google?: boolean;
 }
