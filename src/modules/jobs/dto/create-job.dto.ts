@@ -1,9 +1,8 @@
-import { IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsNumber, IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { Category } from '@/common/entities/Category.entity';
-import { EnglishLevel } from '@/common/constants/entities';
+import { EnglishLevel } from '@constants/entities';
 
-export default class AddJobDescriptionDto {
+export default class CreateJobDto {
   @ApiProperty({ example: 'Landing page' })
   @IsOptional()
   @IsString()
@@ -27,10 +26,15 @@ export default class AddJobDescriptionDto {
   @ApiProperty({ example: 4 })
   @IsOptional()
   @IsNumber()
-  category?: Category;
+  category?: number;
 
   @ApiProperty({ example: 'Upper-intermadiate' })
   @IsOptional()
   @IsString()
   english_level?: EnglishLevel;
+
+  @ApiProperty({ example: [1, 2, 3] })
+  @IsOptional()
+  @IsArray()
+  skills?: number[];
 }

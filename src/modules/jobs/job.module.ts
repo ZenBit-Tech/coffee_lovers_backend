@@ -7,6 +7,7 @@ import { JobsController } from './job.controller';
 import { JobsService } from './job.service';
 import { User } from '@/common/entities/User.entity';
 import { UserModule } from '@/modules/user/user.module';
+import { PropertiesModule } from '@/modules/properties/properties.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { UserModule } from '@/modules/user/user.module';
     }),
     TypeOrmModule.forFeature([Job, User]),
     UserModule,
+    PropertiesModule,
   ],
   controllers: [JobsController],
   providers: [JobsService],

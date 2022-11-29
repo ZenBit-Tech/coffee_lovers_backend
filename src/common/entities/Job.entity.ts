@@ -1,5 +1,6 @@
 import {
   Column,
+  CreateDateColumn,
   Entity,
   JoinTable,
   ManyToMany,
@@ -35,6 +36,9 @@ export class Job {
     default: null,
   })
   english_level: EnglishLevel;
+
+  @CreateDateColumn()
+  created_at: Date;
 
   @ManyToOne(() => User, (user) => user.jobs)
   owner: User;

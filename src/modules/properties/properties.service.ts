@@ -40,6 +40,17 @@ export class PropertiesService {
     }
   }
 
+  async findCategoryById(id: number): Promise<Category> {
+    try {
+      return await this.categoriesRepository
+        .createQueryBuilder('category')
+        .where({ id })
+        .getOne();
+    } catch (error) {
+      throw new InternalServerErrorException();
+    }
+  }
+
   async getAllProperties(): Promise<GetAllPropertiesDto> {
     try {
       const categories = await this.findAllCategories();
