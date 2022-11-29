@@ -23,7 +23,7 @@ export class User {
   @Column({ unique: true })
   email: string;
 
-  @Column({ default: null, nullable: true, select: false })
+  @Column({ default: null, nullable: true })
   password: string;
 
   @Column({ default: null, nullable: true })
@@ -38,7 +38,7 @@ export class User {
   @Column({ default: false, nullable: true })
   is_google: boolean;
 
-  @Column({ default: null, nullable: true, select: false })
+  @Column({ default: null, nullable: true })
   reset_password_key: string;
 
   @Column({ default: null, nullable: true })
