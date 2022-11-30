@@ -150,6 +150,16 @@ export class JobsService {
   ): Promise<void> {
     try {
       const { job, ...proposalPayload } = payload;
+
+      const proposalCount = await this.proposalRepository
+        .createQueryBuilder('proposal')
+        .where({ job: { id: job }, user })
+        .getCount();
+
+      if (proposalCount > 0) {
+        throw new ForbiddenException();
+      }
+
       await this.proposalRepository
         .createQueryBuilder()
         .insert()
@@ -163,6 +173,9 @@ export class JobsService {
         ])
         .execute();
     } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
       throw new InternalServerErrorException();
     }
   }
