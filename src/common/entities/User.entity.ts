@@ -10,6 +10,7 @@ import {
 import { Category } from '@entities/Category.entity';
 
 import { EnglishLevel, Role } from '@constants/entities';
+import { Proposal } from '@entities/Proposal.entity';
 import { Education } from './Education.entity';
 import { Job } from './Job.entity';
 import { Skill } from './Skill.entity';
@@ -90,4 +91,7 @@ export class User {
 
   @ManyToOne(() => Category, (category) => category.user)
   category: Category;
+
+  @OneToMany(() => Proposal, (proposal) => proposal.user)
+  proposals: Proposal[];
 }

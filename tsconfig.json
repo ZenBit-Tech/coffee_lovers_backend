@@ -21,6 +21,7 @@
       "@/*": ["src/*"],
       "@entities/*": ["src/common/entities/*"],
       "@constants/*": ["src/common/constants/*"],
+      "@utils/*": ["src/common/utils/*"],
     }
   }
 }
