@@ -14,6 +14,7 @@ import GetJobsDto from './dto/get-jobs.dto';
 import CreateJobDto from './dto/create-job.dto';
 import FindJobsResponse from './dto/find-jobs-response.dto';
 import CreateProposalDto from './dto/create-proposal.dto';
+import getJobProposalsResponseDto from './dto/get-job-proposals-response.dto';
 
 @Injectable()
 export class JobsService {
@@ -180,20 +181,28 @@ export class JobsService {
     }
   }
 
-  async getJobProposals(jobId: number, user: UserDto): Promise<Proposal[]> {
+  async getJobProposals(
+    jobId: number,
+    user: UserDto,
+  ): Promise<getJobProposalsResponseDto> {
     try {
       const job = await this.findOne({ id: jobId });
       if (!(job && job.owner.id === user.id)) {
         throw new ForbiddenException();
       }
 
-      return await this.proposalRepository
+      const proposals = await this.proposalRepository
         .createQueryBuilder('proposal')
         .leftJoinAndSelect('proposal.user', 'user')
         .where({
           job: { id: jobId },
         })
         .getMany();
+
+      return {
+        job,
+        proposals,
+      };
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;

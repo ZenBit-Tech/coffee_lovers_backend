@@ -65,13 +65,13 @@ export class JobsController {
 
   @ApiOperation({ summary: 'Get proposals of job' })
   @ApiHeader(getAuthorizationApiHeader())
-  @ApiResponse({ type: [getJobProposalsResponseDto] })
+  @ApiResponse({ type: getJobProposalsResponseDto })
   @UseGuards(JwtAuthGuard)
   @Get(':id/proposals')
   getJobProposals(
     @Request() req,
     @Param() params: getJobProposalsParamsDto,
-  ): Promise<Proposal[]> {
+  ): Promise<getJobProposalsResponseDto> {
     return this.jobsService.getJobProposals(params.id, req.user);
   }
 }
