@@ -9,7 +9,7 @@ export default class FindJobsResponse {
         title: 'Test job',
         description: 'this is test job',
         hourly_rate: 25,
-        available_time: 8,
+        available_time: 'Full-Time',
         english_level: 'Intermediate',
         created_at: '2022-11-25T22:24:28.682Z',
         owner: {

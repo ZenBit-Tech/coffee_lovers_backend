@@ -9,7 +9,7 @@ import {
 } from 'typeorm';
 import { Category } from '@entities/Category.entity';
 
-import { EnglishLevel, Role } from '@constants/entities';
+import { AvailableTime, EnglishLevel, Role } from '@constants/entities';
 import { Proposal } from '@entities/Proposal.entity';
 import { Education } from './Education.entity';
 import { Job } from './Job.entity';
@@ -42,8 +42,13 @@ export class User {
   @Column({ default: null, nullable: true })
   reset_password_key: string;
 
-  @Column({ default: null, nullable: true })
-  available_time: string;
+  @Column({
+    type: 'enum',
+    enum: AvailableTime,
+    nullable: true,
+    default: null,
+  })
+  available_time: AvailableTime;
 
   @Column({ default: null, nullable: true })
   description: string;
