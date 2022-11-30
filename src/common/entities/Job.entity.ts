@@ -5,11 +5,13 @@ import {
   JoinTable,
   ManyToMany,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { User } from '@entities/User.entity';
 import { Category } from '@entities/Category.entity';
 import { Skill } from '@entities/Skill.entity';
+import { Proposal } from '@entities/Proposal.entity';
 import { EnglishLevel } from '@constants/entities';
 
 @Entity()
@@ -49,4 +51,7 @@ export class Job {
   @ManyToMany(() => Skill)
   @JoinTable()
   skills: Skill[];
+
+  @OneToMany(() => Proposal, (proposal) => proposal.job)
+  proposals: Proposal[];
 }
