@@ -10,7 +10,13 @@ import {
   Query,
   Param,
 } from '@nestjs/common';
-import { ApiHeader, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiHeader,
+  ApiOperation,
+  ApiProperty,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { getAuthorizationApiHeader } from '@utils/swagger';
 import { Proposal } from '@entities/Proposal.entity';
 import { JwtAuthGuard } from '@/modules/auth/guards/jwt-auth.guard';
@@ -19,6 +25,8 @@ import CreateJobDto from './dto/create-job.dto';
 import GetJobsDto from './dto/get-jobs.dto';
 import FindJobsResponse from './dto/find-jobs-response.dto';
 import CreateProposalDto from './dto/create-proposal.dto';
+import getJobProposalsResponseDto from './dto/get-job-proposals-response.dto';
+import getJobProposalsParamsDto from './dto/get-job-proposals-params-dto';
 
 @ApiTags('jobs')
 @Controller('jobs')
@@ -57,9 +65,13 @@ export class JobsController {
 
   @ApiOperation({ summary: 'Get proposals of job' })
   @ApiHeader(getAuthorizationApiHeader())
+  @ApiResponse({ type: [getJobProposalsResponseDto] })
   @UseGuards(JwtAuthGuard)
   @Get(':id/proposals')
-  getJobProposals(@Request() req, @Param() params): Promise<Proposal[]> {
+  getJobProposals(
+    @Request() req,
+    @Param() params: getJobProposalsParamsDto,
+  ): Promise<Proposal[]> {
     return this.jobsService.getJobProposals(params.id, req.user);
   }
 }
