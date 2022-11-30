@@ -156,7 +156,7 @@ export class JobsService {
         .where({ job: { id: job }, user })
         .getCount();
 
-      if (proposalCount > 0) {
+      if (proposalCount) {
         throw new ForbiddenException();
       }
 
