@@ -1,6 +1,7 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { User } from '@entities/User.entity';
 import { Job } from '@entities/Job.entity';
+import { coverLetterMaxLength } from '../constants/entities';
 
 @Entity()
 export class Proposal {
@@ -10,7 +11,12 @@ export class Proposal {
   @Column({ default: null, nullable: true })
   hourly_rate: number;
 
-  @Column({ default: null, nullable: true })
+  @Column({
+    type: 'varchar',
+    length: coverLetterMaxLength,
+    default: null,
+    nullable: true,
+  })
   cover_letter: string;
 
   @ManyToOne(() => User, (user) => user.proposals)
