@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ConfigService } from '@nestjs/config';
-import { Repository, InsertResult } from 'typeorm';
+import { Repository, InsertResult, Brackets } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { User } from '@entities/User.entity';
 import { Education } from '@entities/Education.entity';
@@ -22,6 +22,7 @@ import UserDto from './dto/user.dto';
 import SetProfileImageDto from './dto/set-profile-image.dto';
 import AddUserWorkhistoryDto from './dto/add-user-workhistory.dto';
 import AddUserEducationDto from './dto/add-user-education.dto';
+import { Category } from '@/common/entities/Category.entity';
 import AddUserInfoDto from './dto/add-user-info.dto';
 
 @Injectable()
@@ -29,6 +30,9 @@ export class UserService {
   constructor(
     @InjectRepository(Education)
     private educationRepository: Repository<Education>,
+
+    @InjectRepository(Category)
+    private categoryRepository: Repository<Category>,
 
     @InjectRepository(User)
     private userRepository: Repository<User>,
@@ -255,6 +259,68 @@ export class UserService {
     try {
       const currentUser = await this.findByEmail(user.email);
       await this.addWorkToUser(currentUser, payload);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async getFheelancerInformation(
+    take: number,
+    page: number,
+    search: string,
+  ): Promise<[User[], number]> {
+    try {
+      const currentUser = await this.userRepository
+        .createQueryBuilder('user')
+        .leftJoinAndSelect('user.category', 'category')
+        .skip((page - 1) * take)
+        .take(take)
+        .where(
+          new Brackets((qb) => {
+            qb.where('user.category LIKE :search')
+              .orWhere('user.position LIKE :search')
+              .orWhere('user.hourly_rate LIKE :search')
+              .orWhere('user.available_time LIKE :search', {
+                search: `%${search}%`,
+              });
+          }),
+        )
+        .getManyAndCount();
+
+      return currentUser;
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async addCategoryInfo(payload: Category, user: User): Promise<void> {
+    try {
+      await this.userRepository
+        .createQueryBuilder()
+        .relation(User, 'category')
+        .of({ id: user.id })
+        .set({ id: payload.id });
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async getCategoryInfo(): Promise<Category[]> {
+    try {
+      const Categories = await this.categoryRepository
+        .createQueryBuilder('category')
+        .getMany();
+
+      return Categories;
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
