@@ -70,9 +70,6 @@ export class User {
   })
   english_level: EnglishLevel;
 
-  @Column({ default: null, nullable: true })
-  category_id?: number;
-
   @Column({
     type: 'enum',
     enum: Role,
