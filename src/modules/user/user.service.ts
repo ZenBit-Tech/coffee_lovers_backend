@@ -25,8 +25,6 @@ import AddUserEducationDto from './dto/add-user-education.dto';
 import { Category } from '@/common/entities/Category.entity';
 import AddUserInfoDto from './dto/add-user-info.dto';
 import GetFreelancerDto from './dto/get-freelancer-params.dto';
-import { findJobsDefaultLimit } from '@/common/constants/jobs';
-import { defaultLimit } from './defaultFreelancer';
 
 @Injectable()
 export class UserService {
@@ -294,8 +292,7 @@ export class UserService {
           role,
         })
         .skip((page - 1) * take)
-        .take(take)
-        .limit(params.take || defaultLimit);
+        .take(take);
 
       if (hourly_rate_start) {
         query.andWhere('user.hourly_rate >= :hourly_rate_start', {

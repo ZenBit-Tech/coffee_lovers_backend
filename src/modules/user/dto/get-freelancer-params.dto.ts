@@ -1,20 +1,14 @@
-import {
-  IsArray,
-  IsNumber,
-  IsNumberString,
-  IsOptional,
-  IsString,
-} from 'class-validator';
+import { IsArray, IsNumberString, IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { EnglishLevel } from '@constants/entities';
 
 export default class GetFreelancerDto {
-  @ApiProperty({ example: 4 })
+  @ApiProperty({ example: 10 })
   @IsOptional()
   @IsNumberString()
   take: number;
 
-  @ApiProperty({ example: [1, 2, 3] })
+  @ApiProperty({ example: 1 })
   @IsOptional()
   @IsNumberString()
   page: number;
