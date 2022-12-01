@@ -108,16 +108,22 @@ export class UserService {
     }
   }
 
-  async findOne(payload: object): Promise<User | null> {
+  async findOne(
+    payload: object,
+    hiddenColumns?: string[],
+  ): Promise<User | null> {
     try {
-      const data = await this.userRepository
-        .createQueryBuilder()
-        .select('id')
-        .from(User, 'id')
-        .where(payload)
-        .getOne();
+      const query = await this.userRepository
+        .createQueryBuilder('user')
+        .where(payload);
 
-      return data;
+      if (hiddenColumns) {
+        hiddenColumns.forEach((column) => {
+          query.addSelect(column);
+        });
+      }
+
+      return await query.getOne();
     } catch (error) {
       throw new InternalServerErrorException();
     }
