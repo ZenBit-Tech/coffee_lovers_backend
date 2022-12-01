@@ -9,6 +9,7 @@ import { Education } from '@entities/Education.entity';
 import { Category } from '@entities/Category.entity';
 import { Job } from '@entities/Job.entity';
 import { Skill } from '@entities/Skill.entity';
+import { Proposal } from '@entities/Proposal.entity';
 import { AppController } from '@/app.controller';
 import { AppService } from '@/app.service';
 import { AuthModule } from '@/modules/auth/auth.module';
@@ -31,7 +32,16 @@ import { JobsModule } from './modules/jobs/job.module';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: [Test, User, WorkHistory, Education, Category, Job, Skill],
+      entities: [
+        Test,
+        User,
+        WorkHistory,
+        Education,
+        Category,
+        Job,
+        Skill,
+        Proposal,
+      ],
       synchronize: true,
     }),
     ServeStaticModule.forRoot({
