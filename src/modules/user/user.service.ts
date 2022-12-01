@@ -63,6 +63,12 @@ export class UserService {
     try {
       await this.educationRepository
         .createQueryBuilder()
+        .delete()
+        .from(Education)
+        .where({ user })
+        .execute();
+      await this.educationRepository
+        .createQueryBuilder()
         .insert()
         .into(Education)
         .values(
@@ -85,6 +91,12 @@ export class UserService {
     payload: AddUserWorkhistoryDto[],
   ): Promise<void> {
     try {
+      await this.workHistoryRepository
+        .createQueryBuilder()
+        .delete()
+        .from(WorkHistory)
+        .where({ user })
+        .execute();
       await this.workHistoryRepository
         .createQueryBuilder()
         .insert()
