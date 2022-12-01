@@ -10,15 +10,8 @@ import {
   Query,
   Param,
 } from '@nestjs/common';
-import {
-  ApiHeader,
-  ApiOperation,
-  ApiProperty,
-  ApiResponse,
-  ApiTags,
-} from '@nestjs/swagger';
+import { ApiHeader, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { getAuthorizationApiHeader } from '@utils/swagger';
-import { Proposal } from '@entities/Proposal.entity';
 import { JwtAuthGuard } from '@/modules/auth/guards/jwt-auth.guard';
 import { JobsService } from './job.service';
 import CreateJobDto from './dto/create-job.dto';

@@ -24,6 +24,9 @@ import AddUserWorkhistoryDto from './dto/add-user-workhistory.dto';
 import AddUserEducationDto from './dto/add-user-education.dto';
 import { Category } from '@/common/entities/Category.entity';
 import AddUserInfoDto from './dto/add-user-info.dto';
+import GetFreelancerDto from './dto/get-freelancer-params.dto';
+import { findJobsDefaultLimit } from '@/common/constants/jobs';
+import { defaultLimit } from './defaultFreelancer';
 
 @Injectable()
 export class UserService {
@@ -268,33 +271,71 @@ export class UserService {
   }
 
   async getFheelancerInformation(
-    take: number,
-    page: number,
-    search: string,
+    params: GetFreelancerDto,
   ): Promise<[User[], number]> {
     try {
-      const currentUser = await this.userRepository
+      const {
+        page,
+        take,
+        skills,
+        categories,
+        hourly_rate_start,
+        hourly_rate_end,
+        search,
+        ...userPayload
+      } = params;
+      const role = 'Freelancer';
+
+      const query = this.userRepository
         .createQueryBuilder('user')
         .leftJoinAndSelect('user.category', 'category')
+        .where(userPayload)
+        .andWhere('user.role >= :role', {
+          role,
+        })
         .skip((page - 1) * take)
         .take(take)
-        .where(
+        .limit(params.take || defaultLimit);
+
+      if (hourly_rate_start) {
+        query.andWhere('user.hourly_rate >= :hourly_rate_start', {
+          hourly_rate_start,
+        });
+      }
+
+      if (hourly_rate_end) {
+        query.andWhere('user.hourly_rate <= :hourly_rate_end', {
+          hourly_rate_end,
+        });
+      }
+
+      if (search) {
+        query.andWhere(
           new Brackets((qb) => {
             qb.where('user.category LIKE :search')
               .orWhere('user.position LIKE :search')
               .orWhere('user.hourly_rate LIKE :search')
               .orWhere('user.available_time LIKE :search', {
-                search: `%${search}%`,
+                search: `%${params.search}%`,
               });
           }),
-        )
-        .getManyAndCount();
+        );
+      }
+
+      if (categories) {
+        query.andWhere('user.category.id IN (:...categories)', { categories });
+      }
+
+      if (skills) {
+        query.innerJoin('user.skills', 'skill', 'skill.id IN (:...skills)', {
+          skills,
+        });
+      }
+
+      const currentUser = await query.getManyAndCount();
 
       return currentUser;
     } catch (error) {
-      if (error instanceof HttpException) {
-        throw error;
-      }
       throw new InternalServerErrorException();
     }
   }
