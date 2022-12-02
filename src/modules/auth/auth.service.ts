@@ -89,9 +89,9 @@ export class AuthService {
 
   async signIn(dto: SignInDto): Promise<AuthResponseDto> {
     try {
-      const user = await this.userService.findOne({ email: dto.email }, [
-        'user.password',
-        'user.is_google',
+      const user = await this.userService.findByEmail(dto.email, [
+        'password',
+        'is_google',
       ]);
       if (!user) {
         throw new BadRequestException('invalid email');

@@ -111,6 +111,7 @@ export class UserService {
   async findOne(
     payload: object,
     hiddenColumns?: string[],
+    leftJoins?: string[],
   ): Promise<User | null> {
     try {
       const query = await this.userRepository
@@ -119,7 +120,13 @@ export class UserService {
 
       if (hiddenColumns) {
         hiddenColumns.forEach((column) => {
-          query.addSelect(column);
+          query.addSelect(`user.${column}`);
+        });
+      }
+
+      if (leftJoins) {
+        leftJoins.forEach((join) => {
+          query.leftJoinAndSelect(`user.${join}`, join);
         });
       }
 
@@ -129,9 +136,13 @@ export class UserService {
     }
   }
 
-  async findByEmail(email: string): Promise<User | null> {
+  async findByEmail(
+    email: string,
+    hiddenColumns?: string[],
+    leftJoins?: string[],
+  ): Promise<User | null> {
     try {
-      const data = await this.findOne({ email });
+      const data = await this.findOne({ email }, hiddenColumns, leftJoins);
 
       return data;
     } catch (error) {
