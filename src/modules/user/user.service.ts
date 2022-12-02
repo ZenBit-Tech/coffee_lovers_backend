@@ -320,7 +320,9 @@ export class UserService {
       }
 
       if (categories) {
-        query.andWhere('user.category.id IN (:...categories)', { categories });
+        query.andWhere('user.category.id IN (:...categories)', {
+          categories,
+        });
       }
 
       if (skills) {
