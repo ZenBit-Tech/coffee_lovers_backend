@@ -12,7 +12,7 @@ import { User } from '@entities/User.entity';
 import { Category } from '@entities/Category.entity';
 import { Skill } from '@entities/Skill.entity';
 import { Proposal } from '@entities/Proposal.entity';
-import { EnglishLevel } from '@constants/entities';
+import { AvailableTime, EnglishLevel } from '@constants/entities';
 
 @Entity()
 export class Job {
@@ -28,8 +28,13 @@ export class Job {
   @Column({ default: null, nullable: true })
   hourly_rate: number;
 
-  @Column({ default: null, nullable: true })
-  available_time: number;
+  @Column({
+    type: 'enum',
+    enum: AvailableTime,
+    nullable: true,
+    default: null,
+  })
+  available_time: AvailableTime;
 
   @Column({
     type: 'enum',
