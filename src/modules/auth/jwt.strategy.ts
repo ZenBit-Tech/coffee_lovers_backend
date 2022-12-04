@@ -40,7 +40,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         available_time: user.available_time,
         position: user.position,
         hourly_rate: user.hourly_rate,
-        category_id: user.category_id,
         role: user.role,
       };
     } catch (error) {
