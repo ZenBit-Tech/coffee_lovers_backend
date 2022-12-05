@@ -311,16 +311,11 @@ export class UserService {
       }
 
       if (search) {
-        query.andWhere(
-          new Brackets((qb) => {
-            qb.where('user.category LIKE :search')
-              .orWhere('user.position LIKE :search')
-              .orWhere('user.hourly_rate LIKE :search')
-              .orWhere('user.available_time LIKE :search', {
-                search: `%${params.search}%`,
-              });
-          }),
-        );
+        query
+          .select()
+          .where(`MATCH(available_time) AGAINST ('${search}' IN BOOLEAN MODE)`)
+          .orWhere(`MATCH(position) AGAINST ('${search}' IN BOOLEAN MODE)`)
+          .orWhere(`MATCH(category) AGAINST ('${search}' IN BOOLEAN MODE)`);
       }
 
       if (categories) {
