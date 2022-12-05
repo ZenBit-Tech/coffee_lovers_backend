@@ -8,13 +8,14 @@ import { UserModule } from '@/modules/user/user.module';
 
 import { JobsController } from './job.controller';
 import { JobsService } from './job.service';
+import { User } from '@/common/entities/User.entity';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       envFilePath: `.${process.env.NODE_ENV}.env`,
     }),
-    TypeOrmModule.forFeature([Job, Proposal]),
+    TypeOrmModule.forFeature([Job, Proposal, User]),
     UserModule,
     PropertiesModule,
   ],

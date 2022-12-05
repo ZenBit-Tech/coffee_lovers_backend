@@ -15,6 +15,7 @@ import CreateJobDto from './dto/create-job.dto';
 import FindJobsResponse from './dto/find-jobs-response.dto';
 import CreateProposalDto from './dto/create-proposal.dto';
 import getJobProposalsResponseDto from './dto/get-job-proposals-response.dto';
+import { User } from '@/common/entities/User.entity';
 
 @Injectable()
 export class JobsService {
@@ -23,6 +24,8 @@ export class JobsService {
     private jobRepository: Repository<Job>,
     @InjectRepository(Proposal)
     private proposalRepository: Repository<Proposal>,
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
   ) {}
 
   async findOne(payload: object): Promise<Job | null> {
@@ -203,6 +206,22 @@ export class JobsService {
         job,
         proposals,
       };
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async getUserJobs(user: UserDto): Promise<Job[]> {
+    try {
+      const jobs = await this.jobRepository
+        .createQueryBuilder('jobs')
+        .where({ owner: user })
+        .getMany();
+
+      return jobs;
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;

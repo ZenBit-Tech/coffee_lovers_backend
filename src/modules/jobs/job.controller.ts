@@ -20,6 +20,7 @@ import FindJobsResponse from './dto/find-jobs-response.dto';
 import CreateProposalDto from './dto/create-proposal.dto';
 import getJobProposalsResponseDto from './dto/get-job-proposals-response.dto';
 import getJobProposalsParamsDto from './dto/get-job-proposals-params-dto';
+import { Job } from '@/common/entities/Job.entity';
 
 @ApiTags('jobs')
 @Controller('jobs')
@@ -66,5 +67,14 @@ export class JobsController {
     @Param() params: getJobProposalsParamsDto,
   ): Promise<getJobProposalsResponseDto> {
     return this.jobsService.getJobProposals(params.id, req.user);
+  }
+
+  @ApiOperation({ summary: 'Get user jobs' })
+  @ApiHeader(getAuthorizationApiHeader())
+  @ApiResponse({ type: Array<Job> })
+  @UseGuards(JwtAuthGuard)
+  @Get('/userjobs')
+  getUserJobs(@Request() req): Promise<Job[]> {
+    return this.jobsService.getUserJobs(req.user);
   }
 }

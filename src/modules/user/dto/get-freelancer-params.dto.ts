@@ -8,6 +8,11 @@ export default class GetFreelancerDto {
   @IsNumberString()
   take: number;
 
+  @ApiProperty({ example: 10 })
+  @IsOptional()
+  @IsNumberString()
+  skip: number;
+
   @ApiProperty({ example: 1 })
   @IsOptional()
   @IsNumberString()

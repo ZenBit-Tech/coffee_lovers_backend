@@ -9,10 +9,18 @@ import { MailModule } from '@/modules/mail/mail.module';
 import { FileModule } from '@/modules/file/file.module';
 import { Job } from '@/common/entities/Job.entity';
 import { Category } from '@/common/entities/Category.entity';
+import { Proposal } from '@/common/entities/Proposal.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, WorkHistory, Education, Job, Category]),
+    TypeOrmModule.forFeature([
+      User,
+      WorkHistory,
+      Education,
+      Job,
+      Category,
+      Proposal,
+    ]),
     MailModule,
     FileModule,
   ],

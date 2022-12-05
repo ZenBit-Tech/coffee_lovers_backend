@@ -25,6 +25,7 @@ import AddUserEducationDto from './dto/add-user-education.dto';
 import { Category } from '@/common/entities/Category.entity';
 import AddUserInfoDto from './dto/add-user-info.dto';
 import GetFreelancerDto from './dto/get-freelancer-params.dto';
+import { Proposal } from '@/common/entities/Proposal.entity';
 
 @Injectable()
 export class UserService {
@@ -34,6 +35,9 @@ export class UserService {
 
     @InjectRepository(Category)
     private categoryRepository: Repository<Category>,
+
+    @InjectRepository(Proposal)
+    private propsalRepository: Repository<Proposal>,
 
     @InjectRepository(User)
     private userRepository: Repository<User>,
