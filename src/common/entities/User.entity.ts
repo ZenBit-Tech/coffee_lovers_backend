@@ -43,7 +43,6 @@ export class User {
   @Column({ default: null, nullable: true })
   reset_password_key: string;
 
-  @Index({ fulltext: true })
   @Column({ default: null, nullable: true })
   available_time: string;
 
@@ -53,7 +52,6 @@ export class User {
   @Column({ default: null, nullable: true })
   hourly_rate: number;
 
-  @Index({ fulltext: true })
   @Column({ default: null, nullable: true })
   position: string;
 

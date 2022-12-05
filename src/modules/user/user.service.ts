@@ -313,9 +313,16 @@ export class UserService {
       if (search) {
         query
           .select()
-          .where(`MATCH(available_time) AGAINST ('${search}' IN BOOLEAN MODE)`)
-          .orWhere(`MATCH(position) AGAINST ('${search}' IN BOOLEAN MODE)`)
-          .orWhere(`MATCH(category) AGAINST ('${search}' IN BOOLEAN MODE)`);
+          .having('user.available_time = :available_time', {
+            available_time: search,
+          })
+          .orHaving('user.position = :position', { position: search })
+          .orHaving('user.category = :category', { category: search })
+          .orHaving('user.english_level = :english_level', {
+            english_level: search,
+          })
+          .orHaving('user.position = :position', { position: search })
+          .orHaving('user.hourly_rate = :hourly_rate', { hourly_rate: search });
       }
 
       if (categories) {
