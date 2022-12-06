@@ -9,6 +9,9 @@ import {
   HttpStatus,
   UseInterceptors,
   UploadedFile,
+  Query,
+  DefaultValuePipe,
+  ParseIntPipe,
   Put,
 } from '@nestjs/common';
 import {
@@ -26,9 +29,11 @@ import UserDto from './dto/user.dto';
 import PasswordResetDto from './dto/password-reset.dto';
 import PasswordResetRequestDto from './dto/password-reset-request.dto';
 import SetProfileImageDto from './dto/set-profile-image.dto';
-import UpdateUserDto from './dto/update-user.dto';
 import AddUserEducationDto from './dto/add-user-education.dto';
 import AddUserWorkhistoryDto from './dto/add-user-workhistory.dto';
+import { User } from '@/common/entities/User.entity';
+import { Category } from '@/common/entities/Category.entity';
+import { ReqUser } from './dto/get-user-dto.dto';
 import AddUserInfoDto from './dto/add-user-info.dto';
 
 @ApiTags('user')
@@ -44,7 +49,7 @@ export class UserController {
   })
   @UseGuards(JwtAuthGuard)
   @Get('')
-  getUserInformation(@Request() req): UserDto {
+  getUserInformation(@Request() req: ReqUser): UserDto {
     return req.user;
   }
 
@@ -88,7 +93,7 @@ export class UserController {
   @HttpCode(HttpStatus.OK)
   setProfileImage(
     @UploadedFile() avatar: Express.Multer.File,
-    @Request() req,
+    @Request() req: ReqUser,
   ): Promise<SetProfileImageDto> {
     return this.userService.setProfileImage(avatar, req.user);
   }
@@ -133,5 +138,48 @@ export class UserController {
     @Body() payload: AddUserWorkhistoryDto[],
   ): Promise<void> {
     return this.userService.addWorkhistoryInfo(payload, req.user);
+  }
+
+  @ApiOperation({ summary: 'Get user information' })
+  @ApiResponse({ type: UserDto })
+  @ApiHeader({
+    name: 'Authorization',
+    description: 'Bearer token',
+  })
+  @UseGuards(JwtAuthGuard)
+  @Get('/freelancer')
+  getFreelancerInformation(
+    @Query('search') search: string,
+    @Query('take', new DefaultValuePipe(10), ParseIntPipe) take: number = 10,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number = 1,
+  ): Promise<[User[], number]> {
+    return this.userService.getFheelancerInformation(take, page, search);
+  }
+
+  @ApiOperation({ summary: 'Add new category for user or set category' })
+  @ApiHeader({
+    name: 'Authorization',
+    description: 'Bearer token',
+  })
+  @Post('category')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  addCategoryInfo(
+    @Request() req: ReqUser,
+    @Body() payload: Category,
+  ): Promise<void> {
+    return this.userService.addCategoryInfo(payload, req.user);
+  }
+
+  @ApiOperation({ summary: 'Get all available categories' })
+  @ApiHeader({
+    name: 'Authorization',
+    description: 'Bearer token',
+  })
+  @Get('category')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  getCategories(): Promise<Category[]> {
+    return this.userService.getCategoryInfo();
   }
 }
