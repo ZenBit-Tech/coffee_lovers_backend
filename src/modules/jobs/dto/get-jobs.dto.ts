@@ -1,6 +1,6 @@
 import { IsArray, IsNumberString, IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { EnglishLevel } from '@constants/entities';
+import { AvailableTime, EnglishLevel } from '@constants/entities';
 
 export default class GetJobsDto {
   @ApiProperty({ example: 10 })
@@ -33,10 +33,10 @@ export default class GetJobsDto {
   @IsNumberString()
   hourly_rate_end?: number;
 
-  @ApiProperty({ example: 8 })
+  @ApiProperty({ example: 'Full-Time' })
   @IsOptional()
-  @IsNumberString()
-  available_time?: number;
+  @IsString()
+  available_time?: AvailableTime;
 
   @ApiProperty({ example: EnglishLevel.INTERMEDIATE })
   @IsOptional()

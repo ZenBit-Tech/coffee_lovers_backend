@@ -10,7 +10,7 @@ import {
 } from 'typeorm';
 import { Category } from '@entities/Category.entity';
 
-import { EnglishLevel, Role } from '@constants/entities';
+import { AvailableTime, EnglishLevel, Role } from '@constants/entities';
 import { Proposal } from '@entities/Proposal.entity';
 import { Education } from './Education.entity';
 import { Job } from './Job.entity';
@@ -25,7 +25,7 @@ export class User {
   @Column({ unique: true })
   email: string;
 
-  @Column({ default: null, nullable: true })
+  @Column({ default: null, nullable: true, select: false })
   password: string;
 
   @Column({ default: null, nullable: true })
@@ -37,14 +37,19 @@ export class User {
   @Column({ default: null, nullable: true })
   profile_image: string;
 
-  @Column({ default: false, nullable: true })
+  @Column({ default: false, nullable: true, select: false })
   is_google: boolean;
 
-  @Column({ default: null, nullable: true })
+  @Column({ default: null, nullable: true, select: false })
   reset_password_key: string;
 
-  @Column({ default: null, nullable: true })
-  available_time: string;
+  @Column({
+    type: 'enum',
+    enum: AvailableTime,
+    nullable: true,
+    default: null,
+  })
+  available_time: AvailableTime;
 
   @Column({ default: null, nullable: true })
   description: string;
@@ -65,9 +70,6 @@ export class User {
     default: null,
   })
   english_level: EnglishLevel;
-
-  @Column({ default: null, nullable: true })
-  category_id?: number;
 
   @Column({
     type: 'enum',

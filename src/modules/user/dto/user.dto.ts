@@ -1,5 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Role } from '@constants/entities';
+import { EnglishLevel, Role, AvailableTime } from '@constants/entities';
+import { Skill } from '@entities/Skill.entity';
+import { Category } from '@entities/Category.entity';
 
 export default class UserDto {
   @ApiProperty({ example: 123 })
@@ -20,8 +22,11 @@ export default class UserDto {
   @ApiProperty({ example: 'Freelancer' })
   role: Role;
 
-  @ApiProperty({ example: '4' })
-  available_time: string;
+  @ApiProperty({ example: 'Full-Time' })
+  available_time: AvailableTime;
+
+  @ApiProperty({ example: 'Front-end developer' })
+  description: string;
 
   @ApiProperty({ example: 'Front-end developer' })
   position: string;
@@ -29,6 +34,15 @@ export default class UserDto {
   @ApiProperty({ example: 30 })
   hourly_rate: number;
 
-  @ApiProperty({ example: 377 })
-  category_id?: number;
+  @ApiProperty({ example: 'English teacher' })
+  other_experience: string;
+
+  @ApiProperty({ example: EnglishLevel.UPPER_INTERMEDIATE })
+  english_level: EnglishLevel;
+
+  @ApiProperty({ example: { id: 1, name: 'Front-end development' } })
+  category: Category;
+
+  @ApiProperty({ example: [{ id: 1, name: 'HTML' }] })
+  skills: Skill[];
 }

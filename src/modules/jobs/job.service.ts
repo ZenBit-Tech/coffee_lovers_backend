@@ -197,6 +197,7 @@ export class JobsService {
       const proposals = await this.proposalRepository
         .createQueryBuilder('proposal')
         .leftJoinAndSelect('proposal.user', 'user')
+        .leftJoinAndSelect('user.skills', 'skill')
         .where({
           job: { id: jobId },
         })
