@@ -40,7 +40,7 @@ export default class CreateJobDto {
   @ApiProperty({ example: 'Full-Time' })
   @IsOptional()
   @IsString()
-  durationAmount?: DurationAmount;
+  duration_amount?: DurationAmount;
 
   @ApiProperty({ example: 5 })
   @IsOptional()

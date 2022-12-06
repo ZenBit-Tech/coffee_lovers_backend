@@ -57,7 +57,7 @@ export class Job {
     nullable: true,
     default: null,
   })
-  durationAmount: DurationAmount;
+  duration_amount: DurationAmount;
 
   @CreateDateColumn()
   created_at: Date;

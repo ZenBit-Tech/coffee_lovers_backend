@@ -44,7 +44,7 @@ export default class UpdateJobDto {
   @ApiProperty({ example: 'Month' })
   @IsOptional()
   @IsString()
-  durationAmount?: DurationAmount;
+  duration_amount?: DurationAmount;
 
   @ApiProperty({ example: 'Full-Time' })
   @IsOptional()
