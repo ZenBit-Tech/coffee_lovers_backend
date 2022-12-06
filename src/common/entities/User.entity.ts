@@ -18,7 +18,7 @@ import { Job } from '@entities/Job.entity';
 import { Skill } from '@entities/Skill.entity';
 import { WorkHistory } from '@entities/WorkHistory.entity';
 import { Notification } from '@entities/Notification.entity';
-import { Offer } from './Offer.entity';
+import { Offer } from '@entities/Offer.entity';
 
 @Entity()
 export class User {

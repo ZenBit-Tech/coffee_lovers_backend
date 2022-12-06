@@ -6,8 +6,8 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Conversation } from '@entities/Conversation.entity';
-import { User } from './User.entity';
-import { conversationMessageMaxLength } from '../constants/entities';
+import { User } from '@entities/User.entity';
+import { conversationMessageMaxLength } from '@constants/entities';
 
 @Entity()
 export class Message {
