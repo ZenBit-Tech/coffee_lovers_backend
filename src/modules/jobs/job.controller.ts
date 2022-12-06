@@ -18,7 +18,6 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { getAuthorizationApiHeader } from '@utils/swagger';
-import { Proposal } from '@entities/Proposal.entity';
 import { JwtAuthGuard } from '@/modules/auth/guards/jwt-auth.guard';
 import { JobsService } from './job.service';
 import CreateJobDto from './dto/create-job.dto';

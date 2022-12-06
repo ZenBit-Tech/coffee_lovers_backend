@@ -7,8 +7,9 @@ import {
 import { Brackets, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Job } from '@entities/Job.entity';
-import { Proposal } from '@entities/Proposal.entity';
 import { findJobsDefaultLimit, findJobsDefaultOffset } from '@constants/jobs';
+import { Request } from '@entities/Request.entity';
+import { RequestType } from '@constants/entities';
 import UserDto from '@/modules/user/dto/user.dto';
 import GetJobsDto from './dto/get-jobs.dto';
 import CreateJobDto from './dto/create-job.dto';
@@ -21,8 +22,8 @@ export class JobsService {
   constructor(
     @InjectRepository(Job)
     private jobRepository: Repository<Job>,
-    @InjectRepository(Proposal)
-    private proposalRepository: Repository<Proposal>,
+    @InjectRepository(Request)
+    private requestRepository: Repository<Request>,
   ) {}
 
   async findOne(payload: object): Promise<Job | null> {
@@ -152,23 +153,24 @@ export class JobsService {
     try {
       const { job, ...proposalPayload } = payload;
 
-      const proposalCount = await this.proposalRepository
-        .createQueryBuilder('proposal')
-        .where({ job: { id: job }, user })
+      const proposalCount = await this.requestRepository
+        .createQueryBuilder('request')
+        .where({ job: { id: job }, freelancer: user })
         .getCount();
 
       if (proposalCount) {
         throw new ForbiddenException();
       }
 
-      await this.proposalRepository
+      await this.requestRepository
         .createQueryBuilder()
         .insert()
-        .into(Proposal)
+        .into(Request)
         .values([
           {
             ...proposalPayload,
-            user,
+            type: RequestType.PROPOSAL,
+            freelancer: { id: user.id },
             job: { id: job },
           },
         ])
@@ -191,18 +193,24 @@ export class JobsService {
         throw new ForbiddenException();
       }
 
-      const proposals = await this.proposalRepository
-        .createQueryBuilder('proposal')
-        .leftJoinAndSelect('proposal.user', 'user')
-        .leftJoinAndSelect('user.skills', 'skill')
+      const proposals = await this.requestRepository
+        .createQueryBuilder('request')
+        .leftJoinAndSelect('request.freelancer', 'freelancer')
+        .leftJoinAndSelect('freelancer.skills', 'skill')
         .where({
           job: { id: jobId },
+          type: RequestType.PROPOSAL,
         })
         .getMany();
 
       return {
         job,
-        proposals,
+        proposals: proposals.map((item) => ({
+          id: item.id,
+          user: item.freelancer,
+          cover_letter: item.cover_letter,
+          hourly_rate: item.hourly_rate,
+        })),
       };
     } catch (error) {
       if (error instanceof HttpException) {
