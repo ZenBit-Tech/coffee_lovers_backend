@@ -9,7 +9,8 @@ import {
 } from 'typeorm';
 import { Category } from '@entities/Category.entity';
 
-import { EnglishLevel } from '@constants/entities';
+import { AvailableTime, EnglishLevel, Role } from '@constants/entities';
+import { Proposal } from '@entities/Proposal.entity';
 import { Education } from './Education.entity';
 import { Job } from './Job.entity';
 import { Skill } from './Skill.entity';
@@ -23,7 +24,7 @@ export class User {
   @Column({ unique: true })
   email: string;
 
-  @Column({ default: null, nullable: true })
+  @Column({ default: null, nullable: true, select: false })
   password: string;
 
   @Column({ default: null, nullable: true })
@@ -35,14 +36,19 @@ export class User {
   @Column({ default: null, nullable: true })
   profile_image: string;
 
-  @Column({ default: false, nullable: true })
+  @Column({ default: false, nullable: true, select: false })
   is_google: boolean;
 
-  @Column({ default: null, nullable: true })
+  @Column({ default: null, nullable: true, select: false })
   reset_password_key: string;
 
-  @Column({ default: null, nullable: true })
-  available_time: string;
+  @Column({
+    type: 'enum',
+    enum: AvailableTime,
+    nullable: true,
+    default: null,
+  })
+  available_time: AvailableTime;
 
   @Column({ default: null, nullable: true })
   description: string;
@@ -64,8 +70,13 @@ export class User {
   })
   english_level: EnglishLevel;
 
-  @Column({ default: null, nullable: true })
-  category_id?: number;
+  @Column({
+    type: 'enum',
+    enum: Role,
+    nullable: true,
+    default: null,
+  })
+  role: Role;
 
   @OneToMany(() => WorkHistory, (history) => history.user)
   workHistory: WorkHistory[];
@@ -82,4 +93,7 @@ export class User {
 
   @ManyToOne(() => Category, (category) => category.user)
   category: Category;
+
+  @OneToMany(() => Proposal, (proposal) => proposal.user)
+  proposals: Proposal[];
 }

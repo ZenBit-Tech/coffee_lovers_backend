@@ -6,7 +6,7 @@ import {
   IsNumber,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { EnglishLevel } from '@constants/entities';
+import { AvailableTime, EnglishLevel, Role } from '@constants/entities';
 import {
   passwordMinLength,
   passwordValidationMessage,
@@ -40,7 +40,7 @@ export default class UpdateUserDto {
   @ApiProperty({ example: 'Full-Time' })
   @IsOptional()
   @IsString()
-  available_time?: string;
+  available_time?: AvailableTime;
 
   @ApiProperty({ example: 'I am hard-working person, like reading' })
   @IsOptional()
@@ -71,4 +71,9 @@ export default class UpdateUserDto {
   @IsOptional()
   @IsNumber()
   category_id?: number;
+
+  @ApiProperty({ example: 'Freelancer' })
+  @IsOptional()
+  @IsString()
+  role?: Role;
 }

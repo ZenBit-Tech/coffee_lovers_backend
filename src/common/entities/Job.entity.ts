@@ -1,15 +1,18 @@
 import {
   Column,
+  CreateDateColumn,
   Entity,
   JoinTable,
   ManyToMany,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { User } from '@entities/User.entity';
 import { Category } from '@entities/Category.entity';
 import { Skill } from '@entities/Skill.entity';
-import { EnglishLevel } from '@constants/entities';
+import { Proposal } from '@entities/Proposal.entity';
+import { AvailableTime, EnglishLevel } from '@constants/entities';
 
 @Entity()
 export class Job {
@@ -25,8 +28,13 @@ export class Job {
   @Column({ default: null, nullable: true })
   hourly_rate: number;
 
-  @Column({ default: null, nullable: true })
-  available_time: number;
+  @Column({
+    type: 'enum',
+    enum: AvailableTime,
+    nullable: true,
+    default: null,
+  })
+  available_time: AvailableTime;
 
   @Column({
     type: 'enum',
@@ -35,6 +43,9 @@ export class Job {
     default: null,
   })
   english_level: EnglishLevel;
+
+  @CreateDateColumn()
+  created_at: Date;
 
   @ManyToOne(() => User, (user) => user.jobs)
   owner: User;
@@ -45,4 +56,7 @@ export class Job {
   @ManyToMany(() => Skill)
   @JoinTable()
   skills: Skill[];
+
+  @OneToMany(() => Proposal, (proposal) => proposal.job)
+  proposals: Proposal[];
 }

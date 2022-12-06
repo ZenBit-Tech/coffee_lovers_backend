@@ -5,6 +5,7 @@ import {
   Injectable,
   BadRequestException,
   Body,
+  InternalServerErrorException,
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
@@ -50,7 +51,6 @@ export class AuthService {
         email: userData.email,
         first_name: userData.given_name,
         second_name: userData.family_name,
-        is_google: true,
       };
 
       const user = await this.userService.findByEmail(dataLogin.email);
@@ -66,7 +66,7 @@ export class AuthService {
       if (error instanceof HttpException) {
         throw error;
       }
-      throw new HttpException('', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new InternalServerErrorException();
     }
   }
 
@@ -83,13 +83,16 @@ export class AuthService {
       if (error instanceof HttpException) {
         throw error;
       }
-      throw new HttpException('', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new InternalServerErrorException();
     }
   }
 
   async signIn(dto: SignInDto): Promise<AuthResponseDto> {
     try {
-      const user = await this.userService.findByEmail(dto.email);
+      const user = await this.userService.findByEmail(dto.email, [
+        'password',
+        'is_google',
+      ]);
       if (!user) {
         throw new BadRequestException('invalid email');
       }
@@ -106,7 +109,7 @@ export class AuthService {
       if (error instanceof HttpException) {
         throw error;
       }
-      throw new HttpException('', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new InternalServerErrorException();
     }
   }
 

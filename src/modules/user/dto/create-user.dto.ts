@@ -3,7 +3,6 @@ import {
   IsEmail,
   IsString,
   IsNotEmpty,
-  IsBoolean,
   IsOptional,
   MinLength,
   Matches,
@@ -40,8 +39,4 @@ export default class CreateUserDto {
   @IsString()
   @IsOptional()
   readonly last_name?: string;
-
-  @IsBoolean()
-  @IsOptional()
-  readonly is_google?: boolean;
 }

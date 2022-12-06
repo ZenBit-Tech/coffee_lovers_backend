@@ -27,12 +27,16 @@ module.exports = {
     'class-methods-use-this': 'off',
     'padding-line-between-statements': 'off',
     'import/prefer-default-export': 'off',
+    '@typescript-eslint/naming-convention': 'off',
     'import/extensions': [
       'error',
       'ignorePackages',
       {
         '': 'never',
         ts: 'never',
+        js: 'never',
+        tsx: 'never',
+        jsx: 'never',
       },
     ],
     'prettier/prettier': [
@@ -42,7 +46,7 @@ module.exports = {
     ],
     '@typescript-eslint/padding-line-between-statements': [
       'error',
-      { blankLine: "always", prev: "*", next: "return" }
-    ]
+      { blankLine: 'always', prev: '*', next: 'return' },
+    ],
   },
 };
