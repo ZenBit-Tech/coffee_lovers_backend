@@ -146,6 +146,27 @@ export class JobsService {
     }
   }
 
+  async getPostedJobs(user: UserDto): Promise<Job[]> {
+    try {
+      return await this.jobRepository
+        .createQueryBuilder('job')
+        .leftJoinAndSelect('job.category', 'category')
+        .loadRelationCountAndMap(
+          'job.proposalsCount',
+          'job.requests',
+          'proposalsCount',
+          (qb) =>
+            qb.andWhere('proposalsCount.type = :type', {
+              type: RequestType.PROPOSAL,
+            }),
+        )
+        .where({ owner: user })
+        .getMany();
+    } catch (error) {
+      throw new InternalServerErrorException();
+    }
+  }
+
   async createProposal(
     payload: CreateProposalDto,
     user: UserDto,
