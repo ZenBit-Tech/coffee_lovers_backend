@@ -15,4 +15,9 @@ export enum AvailableTime {
   PART_TIME = 'Part-Time',
 }
 
+export enum DurationAmount {
+  MONTH = 'Month',
+  WEEK = 'Week',
+}
+
 export const coverLetterMaxLength = 1000;

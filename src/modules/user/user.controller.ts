@@ -149,8 +149,8 @@ export class UserController {
   @Get('/freelancer')
   getFreelancerInformation(
     @Query('search') search: string,
-    @Query('take', new DefaultValuePipe(10), ParseIntPipe) take: number = 10,
-    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number = 1,
+    @Query('take', new DefaultValuePipe(10), ParseIntPipe) take = 10,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
   ): Promise<[User[], number]> {
     return this.userService.getFheelancerInformation(take, page, search);
   }

@@ -12,7 +12,11 @@ import { User } from '@entities/User.entity';
 import { Category } from '@entities/Category.entity';
 import { Skill } from '@entities/Skill.entity';
 import { Proposal } from '@entities/Proposal.entity';
-import { AvailableTime, EnglishLevel } from '@constants/entities';
+import {
+  AvailableTime,
+  EnglishLevel,
+  DurationAmount,
+} from '@constants/entities';
 
 @Entity()
 export class Job {
@@ -43,6 +47,17 @@ export class Job {
     default: null,
   })
   english_level: EnglishLevel;
+
+  @Column({ default: null, nullable: true })
+  duration: number;
+
+  @Column({
+    type: 'enum',
+    enum: DurationAmount,
+    nullable: true,
+    default: null,
+  })
+  durationAmount: DurationAmount;
 
   @CreateDateColumn()
   created_at: Date;
