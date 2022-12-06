@@ -34,6 +34,9 @@ export class Request {
   @Column({ default: null, nullable: true })
   hourly_rate: number;
 
+  @Column({ default: false, nullable: true })
+  rejected: boolean;
+
   @Column({
     type: 'varchar',
     length: coverLetterMaxLength,

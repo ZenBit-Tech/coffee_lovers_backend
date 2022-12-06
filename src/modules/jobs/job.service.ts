@@ -221,6 +221,7 @@ export class JobsService {
         .where({
           job: { id: jobId },
           type: RequestType.PROPOSAL,
+          rejected: false,
         })
         .getMany();
 
