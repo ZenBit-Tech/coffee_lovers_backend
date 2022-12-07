@@ -18,10 +18,6 @@ import { Offer } from '@entities/Offer.entity';
 
 @Entity()
 export class Job {
-  leftJoinAndSelect(arg0: string, join: string) {
-    throw new Error('Method not implemented.');
-  }
-
   @PrimaryGeneratedColumn()
   id: number;
 

@@ -35,7 +35,6 @@ import { Category } from '@/common/entities/Category.entity';
 import { ReqUser } from './dto/get-user-dto.dto';
 import AddUserInfoDto from './dto/add-user-info.dto';
 import getUserProposalsResponseDto from './dto/get-proposals-by-user.dto';
-import getJobProposalsParamsDto from '../jobs/dto/get-job-proposals-params-dto';
 
 @ApiTags('user')
 @Controller('user')
