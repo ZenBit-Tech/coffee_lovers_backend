@@ -296,6 +296,38 @@ export class UserService {
     }
   }
 
+  async getWorkInfo(user: UserDto): Promise<WorkHistory[]> {
+    try {
+      const Workhistories = await this.workHistoryRepository
+        .createQueryBuilder()
+        .where({ user })
+        .getMany();
+
+      return Workhistories;
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async getEducationInfo(user: UserDto): Promise<Education[]> {
+    try {
+      const Educations = await this.educationRepository
+        .createQueryBuilder()
+        .where({ user })
+        .getMany();
+
+      return Educations;
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new InternalServerErrorException();
+    }
+  }
+
   async getFheelancerInformation(
     take: number,
     page: number,
