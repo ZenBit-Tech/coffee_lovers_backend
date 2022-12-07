@@ -28,7 +28,7 @@ export default class CreateJobDto {
   @IsNumber()
   category?: number;
 
-  @ApiProperty({ example: 'Upper-intermadiate' })
+  @ApiProperty({ example: 'Upper-Intermediate' })
   @IsOptional()
   @IsString()
   english_level?: EnglishLevel;
