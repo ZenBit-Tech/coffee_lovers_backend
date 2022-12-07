@@ -34,6 +34,8 @@ import { User } from '@/common/entities/User.entity';
 import { Category } from '@/common/entities/Category.entity';
 import { ReqUser } from './dto/get-user-dto.dto';
 import AddUserInfoDto from './dto/add-user-info.dto';
+import getUserProposalsResponseDto from './dto/get-proposals-by-user.dto';
+import getJobProposalsParamsDto from '../jobs/dto/get-job-proposals-params-dto';
 
 @ApiTags('user')
 @Controller('user')
@@ -180,5 +182,21 @@ export class UserController {
   @HttpCode(HttpStatus.OK)
   getCategories(): Promise<Category[]> {
     return this.userService.getCategoryInfo();
+  }
+
+  @ApiOperation({
+    summary: 'Get proposals by user',
+  })
+  @ApiResponse({ type: getUserProposalsResponseDto })
+  @ApiHeader({
+    name: 'Authorization',
+    description: 'Bearer token',
+  })
+  @UseGuards(JwtAuthGuard)
+  @Get('/proposals')
+  getProposalsByUser(
+    @Request() req: ReqUser,
+  ): Promise<getUserProposalsResponseDto> {
+    return this.userService.getProposalsByUser(req.user);
   }
 }

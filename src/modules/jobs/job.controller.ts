@@ -18,7 +18,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { getAuthorizationApiHeader } from '@utils/swagger';
-import { Proposal } from '@entities/Proposal.entity';
+import { Job } from '@entities/Job.entity';
 import { JwtAuthGuard } from '@/modules/auth/guards/jwt-auth.guard';
 import { JobsService } from './job.service';
 import CreateJobDto from './dto/create-job.dto';
@@ -28,6 +28,7 @@ import CreateProposalDto from './dto/create-proposal.dto';
 import getJobProposalsResponseDto from './dto/get-job-proposals-response.dto';
 import getJobProposalsParamsDto from './dto/get-job-proposals-params-dto';
 import getJobByIdResponseDto from './dto/get-job-response.dto';
+import GetPostedJobsResponseDto from './dto/get-posted-jobs-response.dto';
 
 @ApiTags('jobs')
 @Controller('jobs')
@@ -41,6 +42,15 @@ export class JobsController {
   @Get('/')
   async findJobs(@Query() params: GetJobsDto): Promise<FindJobsResponse> {
     return this.jobsService.findJobs(params);
+  }
+
+  @ApiOperation({ summary: 'Get all posted jobs by user' })
+  @ApiHeader(getAuthorizationApiHeader())
+  @ApiResponse({ type: [GetPostedJobsResponseDto] })
+  @UseGuards(JwtAuthGuard)
+  @Get('/posted')
+  async getPostedJobs(@Request() req): Promise<Job[]> {
+    return this.jobsService.getPostedJobs(req.user);
   }
 
   @ApiOperation({ summary: 'Add job' })

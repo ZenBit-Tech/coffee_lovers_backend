@@ -11,6 +11,7 @@ import * as bcrypt from 'bcrypt';
 import { User } from '@entities/User.entity';
 import { Education } from '@entities/Education.entity';
 import { WorkHistory } from '@entities/WorkHistory.entity';
+import { Request } from '@entities/Request.entity';
 import { MailService } from '@/modules/mail/mail.service';
 import { FileService } from '@/modules/file/file.service';
 import { FileType } from '@/modules/file/types';
@@ -24,6 +25,8 @@ import AddUserWorkhistoryDto from './dto/add-user-workhistory.dto';
 import AddUserEducationDto from './dto/add-user-education.dto';
 import { Category } from '@/common/entities/Category.entity';
 import AddUserInfoDto from './dto/add-user-info.dto';
+import getUserProposalsResponseDto from './dto/get-proposals-by-user.dto';
+import { RequestType } from '@/common/constants/entities';
 
 @Injectable()
 export class UserService {
@@ -42,6 +45,9 @@ export class UserService {
 
     @InjectRepository(WorkHistory)
     private workHistoryRepository: Repository<WorkHistory>,
+
+    @InjectRepository(Request)
+    private requestRepository: Repository<Request>,
   ) {}
 
   async create(dto: CreateUserDto): Promise<InsertResult> {
@@ -108,24 +114,41 @@ export class UserService {
     }
   }
 
-  async findOne(payload: object): Promise<User | null> {
+  async findOne(
+    payload: object,
+    hiddenColumns?: string[],
+    leftJoins?: string[],
+  ): Promise<User | null> {
     try {
-      const data = await this.userRepository
-        .createQueryBuilder()
-        .select('id')
-        .from(User, 'id')
-        .where(payload)
-        .getOne();
+      const query = this.userRepository
+        .createQueryBuilder('user')
+        .where(payload);
 
-      return data;
+      if (hiddenColumns) {
+        hiddenColumns.forEach((column) => {
+          query.addSelect(`user.${column}`);
+        });
+      }
+
+      if (leftJoins) {
+        leftJoins.forEach((join) => {
+          query.leftJoinAndSelect(`user.${join}`, join);
+        });
+      }
+
+      return await query.getOne();
     } catch (error) {
       throw new InternalServerErrorException();
     }
   }
 
-  async findByEmail(email: string): Promise<User | null> {
+  async findByEmail(
+    email: string,
+    hiddenColumns?: string[],
+    leftJoins?: string[],
+  ): Promise<User | null> {
     try {
-      const data = await this.findOne({ email });
+      const data = await this.findOne({ email }, hiddenColumns, leftJoins);
 
       return data;
     } catch (error) {
@@ -321,6 +344,35 @@ export class UserService {
         .getMany();
 
       return Categories;
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async getProposalsByUser(
+    user: UserDto,
+  ): Promise<getUserProposalsResponseDto> {
+    try {
+      const proposals = await this.requestRepository
+        .createQueryBuilder('request')
+        .leftJoinAndSelect('request.job', 'job')
+        .where({
+          type: RequestType.PROPOSAL,
+          freelancer: user,
+        })
+        .getMany();
+
+      return {
+        proposals: proposals.map((item) => ({
+          id: item.id,
+          hourly_rate: item.hourly_rate,
+          cover_letter: item.cover_letter,
+          job: item.job,
+        })),
+      };
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;

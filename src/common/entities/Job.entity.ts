@@ -8,14 +8,20 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { AvailableTime, EnglishLevel } from '@constants/entities';
 import { User } from '@entities/User.entity';
 import { Category } from '@entities/Category.entity';
 import { Skill } from '@entities/Skill.entity';
-import { Proposal } from '@entities/Proposal.entity';
-import { EnglishLevel } from '@constants/entities';
+import { Conversation } from '@entities/Conversation.entity';
+import { Request } from '@entities/Request.entity';
+import { Offer } from '@entities/Offer.entity';
 
 @Entity()
 export class Job {
+  leftJoinAndSelect(arg0: string, join: string) {
+    throw new Error('Method not implemented.');
+  }
+
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -28,8 +34,13 @@ export class Job {
   @Column({ default: null, nullable: true })
   hourly_rate: number;
 
-  @Column({ default: null, nullable: true })
-  available_time: number;
+  @Column({
+    type: 'enum',
+    enum: AvailableTime,
+    nullable: true,
+    default: null,
+  })
+  available_time: AvailableTime;
 
   @Column({
     type: 'enum',
@@ -52,6 +63,12 @@ export class Job {
   @JoinTable()
   skills: Skill[];
 
-  @OneToMany(() => Proposal, (proposal) => proposal.job)
-  proposals: Proposal[];
+  @OneToMany(() => Conversation, (conversation) => conversation.job)
+  conversations: Conversation[];
+
+  @OneToMany(() => Request, (request) => request.job)
+  requests: Request[];
+
+  @OneToMany(() => Offer, (offer) => offer.job)
+  offers: Offer[];
 }
