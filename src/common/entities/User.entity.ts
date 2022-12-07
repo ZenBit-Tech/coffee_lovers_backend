@@ -11,11 +11,15 @@ import {
 import { Category } from '@entities/Category.entity';
 
 import { AvailableTime, EnglishLevel, Role } from '@constants/entities';
-import { Proposal } from '@entities/Proposal.entity';
-import { Education } from './Education.entity';
-import { Job } from './Job.entity';
-import { Skill } from './Skill.entity';
-import { WorkHistory } from './WorkHistory.entity';
+import { Conversation } from '@entities/Conversation.entity';
+import { Message } from '@entities/Message.entity';
+import { Request } from '@entities/Request.entity';
+import { Education } from '@entities/Education.entity';
+import { Job } from '@entities/Job.entity';
+import { Skill } from '@entities/Skill.entity';
+import { WorkHistory } from '@entities/WorkHistory.entity';
+import { Notification } from '@entities/Notification.entity';
+import { Offer } from '@entities/Offer.entity';
 
 @Entity()
 export class User {
@@ -95,6 +99,21 @@ export class User {
   @ManyToOne(() => Category, (category) => category.user)
   category: Category;
 
-  @OneToMany(() => Proposal, (proposal) => proposal.user)
-  proposals: Proposal[];
+  @OneToMany(() => Conversation, (conversation) => conversation.freelancer)
+  @OneToMany(() => Conversation, (conversation) => conversation.job_owner)
+  conversations: Conversation[];
+
+  @OneToMany(() => Message, (message) => message.from)
+  messages: Message[];
+
+  @OneToMany(() => Request, (request) => request.job_owner)
+  @OneToMany(() => Request, (request) => request.freelancer)
+  requests: Request[];
+
+  @OneToMany(() => Notification, (notification) => notification.user)
+  notifications: Notification[];
+
+  @OneToMany(() => Offer, (offer) => offer.job_owner)
+  @OneToMany(() => Offer, (offer) => offer.freelancer)
+  offers: Offer[];
 }

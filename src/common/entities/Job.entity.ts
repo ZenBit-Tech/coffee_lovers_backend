@@ -8,11 +8,13 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { AvailableTime, EnglishLevel } from '@constants/entities';
 import { User } from '@entities/User.entity';
 import { Category } from '@entities/Category.entity';
 import { Skill } from '@entities/Skill.entity';
-import { Proposal } from '@entities/Proposal.entity';
-import { AvailableTime, EnglishLevel } from '@constants/entities';
+import { Conversation } from '@entities/Conversation.entity';
+import { Request } from '@entities/Request.entity';
+import { Offer } from '@entities/Offer.entity';
 
 @Entity()
 export class Job {
@@ -57,6 +59,12 @@ export class Job {
   @JoinTable()
   skills: Skill[];
 
-  @OneToMany(() => Proposal, (proposal) => proposal.job)
-  proposals: Proposal[];
+  @OneToMany(() => Conversation, (conversation) => conversation.job)
+  conversations: Conversation[];
+
+  @OneToMany(() => Request, (request) => request.job)
+  requests: Request[];
+
+  @OneToMany(() => Offer, (offer) => offer.job)
+  offers: Offer[];
 }

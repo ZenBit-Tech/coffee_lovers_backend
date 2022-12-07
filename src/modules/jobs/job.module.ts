@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Proposal } from '@entities/Proposal.entity';
 import { Job } from '@entities/Job.entity';
+import { Request } from '@entities/Request.entity';
 import { PropertiesModule } from '@/modules/properties/properties.module';
 import { UserModule } from '@/modules/user/user.module';
 
@@ -15,7 +15,7 @@ import { User } from '@/common/entities/User.entity';
     ConfigModule.forRoot({
       envFilePath: `.${process.env.NODE_ENV}.env`,
     }),
-    TypeOrmModule.forFeature([Job, Proposal, User]),
+    TypeOrmModule.forFeature([Job, Request, User]),
     UserModule,
     PropertiesModule,
   ],
