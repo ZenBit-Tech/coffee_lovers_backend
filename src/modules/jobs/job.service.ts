@@ -216,7 +216,10 @@ export class JobsService {
   async updateJob(payload: UpdateJobDto, user: UserDto): Promise<void> {
     try {
       const { id, skills, ...jobPayload } = payload;
-
+      const job = await this.findOne({ id });
+      if (!(job && job.owner.id === user.id)) {
+        throw new ForbiddenException();
+      }
       if (skills) {
         const jobWithSkills = await this.jobRepository
           .createQueryBuilder('job')
