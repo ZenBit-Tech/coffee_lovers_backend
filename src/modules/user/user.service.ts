@@ -15,6 +15,7 @@ import { Request } from '@entities/Request.entity';
 import { MailService } from '@/modules/mail/mail.service';
 import { FileService } from '@/modules/file/file.service';
 import { FileType } from '@/modules/file/types';
+import { RequestType } from '@/common/constants/entities';
 import CreateUserDto from './dto/create-user.dto';
 import UpdateUserDto from './dto/update-user.dto';
 import PasswordResetRequestDto from './dto/password-reset-request.dto';
@@ -26,7 +27,6 @@ import AddUserEducationDto from './dto/add-user-education.dto';
 import { Category } from '@/common/entities/Category.entity';
 import AddUserInfoDto from './dto/add-user-info.dto';
 import getUserProposalsResponseDto from './dto/get-proposals-by-user.dto';
-import { RequestType } from '@/common/constants/entities';
 
 @Injectable()
 export class UserService {

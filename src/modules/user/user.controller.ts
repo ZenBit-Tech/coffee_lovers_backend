@@ -35,6 +35,7 @@ import { Category } from '@/common/entities/Category.entity';
 import { ReqUser } from './dto/get-user-dto.dto';
 import AddUserInfoDto from './dto/add-user-info.dto';
 import getUserProposalsResponseDto from './dto/get-proposals-by-user.dto';
+import { getAuthorizationApiHeader } from '@/common/utils/swagger';
 
 @ApiTags('user')
 @Controller('user')
@@ -187,10 +188,7 @@ export class UserController {
     summary: 'Get proposals by user',
   })
   @ApiResponse({ type: getUserProposalsResponseDto })
-  @ApiHeader({
-    name: 'Authorization',
-    description: 'Bearer token',
-  })
+  @ApiHeader(getAuthorizationApiHeader())
   @UseGuards(JwtAuthGuard)
   @Get('/proposals')
   getProposalsByUser(
