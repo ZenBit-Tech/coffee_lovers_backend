@@ -24,18 +24,18 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UserService } from '@/modules/user/user.service';
 import { JwtAuthGuard } from '@/modules/auth/guards/jwt-auth.guard';
+import { getAuthorizationApiHeader } from '@/common/utils/swagger';
+import { User } from '@/common/entities/User.entity';
+import { Category } from '@/common/entities/Category.entity';
 import UserDto from './dto/user.dto';
 import PasswordResetDto from './dto/password-reset.dto';
 import PasswordResetRequestDto from './dto/password-reset-request.dto';
 import SetProfileImageDto from './dto/set-profile-image.dto';
 import AddUserEducationDto from './dto/add-user-education.dto';
 import AddUserWorkhistoryDto from './dto/add-user-workhistory.dto';
-import { User } from '@/common/entities/User.entity';
-import { Category } from '@/common/entities/Category.entity';
 import { ReqUser } from './dto/get-user-dto.dto';
 import AddUserInfoDto from './dto/add-user-info.dto';
 import getUserProposalsResponseDto from './dto/get-proposals-by-user.dto';
-import { getAuthorizationApiHeader } from '@/common/utils/swagger';
 
 @ApiTags('user')
 @Controller('user')
