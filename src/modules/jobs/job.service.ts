@@ -16,6 +16,7 @@ import CreateJobDto from './dto/create-job.dto';
 import FindJobsResponse from './dto/find-jobs-response.dto';
 import CreateProposalDto from './dto/create-proposal.dto';
 import getJobProposalsResponseDto from './dto/get-job-proposals-response.dto';
+import getJobByIdResponseDto from './dto/get-job-response.dto';
 
 @Injectable()
 export class JobsService {
@@ -26,15 +27,20 @@ export class JobsService {
     private requestRepository: Repository<Request>,
   ) {}
 
-  async findOne(payload: object): Promise<Job | null> {
+  async findOne(payload: object, leftJoins?: string[]): Promise<Job | null> {
     try {
-      const data = await this.jobRepository
+      const query = this.jobRepository
         .createQueryBuilder('job')
         .leftJoinAndSelect('job.owner', 'user')
-        .where(payload)
-        .getOne();
+        .where(payload);
 
-      return data;
+      if (leftJoins) {
+        leftJoins.forEach((join) => {
+          query.leftJoinAndSelect(`job.${join}`, join);
+        });
+      }
+
+      return await query.getOne();
     } catch (error) {
       throw new InternalServerErrorException();
     }
@@ -233,6 +239,21 @@ export class JobsService {
           cover_letter: item.cover_letter,
           hourly_rate: item.hourly_rate,
         })),
+      };
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async getJobById(jobId: number): Promise<getJobByIdResponseDto | null> {
+    try {
+      const job = await this.findOne({ id: jobId }, ['category']);
+
+      return {
+        job,
       };
     } catch (error) {
       if (error instanceof HttpException) {
