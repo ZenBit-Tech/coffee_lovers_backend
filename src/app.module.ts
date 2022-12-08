@@ -22,7 +22,8 @@ import { TestModule } from '@/modules/test/test.module';
 import { UserModule } from '@/modules/user/user.module';
 import { filePath } from '@/modules/file/constants';
 import { PropertiesModule } from '@/modules/properties/properties.module';
-import { JobsModule } from './modules/jobs/job.module';
+import { JobsModule } from '@/modules/jobs/job.module';
+import { ChatModule } from '@/modules/chat/chat.module';
 
 @Module({
   imports: [
@@ -62,6 +63,7 @@ import { JobsModule } from './modules/jobs/job.module';
     UserModule,
     JobsModule,
     PropertiesModule,
+    ChatModule,
   ],
   controllers: [AppController],
   providers: [AppService],
