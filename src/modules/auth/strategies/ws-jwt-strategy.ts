@@ -29,7 +29,7 @@ export class WsJwtStrategy extends PassportStrategy(Strategy, 'wsjwt') {
 
       return { ...user };
     } catch (error) {
-      if (error instanceof HttpException) {
+      if (error instanceof WsException) {
         throw error;
       }
       throw new WsException('Internal error');
