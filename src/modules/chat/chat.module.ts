@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { UserModule } from '../user/user.module';
+import { UserModule } from '@/modules/user/user.module';
 import { ChatController } from './chat.controller';
 import { ChatGateway } from './chat.gateway';
 
