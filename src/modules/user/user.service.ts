@@ -298,12 +298,12 @@ export class UserService {
 
   async getWorkInfo(user: UserDto): Promise<WorkHistory[]> {
     try {
-      const Workhistories = await this.workHistoryRepository
+      const workHistories = await this.workHistoryRepository
         .createQueryBuilder()
         .where({ user })
         .getMany();
 
-      return Workhistories;
+      return workHistories;
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
@@ -314,12 +314,12 @@ export class UserService {
 
   async getEducationInfo(user: UserDto): Promise<Education[]> {
     try {
-      const Educations = await this.educationRepository
+      const educations = await this.educationRepository
         .createQueryBuilder()
         .where({ user })
         .getMany();
 
-      return Educations;
+      return educations;
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
