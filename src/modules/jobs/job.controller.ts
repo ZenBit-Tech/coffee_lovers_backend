@@ -21,6 +21,7 @@ import FindJobsResponse from './dto/find-jobs-response.dto';
 import CreateProposalDto from './dto/create-proposal.dto';
 import getJobProposalsResponseDto from './dto/get-job-proposals-response.dto';
 import getJobProposalsParamsDto from './dto/get-job-proposals-params-dto';
+import getJobByIdResponseDto from './dto/get-job-response.dto';
 import GetPostedJobsResponseDto from './dto/get-posted-jobs-response.dto';
 
 @ApiTags('jobs')
@@ -88,5 +89,16 @@ export class JobsController {
   @Get('/userjobs')
   getUserJobs(@Request() req): Promise<Job[]> {
     return this.jobsService.getAvailableJobs(req.user);
+  }
+
+  @ApiOperation({ summary: 'Get job by id' })
+  @ApiHeader(getAuthorizationApiHeader())
+  @ApiResponse({ type: getJobByIdResponseDto })
+  @UseGuards(JwtAuthGuard)
+  @Get('/:id/job')
+  getJobById(
+    @Param() params: getJobProposalsParamsDto,
+  ): Promise<getJobByIdResponseDto> {
+    return this.jobsService.getJobById(params.id);
   }
 }

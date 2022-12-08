@@ -11,9 +11,12 @@ import * as bcrypt from 'bcrypt';
 import { User } from '@entities/User.entity';
 import { Education } from '@entities/Education.entity';
 import { WorkHistory } from '@entities/WorkHistory.entity';
+import { Request } from '@entities/Request.entity';
 import { MailService } from '@/modules/mail/mail.service';
 import { FileService } from '@/modules/file/file.service';
 import { FileType } from '@/modules/file/types';
+import { RequestType } from '@/common/constants/entities';
+import { Category } from '@/common/entities/Category.entity';
 import CreateUserDto from './dto/create-user.dto';
 import UpdateUserDto from './dto/update-user.dto';
 import PasswordResetRequestDto from './dto/password-reset-request.dto';
@@ -22,9 +25,9 @@ import UserDto from './dto/user.dto';
 import SetProfileImageDto from './dto/set-profile-image.dto';
 import AddUserWorkhistoryDto from './dto/add-user-workhistory.dto';
 import AddUserEducationDto from './dto/add-user-education.dto';
-import { Category } from '@/common/entities/Category.entity';
 import AddUserInfoDto from './dto/add-user-info.dto';
 import GetFreelancerDto from './dto/get-freelancer-params.dto';
+import getUserProposalsResponseDto from './dto/get-proposals-by-user.dto';
 
 @Injectable()
 export class UserService {
@@ -43,6 +46,9 @@ export class UserService {
 
     @InjectRepository(WorkHistory)
     private workHistoryRepository: Repository<WorkHistory>,
+
+    @InjectRepository(Request)
+    private requestRepository: Repository<Request>,
   ) {}
 
   async create(dto: CreateUserDto): Promise<InsertResult> {
@@ -115,7 +121,7 @@ export class UserService {
     leftJoins?: string[],
   ): Promise<User | null> {
     try {
-      const query = await this.userRepository
+      const query = this.userRepository
         .createQueryBuilder('user')
         .where(payload);
 
@@ -380,6 +386,35 @@ export class UserService {
         .getMany();
 
       return Categories;
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async getProposalsByUser(
+    user: UserDto,
+  ): Promise<getUserProposalsResponseDto> {
+    try {
+      const proposals = await this.requestRepository
+        .createQueryBuilder('request')
+        .leftJoinAndSelect('request.job', 'job')
+        .where({
+          type: RequestType.PROPOSAL,
+          freelancer: user,
+        })
+        .getMany();
+
+      return {
+        proposals: proposals.map((item) => ({
+          id: item.id,
+          hourly_rate: item.hourly_rate,
+          cover_letter: item.cover_letter,
+          job: item.job,
+        })),
+      };
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
