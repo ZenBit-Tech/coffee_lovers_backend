@@ -5,11 +5,10 @@ import { Job } from '@entities/Job.entity';
 import { Request } from '@entities/Request.entity';
 import { PropertiesModule } from '@/modules/properties/properties.module';
 import { UserModule } from '@/modules/user/user.module';
-
-import { JobsController } from './job.controller';
-import { JobsService } from './job.service';
 import { User } from '@/common/entities/User.entity';
 import { Conversation } from '@/common/entities/Conversation.entity';
+import { JobsController } from './job.controller';
+import { JobsService } from './job.service';
 
 @Module({
   imports: [

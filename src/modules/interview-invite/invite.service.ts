@@ -1,11 +1,7 @@
-import {
-  HttpException,
-  HttpStatus,
-  Injectable,
-  InternalServerErrorException,
-} from '@nestjs/common';
+import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { UserService } from 'src/modules/user/user.service';
 import { Conversation } from '@/common/entities/Conversation.entity';
 import { User } from '@/common/entities/User.entity';
 import { ConversResponse } from './dto/conversations-freelancer.dto';
@@ -13,35 +9,19 @@ import { ConversResponse } from './dto/conversations-freelancer.dto';
 @Injectable()
 export class InviteService {
   constructor(
+    @Inject(UserService)
+    private userService: UserService,
+
     @InjectRepository(Conversation)
     private conversationRepository: Repository<Conversation>,
-
-    @InjectRepository(User)
-    private userRepository: Repository<User>,
   ) {}
-
-  async getUserById(id: number): Promise<User> {
-    try {
-      const userInfo = await this.userRepository
-        .createQueryBuilder('user')
-        .where('user.id = :id', { id })
-        .getOne();
-
-      return userInfo;
-    } catch (error) {
-      if (error instanceof HttpException) {
-        throw error;
-      }
-      throw new InternalServerErrorException();
-    }
-  }
 
   async checkChatAvailability(
     user: User,
     frId: number,
   ): Promise<ConversResponse | null> {
     try {
-      const freelancer = await this.getUserById(frId);
+      const freelancer = await this.userService.getUserById(frId);
       const data = await this.conversationRepository
         .createQueryBuilder('conversations')
         .leftJoin('conversations.freelancer', 'freelancer')

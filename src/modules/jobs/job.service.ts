@@ -10,13 +10,13 @@ import { Job } from '@entities/Job.entity';
 import { findJobsDefaultLimit, findJobsDefaultOffset } from '@constants/jobs';
 import { Request } from '@entities/Request.entity';
 import { RequestType } from '@constants/entities';
+import { Conversation } from '@/common/entities/Conversation.entity';
 import UserDto from '@/modules/user/dto/user.dto';
 import GetJobsDto from './dto/get-jobs.dto';
 import CreateJobDto from './dto/create-job.dto';
 import FindJobsResponse from './dto/find-jobs-response.dto';
 import CreateProposalDto from './dto/create-proposal.dto';
 import getJobProposalsResponseDto from './dto/get-job-proposals-response.dto';
-import { Conversation } from '@/common/entities/Conversation.entity';
 import getJobByIdResponseDto from './dto/get-job-response.dto';
 
 @Injectable()

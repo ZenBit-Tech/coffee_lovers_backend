@@ -422,4 +422,20 @@ export class UserService {
       throw new InternalServerErrorException();
     }
   }
+
+  async getUserById(id: number): Promise<User> {
+    try {
+      const userInfo = await this.userRepository
+        .createQueryBuilder('user')
+        .where('user.id = :id', { id })
+        .getOne();
+
+      return userInfo;
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new InternalServerErrorException();
+    }
+  }
 }
