@@ -79,12 +79,14 @@ export class JobsController {
     return this.jobsService.getJobProposals(params.id, req.user);
   }
 
-  @ApiOperation({ summary: 'Get user jobs' })
+  @ApiOperation({
+    summary: 'Get jobs of jobowner without chat with any freelancer yet',
+  })
   @ApiHeader(getAuthorizationApiHeader())
   @ApiResponse({ type: Array<Job> })
   @UseGuards(JwtAuthGuard)
   @Get('/userjobs')
   getUserJobs(@Request() req): Promise<Job[]> {
-    return this.jobsService.getUserJobs(req.user);
+    return this.jobsService.getAvailableJobs(req.user);
   }
 }

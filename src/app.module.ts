@@ -23,6 +23,7 @@ import { UserModule } from '@/modules/user/user.module';
 import { filePath } from '@/modules/file/constants';
 import { PropertiesModule } from '@/modules/properties/properties.module';
 import { JobsModule } from './modules/jobs/job.module';
+import { InviteModule } from './modules/interview-invite/invite.module';
 
 @Module({
   imports: [
@@ -62,6 +63,7 @@ import { JobsModule } from './modules/jobs/job.module';
     UserModule,
     JobsModule,
     PropertiesModule,
+    InviteModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -16,7 +16,7 @@ import CreateJobDto from './dto/create-job.dto';
 import FindJobsResponse from './dto/find-jobs-response.dto';
 import CreateProposalDto from './dto/create-proposal.dto';
 import getJobProposalsResponseDto from './dto/get-job-proposals-response.dto';
-import { User } from '@/common/entities/User.entity';
+import { Conversation } from '@/common/entities/Conversation.entity';
 
 @Injectable()
 export class JobsService {
@@ -25,8 +25,8 @@ export class JobsService {
     private jobRepository: Repository<Job>,
     @InjectRepository(Request)
     private requestRepository: Repository<Request>,
-    @InjectRepository(User)
-    private userRepository: Repository<User>,
+    @InjectRepository(Conversation)
+    private conversationRepository: Repository<Conversation>,
   ) {}
 
   async findOne(payload: object): Promise<Job | null> {
@@ -245,11 +245,34 @@ export class JobsService {
     }
   }
 
-  async getUserJobs(user: UserDto): Promise<Job[]> {
+  async getJobConversations(user: UserDto): Promise<Conversation[]> {
     try {
+      const conversations = await this.conversationRepository
+        .createQueryBuilder('conversations')
+        .where({ job_owner: user })
+        .leftJoinAndSelect('conversations.job', 'job')
+        .getMany();
+
+      return conversations;
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async getAvailableJobs(user: UserDto): Promise<Job[]> {
+    try {
+      const conversations = await this.getJobConversations(user);
+      const conversationsJobIdArray = conversations.map((el) => el.job.id);
+
       const jobs = await this.jobRepository
         .createQueryBuilder('jobs')
         .where({ owner: user })
+        .andWhere('jobs.id NOT IN (:...id)', {
+          id: conversationsJobIdArray,
+        })
         .getMany();
 
       return jobs;
