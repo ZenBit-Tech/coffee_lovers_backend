@@ -34,6 +34,7 @@ import { User } from '@/common/entities/User.entity';
 import { Category } from '@/common/entities/Category.entity';
 import { ReqUser } from './dto/get-user-dto.dto';
 import AddUserInfoDto from './dto/add-user-info.dto';
+import { takeValue, pageNumber } from './constants';
 
 @ApiTags('user')
 @Controller('user')
@@ -149,8 +150,10 @@ export class UserController {
   @Get('/freelancer')
   getFreelancerInformation(
     @Query('search') search: string,
-    @Query('take', new DefaultValuePipe(10), ParseIntPipe) take = 10,
-    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
+    @Query('take', new DefaultValuePipe(takeValue), ParseIntPipe)
+    take = takeValue,
+    @Query('page', new DefaultValuePipe(pageNumber), ParseIntPipe)
+    page = pageNumber,
   ): Promise<[User[], number]> {
     return this.userService.getFheelancerInformation(take, page, search);
   }
