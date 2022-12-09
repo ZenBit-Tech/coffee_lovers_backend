@@ -74,6 +74,12 @@ export class UserService {
     try {
       await this.educationRepository
         .createQueryBuilder()
+        .delete()
+        .from(Education)
+        .where({ user })
+        .execute();
+      await this.educationRepository
+        .createQueryBuilder()
         .insert()
         .into(Education)
         .values(
@@ -96,6 +102,12 @@ export class UserService {
     payload: AddUserWorkhistoryDto[],
   ): Promise<void> {
     try {
+      await this.workHistoryRepository
+        .createQueryBuilder()
+        .delete()
+        .from(WorkHistory)
+        .where({ user })
+        .execute();
       await this.workHistoryRepository
         .createQueryBuilder()
         .insert()
@@ -283,6 +295,38 @@ export class UserService {
     try {
       const currentUser = await this.findByEmail(user.email);
       await this.addWorkToUser(currentUser, payload);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async getWorkInfo(user: UserDto): Promise<WorkHistory[]> {
+    try {
+      const workHistories = await this.workHistoryRepository
+        .createQueryBuilder()
+        .where({ user })
+        .getMany();
+
+      return workHistories;
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async getEducationInfo(user: UserDto): Promise<Education[]> {
+    try {
+      const educations = await this.educationRepository
+        .createQueryBuilder()
+        .where({ user })
+        .getMany();
+
+      return educations;
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;

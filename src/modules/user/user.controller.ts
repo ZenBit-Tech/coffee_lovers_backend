@@ -12,6 +12,7 @@ import {
   Query,
   DefaultValuePipe,
   ParseIntPipe,
+  Put,
 } from '@nestjs/common';
 import {
   ApiBody,
@@ -35,6 +36,10 @@ import AddUserEducationDto from './dto/add-user-education.dto';
 import AddUserWorkhistoryDto from './dto/add-user-workhistory.dto';
 import { ReqUser } from './dto/get-user-dto.dto';
 import AddUserInfoDto from './dto/add-user-info.dto';
+import GetUserWorkhistoryDto from './dto/get-user-workhistory.dto';
+import { WorkHistory } from '@/common/entities/WorkHistory.entity';
+import GetUserEducationDto from './dto/get-user-education.dto';
+import { Education } from '@/common/entities/Education.entity';
 import GetFreelancerDto from './dto/get-freelancer-params.dto';
 import getUserProposalsResponseDto from './dto/get-proposals-by-user.dto';
 
@@ -53,6 +58,34 @@ export class UserController {
   @Get('')
   getUserInformation(@Request() req: ReqUser): UserDto {
     return req.user;
+  }
+
+  @ApiOperation({
+    summary: 'get information about current user work experience',
+  })
+  @ApiResponse({ type: GetUserWorkhistoryDto })
+  @ApiHeader({
+    name: 'Authorization',
+    description: 'Bearer token',
+  })
+  @UseGuards(JwtAuthGuard)
+  @Get('/workhistory-info')
+  getUserWorkInformation(@Request() req: ReqUser): Promise<WorkHistory[]> {
+    return this.userService.getWorkInfo(req.user);
+  }
+
+  @ApiOperation({
+    summary: 'get information about current user education',
+  })
+  @ApiResponse({ type: GetUserEducationDto })
+  @ApiHeader({
+    name: 'Authorization',
+    description: 'Bearer token',
+  })
+  @UseGuards(JwtAuthGuard)
+  @Get('/education-info')
+  getUserEducationInformation(@Request() req: ReqUser): Promise<Education[]> {
+    return this.userService.getEducationInfo(req.user);
   }
 
   @ApiOperation({ summary: 'send mail for password reset' })
@@ -105,10 +138,13 @@ export class UserController {
     name: 'Authorization',
     description: 'Bearer token',
   })
-  @Post('user-info')
+  @Put('/')
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
-  addUserInfo(@Request() req, @Body() payload: AddUserInfoDto): Promise<void> {
+  addUserInfo(
+    @Request() req: ReqUser,
+    @Body() payload: AddUserInfoDto,
+  ): Promise<void> {
     return this.userService.addUserInfo(payload, req.user);
   }
 
@@ -121,7 +157,7 @@ export class UserController {
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
   addEducationInfo(
-    @Request() req,
+    @Request() req: ReqUser,
     @Body() payload: AddUserEducationDto[],
   ): Promise<void> {
     return this.userService.addEducationInfo(payload, req.user);
@@ -136,7 +172,7 @@ export class UserController {
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
   addWorkhistoryInfo(
-    @Request() req,
+    @Request() req: ReqUser,
     @Body() payload: AddUserWorkhistoryDto[],
   ): Promise<void> {
     return this.userService.addWorkhistoryInfo(payload, req.user);
