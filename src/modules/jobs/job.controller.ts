@@ -10,13 +10,7 @@ import {
   Query,
   Param,
 } from '@nestjs/common';
-import {
-  ApiHeader,
-  ApiOperation,
-  ApiProperty,
-  ApiResponse,
-  ApiTags,
-} from '@nestjs/swagger';
+import { ApiHeader, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { getAuthorizationApiHeader } from '@utils/swagger';
 import { Job } from '@entities/Job.entity';
 import { JwtAuthGuard } from '@/modules/auth/guards/jwt-auth.guard';
@@ -84,6 +78,17 @@ export class JobsController {
     @Param() params: getJobProposalsParamsDto,
   ): Promise<getJobProposalsResponseDto> {
     return this.jobsService.getJobProposals(params.id, req.user);
+  }
+
+  @ApiOperation({
+    summary: 'Get jobs of jobowner without chat with any freelancer yet',
+  })
+  @ApiHeader(getAuthorizationApiHeader())
+  @ApiResponse({ type: Array<Job> })
+  @UseGuards(JwtAuthGuard)
+  @Get('/userjobs')
+  getUserJobs(@Request() req): Promise<Job[]> {
+    return this.jobsService.getAvailableJobs(req.user);
   }
 
   @ApiOperation({ summary: 'Get job by id' })
