@@ -15,7 +15,7 @@ import { Request } from '@entities/Request.entity';
 import { MailService } from '@/modules/mail/mail.service';
 import { FileService } from '@/modules/file/file.service';
 import { FileType } from '@/modules/file/types';
-import { RequestType } from '@/common/constants/entities';
+import { RequestType, Role } from '@/common/constants/entities';
 import { Category } from '@/common/entities/Category.entity';
 import CreateUserDto from './dto/create-user.dto';
 import UpdateUserDto from './dto/update-user.dto';
@@ -305,14 +305,13 @@ export class UserService {
         search,
         ...userPayload
       } = params;
-      const role = 'Freelancer';
 
       const query = this.userRepository
         .createQueryBuilder('user')
         .leftJoinAndSelect('user.category', 'category')
         .where(userPayload)
         .andWhere('user.role >= :role', {
-          role,
+          role: Role.FREELANCER,
         })
         .skip((page - 1) * take)
         .take(take);
