@@ -10,6 +10,7 @@ import { Job } from '@entities/Job.entity';
 import { findJobsDefaultLimit, findJobsDefaultOffset } from '@constants/jobs';
 import { Request } from '@entities/Request.entity';
 import { RequestType } from '@constants/entities';
+import { Conversation } from '@/common/entities/Conversation.entity';
 import UserDto from '@/modules/user/dto/user.dto';
 import GetJobsDto from './dto/get-jobs.dto';
 import CreateJobDto from './dto/create-job.dto';
@@ -25,6 +26,8 @@ export class JobsService {
     private jobRepository: Repository<Job>,
     @InjectRepository(Request)
     private requestRepository: Repository<Request>,
+    @InjectRepository(Conversation)
+    private conversationRepository: Repository<Conversation>,
   ) {}
 
   async findOne(payload: object, leftJoins?: string[]): Promise<Job | null> {
@@ -255,6 +258,45 @@ export class JobsService {
       return {
         job,
       };
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async getJobConversations(user: UserDto): Promise<Conversation[]> {
+    try {
+      const conversations = await this.conversationRepository
+        .createQueryBuilder('conversations')
+        .where({ job_owner: user })
+        .leftJoinAndSelect('conversations.job', 'job')
+        .getMany();
+
+      return conversations;
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async getAvailableJobs(user: UserDto): Promise<Job[]> {
+    try {
+      const conversations = await this.getJobConversations(user);
+      const conversationsJobIdArray = conversations.map((el) => el.job.id);
+
+      const jobs = await this.jobRepository
+        .createQueryBuilder('jobs')
+        .where({ owner: user })
+        .andWhere('jobs.id NOT IN (:...id)', {
+          id: conversationsJobIdArray,
+        })
+        .getMany();
+
+      return jobs;
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;

@@ -15,7 +15,7 @@ import { Request } from '@entities/Request.entity';
 import { MailService } from '@/modules/mail/mail.service';
 import { FileService } from '@/modules/file/file.service';
 import { FileType } from '@/modules/file/types';
-import { RequestType } from '@/common/constants/entities';
+import { RequestType, Role } from '@/common/constants/entities';
 import { Category } from '@/common/entities/Category.entity';
 import CreateUserDto from './dto/create-user.dto';
 import UpdateUserDto from './dto/update-user.dto';
@@ -26,6 +26,7 @@ import SetProfileImageDto from './dto/set-profile-image.dto';
 import AddUserWorkhistoryDto from './dto/add-user-workhistory.dto';
 import AddUserEducationDto from './dto/add-user-education.dto';
 import AddUserInfoDto from './dto/add-user-info.dto';
+import GetFreelancerDto from './dto/get-freelancer-params.dto';
 import getUserProposalsResponseDto from './dto/get-proposals-by-user.dto';
 
 @Injectable()
@@ -291,33 +292,73 @@ export class UserService {
   }
 
   async getFheelancerInformation(
-    take: number,
-    page: number,
-    search: string,
+    params: GetFreelancerDto,
   ): Promise<[User[], number]> {
     try {
-      const currentUser = await this.userRepository
+      const {
+        page,
+        take,
+        skills,
+        categories,
+        hourly_rate_start,
+        hourly_rate_end,
+        search,
+        ...userPayload
+      } = params;
+
+      const query = this.userRepository
         .createQueryBuilder('user')
         .leftJoinAndSelect('user.category', 'category')
+        .where(userPayload)
+        .andWhere('user.role >= :role', {
+          role: Role.FREELANCER,
+        })
         .skip((page - 1) * take)
-        .take(take)
-        .where(
-          new Brackets((qb) => {
-            qb.where('user.category LIKE :search')
-              .orWhere('user.position LIKE :search')
-              .orWhere('user.hourly_rate LIKE :search')
-              .orWhere('user.available_time LIKE :search', {
-                search: `%${search}%`,
-              });
-          }),
-        )
-        .getManyAndCount();
+        .take(take);
+
+      if (hourly_rate_start) {
+        query.andWhere('user.hourly_rate >= :hourly_rate_start', {
+          hourly_rate_start,
+        });
+      }
+
+      if (hourly_rate_end) {
+        query.andWhere('user.hourly_rate <= :hourly_rate_end', {
+          hourly_rate_end,
+        });
+      }
+
+      if (search) {
+        query
+          .select()
+          .having('user.available_time = :available_time', {
+            available_time: search,
+          })
+          .orHaving('user.position = :position', { position: search })
+          .orHaving('user.category = :category', { category: search })
+          .orHaving('user.english_level = :english_level', {
+            english_level: search,
+          })
+          .orHaving('user.position = :position', { position: search })
+          .orHaving('user.hourly_rate = :hourly_rate', { hourly_rate: search });
+      }
+
+      if (categories) {
+        query.andWhere('user.category.id IN (:...categories)', {
+          categories,
+        });
+      }
+
+      if (skills) {
+        query.innerJoin('user.skills', 'skill', 'skill.id IN (:...skills)', {
+          skills,
+        });
+      }
+
+      const currentUser = await query.getManyAndCount();
 
       return currentUser;
     } catch (error) {
-      if (error instanceof HttpException) {
-        throw error;
-      }
       throw new InternalServerErrorException();
     }
   }
@@ -373,6 +414,22 @@ export class UserService {
           job: item.job,
         })),
       };
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async getUserById(id: number): Promise<User> {
+    try {
+      const userInfo = await this.userRepository
+        .createQueryBuilder('user')
+        .where('user.id = :id', { id })
+        .getOne();
+
+      return userInfo;
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;

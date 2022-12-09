@@ -35,6 +35,7 @@ import AddUserEducationDto from './dto/add-user-education.dto';
 import AddUserWorkhistoryDto from './dto/add-user-workhistory.dto';
 import { ReqUser } from './dto/get-user-dto.dto';
 import AddUserInfoDto from './dto/add-user-info.dto';
+import GetFreelancerDto from './dto/get-freelancer-params.dto';
 import getUserProposalsResponseDto from './dto/get-proposals-by-user.dto';
 
 @ApiTags('user')
@@ -150,11 +151,9 @@ export class UserController {
   @UseGuards(JwtAuthGuard)
   @Get('/freelancer')
   getFreelancerInformation(
-    @Query('search') search: string,
-    @Query('take', new DefaultValuePipe(10), ParseIntPipe) take: number = 10,
-    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number = 1,
+    @Query() params: GetFreelancerDto,
   ): Promise<[User[], number]> {
-    return this.userService.getFheelancerInformation(take, page, search);
+    return this.userService.getFheelancerInformation(params);
   }
 
   @ApiOperation({ summary: 'Add new category for user or set category' })

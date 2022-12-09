@@ -6,6 +6,7 @@ import {
   ManyToMany,
   ManyToOne,
   JoinTable,
+  Index,
 } from 'typeorm';
 import { Category } from '@entities/Category.entity';
 
