@@ -10,12 +10,14 @@ import { Job } from '@entities/Job.entity';
 import { findJobsDefaultLimit, findJobsDefaultOffset } from '@constants/jobs';
 import { Request } from '@entities/Request.entity';
 import { RequestType } from '@constants/entities';
+import { Conversation } from '@/common/entities/Conversation.entity';
 import UserDto from '@/modules/user/dto/user.dto';
 import GetJobsDto from './dto/get-jobs.dto';
 import CreateJobDto from './dto/create-job.dto';
 import FindJobsResponse from './dto/find-jobs-response.dto';
 import CreateProposalDto from './dto/create-proposal.dto';
 import getJobProposalsResponseDto from './dto/get-job-proposals-response.dto';
+import getJobByIdResponseDto from './dto/get-job-response.dto';
 
 @Injectable()
 export class JobsService {
@@ -24,17 +26,24 @@ export class JobsService {
     private jobRepository: Repository<Job>,
     @InjectRepository(Request)
     private requestRepository: Repository<Request>,
+    @InjectRepository(Conversation)
+    private conversationRepository: Repository<Conversation>,
   ) {}
 
-  async findOne(payload: object): Promise<Job | null> {
+  async findOne(payload: object, leftJoins?: string[]): Promise<Job | null> {
     try {
-      const data = await this.jobRepository
+      const query = this.jobRepository
         .createQueryBuilder('job')
         .leftJoinAndSelect('job.owner', 'user')
-        .where(payload)
-        .getOne();
+        .where(payload);
 
-      return data;
+      if (leftJoins) {
+        leftJoins.forEach((join) => {
+          query.leftJoinAndSelect(`job.${join}`, join);
+        });
+      }
+
+      return await query.getOne();
     } catch (error) {
       throw new InternalServerErrorException();
     }
@@ -234,6 +243,60 @@ export class JobsService {
           hourly_rate: item.hourly_rate,
         })),
       };
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async getJobById(jobId: number): Promise<getJobByIdResponseDto | null> {
+    try {
+      const job = await this.findOne({ id: jobId }, ['category']);
+
+      return {
+        job,
+      };
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async getJobConversations(user: UserDto): Promise<Conversation[]> {
+    try {
+      const conversations = await this.conversationRepository
+        .createQueryBuilder('conversations')
+        .where({ job_owner: user })
+        .leftJoinAndSelect('conversations.job', 'job')
+        .getMany();
+
+      return conversations;
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async getAvailableJobs(user: UserDto): Promise<Job[]> {
+    try {
+      const conversations = await this.getJobConversations(user);
+      const conversationsJobIdArray = conversations.map((el) => el.job.id);
+
+      const jobs = await this.jobRepository
+        .createQueryBuilder('jobs')
+        .where({ owner: user })
+        .andWhere('jobs.id NOT IN (:...id)', {
+          id: conversationsJobIdArray,
+        })
+        .getMany();
+
+      return jobs;
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;

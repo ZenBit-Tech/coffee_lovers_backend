@@ -25,20 +25,23 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UserService } from '@/modules/user/user.service';
 import { JwtAuthGuard } from '@/modules/auth/guards/jwt-auth.guard';
+import { getAuthorizationApiHeader } from '@/common/utils/swagger';
+import { User } from '@/common/entities/User.entity';
+import { Category } from '@/common/entities/Category.entity';
 import UserDto from './dto/user.dto';
 import PasswordResetDto from './dto/password-reset.dto';
 import PasswordResetRequestDto from './dto/password-reset-request.dto';
 import SetProfileImageDto from './dto/set-profile-image.dto';
 import AddUserEducationDto from './dto/add-user-education.dto';
 import AddUserWorkhistoryDto from './dto/add-user-workhistory.dto';
-import { User } from '@/common/entities/User.entity';
-import { Category } from '@/common/entities/Category.entity';
 import { ReqUser } from './dto/get-user-dto.dto';
 import AddUserInfoDto from './dto/add-user-info.dto';
 import GetUserWorkhistoryDto from './dto/get-user-workhistory.dto';
 import { WorkHistory } from '@/common/entities/WorkHistory.entity';
 import GetUserEducationDto from './dto/get-user-education.dto';
 import { Education } from '@/common/entities/Education.entity';
+import GetFreelancerDto from './dto/get-freelancer-params.dto';
+import getUserProposalsResponseDto from './dto/get-proposals-by-user.dto';
 
 @ApiTags('user')
 @Controller('user')
@@ -184,11 +187,9 @@ export class UserController {
   @UseGuards(JwtAuthGuard)
   @Get('/freelancer')
   getFreelancerInformation(
-    @Query('search') search: string,
-    @Query('take', new DefaultValuePipe(10), ParseIntPipe) take: number = 10,
-    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number = 1,
+    @Query() params: GetFreelancerDto,
   ): Promise<[User[], number]> {
-    return this.userService.getFheelancerInformation(take, page, search);
+    return this.userService.getFheelancerInformation(params);
   }
 
   @ApiOperation({ summary: 'Add new category for user or set category' })
@@ -216,5 +217,18 @@ export class UserController {
   @HttpCode(HttpStatus.OK)
   getCategories(): Promise<Category[]> {
     return this.userService.getCategoryInfo();
+  }
+
+  @ApiOperation({
+    summary: 'Get proposals by user',
+  })
+  @ApiResponse({ type: getUserProposalsResponseDto })
+  @ApiHeader(getAuthorizationApiHeader())
+  @UseGuards(JwtAuthGuard)
+  @Get('/proposals')
+  getProposalsByUser(
+    @Request() req: ReqUser,
+  ): Promise<getUserProposalsResponseDto> {
+    return this.userService.getProposalsByUser(req.user);
   }
 }
