@@ -81,14 +81,14 @@ export class JobsController {
   }
 
   @ApiOperation({
-    summary: 'Get jobs of jobowner without chat with any freelancer yet',
+    summary: 'Get jobs of jobowner without chat with current freelancer yet',
   })
   @ApiHeader(getAuthorizationApiHeader())
   @ApiResponse({ type: Array<Job> })
   @UseGuards(JwtAuthGuard)
-  @Get('/userjobs')
-  getUserJobs(@Request() req): Promise<Job[]> {
-    return this.jobsService.getAvailableJobs(req.user);
+  @Get('/userjobs/:fr')
+  getUserJobs(@Request() req, @Param('fr') fr: string): Promise<Job[]> {
+    return this.jobsService.getAvailableJobs(req.user, +fr);
   }
 
   @ApiOperation({ summary: 'Get job by id' })
@@ -100,5 +100,17 @@ export class JobsController {
     @Param() params: getJobProposalsParamsDto,
   ): Promise<getJobByIdResponseDto> {
     return this.jobsService.getJobById(params.id);
+  }
+
+  @ApiOperation({
+    summary:
+      'Get jobs of jobowner without approved offer with any freelancer yet',
+  })
+  @ApiHeader(getAuthorizationApiHeader())
+  @ApiResponse({ type: Array<Job> })
+  @UseGuards(JwtAuthGuard)
+  @Get('/userjobs/:fr/free')
+  getJobsWithoutOffer(@Request() req): Promise<Job[]> {
+    return this.jobsService.getFreeJobs(req.user);
   }
 }

@@ -4,7 +4,11 @@ import { Repository } from 'typeorm';
 import { UserService } from 'src/modules/user/user.service';
 import { Conversation } from '@/common/entities/Conversation.entity';
 import { User } from '@/common/entities/User.entity';
-import { ConversResponse } from './dto/conversations-freelancer.dto';
+import {
+  ConversResponse,
+  RequestResponse,
+} from './dto/conversations-freelancer.dto';
+import { Request } from '@/common/entities/Request.entity';
 
 @Injectable()
 export class InviteService {

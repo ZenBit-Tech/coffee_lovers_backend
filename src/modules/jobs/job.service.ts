@@ -266,12 +266,20 @@ export class JobsService {
     }
   }
 
-  async getJobConversations(user: UserDto): Promise<Conversation[]> {
+  async getJobConversations(
+    user: UserDto,
+    fr: number,
+  ): Promise<Conversation[]> {
     try {
       const conversations = await this.conversationRepository
         .createQueryBuilder('conversations')
-        .where({ job_owner: user })
         .leftJoinAndSelect('conversations.job', 'job')
+        .leftJoin('conversations.freelancer', 'freelancer')
+        .leftJoin('job.offers', 'offer', 'offer.status != :status', {
+          status: 'Accepted',
+        })
+        .where({ job_owner: user })
+        .where('freelancer.id = :id', { id: fr })
         .getMany();
 
       return conversations;
@@ -283,9 +291,31 @@ export class JobsService {
     }
   }
 
-  async getAvailableJobs(user: UserDto): Promise<Job[]> {
+  async getAvailableJobs(user: UserDto, fr: number): Promise<Job[]> {
     try {
-      const conversations = await this.getJobConversations(user);
+      const conversations = await this.getJobConversations(user, fr);
+      const conversationsJobIdArray = conversations.map((el) => el.job.id);
+
+      const jobs = await this.jobRepository
+        .createQueryBuilder('jobs')
+        .where({ owner: user })
+        .andWhere('jobs.id NOT IN (:...id)', {
+          id: conversationsJobIdArray,
+        })
+        .getMany();
+
+      return jobs;
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async getFreeJobs(user: UserDto): Promise<Job[]> {
+    try {
+      const conversations = await this.getJobConversations(user, 4);
       const conversationsJobIdArray = conversations.map((el) => el.job.id);
 
       const jobs = await this.jobRepository
