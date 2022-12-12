@@ -27,15 +27,15 @@ export default class CreateJobDto {
   @IsNumber()
   category?: number;
 
-  @ApiProperty({ example: [1, 2, 3] })
-  @IsOptional()
-  @IsArray()
-  skills?: number[];
-
   @ApiProperty({ example: 'Upper-Intermediate' })
   @IsOptional()
   @IsString()
   english_level?: EnglishLevel;
+
+  @ApiProperty({ example: [1, 2, 3] })
+  @IsOptional()
+  @IsArray()
+  skills?: number[];
 
   @ApiProperty({ example: 'Full-Time' })
   @IsOptional()

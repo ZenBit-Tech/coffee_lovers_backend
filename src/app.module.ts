@@ -9,7 +9,12 @@ import { Education } from '@entities/Education.entity';
 import { Category } from '@entities/Category.entity';
 import { Job } from '@entities/Job.entity';
 import { Skill } from '@entities/Skill.entity';
-import { Proposal } from '@entities/Proposal.entity';
+import { Conversation } from '@entities/Conversation.entity';
+import { Message } from '@entities/Message.entity';
+import { Request } from '@entities/Request.entity';
+import { Notification } from '@entities/Notification.entity';
+import { Offer } from '@entities/Offer.entity';
+import { Contract } from '@entities/Contract.entity';
 import { AppController } from '@/app.controller';
 import { AppService } from '@/app.service';
 import { AuthModule } from '@/modules/auth/auth.module';
@@ -17,7 +22,9 @@ import { TestModule } from '@/modules/test/test.module';
 import { UserModule } from '@/modules/user/user.module';
 import { filePath } from '@/modules/file/constants';
 import { PropertiesModule } from '@/modules/properties/properties.module';
-import { JobsModule } from './modules/jobs/job.module';
+import { JobsModule } from '@/modules/jobs/job.module';
+import { ChatModule } from '@/modules/chat/chat.module';
+import { InviteModule } from './modules/interview-invite/invite.module';
 
 @Module({
   imports: [
@@ -40,7 +47,12 @@ import { JobsModule } from './modules/jobs/job.module';
         Category,
         Job,
         Skill,
-        Proposal,
+        Conversation,
+        Message,
+        Request,
+        Notification,
+        Offer,
+        Contract,
       ],
       synchronize: true,
     }),
@@ -52,6 +64,8 @@ import { JobsModule } from './modules/jobs/job.module';
     UserModule,
     JobsModule,
     PropertiesModule,
+    ChatModule,
+    InviteModule,
   ],
   controllers: [AppController],
   providers: [AppService],

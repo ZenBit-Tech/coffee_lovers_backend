@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { Request } from '@entities/Request.entity';
 import { User } from '@/common/entities/User.entity';
 import { WorkHistory } from '@/common/entities/WorkHistory.entity';
 import { Education } from '@/common/entities/Education.entity';
@@ -12,7 +13,14 @@ import { Category } from '@/common/entities/Category.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, WorkHistory, Education, Job, Category]),
+    TypeOrmModule.forFeature([
+      User,
+      WorkHistory,
+      Education,
+      Job,
+      Category,
+      Request,
+    ]),
     MailModule,
     FileModule,
   ],
