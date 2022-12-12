@@ -11,6 +11,7 @@ import { Conversation } from '@entities/Conversation.entity';
 import { Request } from '@entities/Request.entity';
 import { RequestType, Role } from '@constants/entities';
 import { Message } from '@entities/Message.entity';
+import { UserColumns } from '@constants/chat';
 import UserDto from '@/modules/user/dto/user.dto';
 import CreateConversationDto from './dto/create-conversation.dto';
 import { CreateMessageDto } from './dto/create-message.dto';
@@ -48,7 +49,9 @@ export class ChatService {
 
       findRequestQuery.andWhere(
         `request.${
-          user.role === Role.JOBOWNER ? 'freelancer' : 'job_owner'
+          user.role === Role.JOBOWNER
+            ? UserColumns.FREELANCER
+            : UserColumns.JOB_OWNER
         } = :userId`,
         {
           userId: payload.user,
@@ -120,12 +123,11 @@ export class ChatService {
         .where({ id: conversation })
         .andWhere(
           new Brackets((qb) => {
-            qb.where('conversation.freelancer = :userId').orWhere(
-              'conversation.job_owner = :userId',
-              {
-                userId: user.id,
-              },
-            );
+            qb.where(
+              `conversation.${UserColumns.FREELANCER} = :userId`,
+            ).orWhere(`conversation.${UserColumns.JOB_OWNER} = :userId`, {
+              userId: user.id,
+            });
           }),
         )
         .getCount();
@@ -162,7 +164,9 @@ export class ChatService {
           : { freelancer: user };
 
       const userColumn =
-        user.role === Role.JOBOWNER ? 'freelancer' : 'job_owner';
+        user.role === Role.JOBOWNER
+          ? UserColumns.FREELANCER
+          : UserColumns.JOB_OWNER;
 
       const query = this.conversationRepository
         .createQueryBuilder('conversation')
