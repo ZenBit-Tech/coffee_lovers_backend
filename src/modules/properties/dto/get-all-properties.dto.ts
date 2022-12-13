@@ -13,4 +13,7 @@ export default class GetAllPropertiesDto {
 
   @ApiProperty({ example: ['Full-Time, Part-Time'] })
   readonly availableTime: string[];
+
+  @ApiProperty({ example: ['Month, Week'] })
+  readonly durationAmount: string[];
 }

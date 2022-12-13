@@ -29,7 +29,7 @@ export default class AddJobDescriptionDto {
   @IsNumber()
   category?: Category;
 
-  @ApiProperty({ example: 'Upper-intermadiate' })
+  @ApiProperty({ example: 'Upper-Intermediate' })
   @IsOptional()
   @IsString()
   english_level?: EnglishLevel;

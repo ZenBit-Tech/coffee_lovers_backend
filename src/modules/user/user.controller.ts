@@ -36,6 +36,7 @@ import AddUserEducationDto from './dto/add-user-education.dto';
 import AddUserWorkhistoryDto from './dto/add-user-workhistory.dto';
 import { ReqUser } from './dto/get-user-dto.dto';
 import AddUserInfoDto from './dto/add-user-info.dto';
+import { takeValue, pageNumber } from './constants';
 import GetUserWorkhistoryDto from './dto/get-user-workhistory.dto';
 import { WorkHistory } from '@/common/entities/WorkHistory.entity';
 import GetUserEducationDto from './dto/get-user-education.dto';

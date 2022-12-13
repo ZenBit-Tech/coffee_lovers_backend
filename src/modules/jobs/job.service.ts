@@ -14,6 +14,7 @@ import { Conversation } from '@/common/entities/Conversation.entity';
 import UserDto from '@/modules/user/dto/user.dto';
 import GetJobsDto from './dto/get-jobs.dto';
 import CreateJobDto from './dto/create-job.dto';
+import UpdateJobDto from './dto/update-job.dto';
 import FindJobsResponse from './dto/find-jobs-response.dto';
 import CreateProposalDto from './dto/create-proposal.dto';
 import getJobProposalsResponseDto from './dto/get-job-proposals-response.dto';
@@ -297,6 +298,41 @@ export class JobsService {
         .getMany();
 
       return jobs;
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async updateJob(payload: UpdateJobDto, user: UserDto): Promise<void> {
+    try {
+      const { id, skills, ...jobPayload } = payload;
+      const job = await this.findOne({ id });
+      if (!(job && job.owner.id === user.id)) {
+        throw new ForbiddenException();
+      }
+      if (skills) {
+        const jobWithSkills = await this.jobRepository
+          .createQueryBuilder('job')
+          .leftJoinAndSelect('job.skills', 'skills')
+          .where('job.id = :id', { id })
+          .getOne();
+        await this.jobRepository
+          .createQueryBuilder()
+          .relation(Job, 'skills')
+          .of(id)
+          .addAndRemove(skills, jobWithSkills.skills);
+      }
+      await this.jobRepository
+        .createQueryBuilder()
+        .update(Job)
+        .set({
+          ...jobPayload,
+        })
+        .where('id = :id', { id })
+        .execute();
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
