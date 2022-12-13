@@ -29,6 +29,8 @@ describe('JobsController', () => {
       expect(await jobsController.getJobById(payload)).toStrictEqual({
         id: +payload.id,
       });
+
+      expect(mockJobService.getJobById).toHaveBeenCalledWith(+payload.id);
     });
   });
 });

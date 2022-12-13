@@ -5,6 +5,8 @@ import { UserController } from './user.controller';
 import { UserService } from './user.service';
 import { ReqUser } from './dto/get-user-dto.dto';
 import AddUserInfoDto from './dto/add-user-info.dto';
+import PasswordResetRequestDto from './dto/password-reset-request.dto';
+import PasswordResetDto from './dto/password-reset.dto';
 
 describe('UserController', () => {
   let userController: UserController;
@@ -17,6 +19,10 @@ describe('UserController', () => {
     addUserInfo: jest
       .fn()
       .mockImplementation((dto: AddUserInfoDto, user: User) => {}),
+    sendPasswordResetMail: jest
+      .fn()
+      .mockImplementation((dto: PasswordResetRequestDto) => {}),
+    resetPassword: jest.fn().mockImplementation((dto: PasswordResetDto) => {}),
   };
 
   beforeEach(async () => {
@@ -60,7 +66,7 @@ describe('UserController', () => {
   });
 
   describe('addUserInfo', () => {
-    it('should update a user', async (): Promise<void> => {
+    it('should call addUserInfo in user service', async (): Promise<void> => {
       const payload: AddUserInfoDto = { first_name: 'John' };
       await userController.addUserInfo(reqUser, payload);
 
@@ -68,6 +74,24 @@ describe('UserController', () => {
         payload,
         reqUser.user,
       );
+    });
+  });
+
+  describe('passwordResetRequest', () => {
+    it('should call sendPasswordResetMail in user service', async (): Promise<void> => {
+      const dto: PasswordResetRequestDto = { email: 'test@test.com' };
+      await userController.passwordResetRequest(dto);
+
+      expect(mockUserService.sendPasswordResetMail).toHaveBeenCalledWith(dto);
+    });
+  });
+
+  describe('passwordReset', () => {
+    it('should call resetPassword in user service', async (): Promise<void> => {
+      const dto: PasswordResetDto = { key: 'test', password: 'Qwerty123' };
+      await userController.passwordReset(dto);
+
+      expect(mockUserService.resetPassword).toHaveBeenCalledWith(dto);
     });
   });
 });
