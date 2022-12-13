@@ -1,44 +1,34 @@
-import { ConfigService } from '@nestjs/config';
-import { Repository } from 'typeorm';
 import { User } from '@entities/User.entity';
 import { WorkHistory } from '@entities/WorkHistory.entity';
-import { Education } from '@entities/Education.entity';
-import { Category } from '@entities/Category.entity';
-import { Request } from '@entities/Request.entity';
-import { MailService } from '@/modules/mail/mail.service';
-import { FileService } from '@/modules/file/file.service';
+import { Test, TestingModule } from '@nestjs/testing';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
 import { ReqUser } from './dto/get-user-dto.dto';
+import AddUserInfoDto from './dto/add-user-info.dto';
 
 describe('UserController', () => {
   let userController: UserController;
-  let userService: UserService;
-  let fileService: FileService;
-  let mailService: MailService;
-  let configService: ConfigService;
-
-  let educationRepository: Repository<Education>;
-  let categoryRepository: Repository<Category>;
-  let userRepository: Repository<User>;
-  let workHistoryRepository: Repository<WorkHistory>;
-  let requestRepository: Repository<Request>;
-
   let reqUser: ReqUser;
 
-  beforeEach(async () => {
-    userService = new UserService(
-      educationRepository,
-      categoryRepository,
-      userRepository,
-      configService,
-      mailService,
-      fileService,
-      workHistoryRepository,
-      requestRepository,
-    );
+  const mockUserService = {
+    getWorkInfo: jest
+      .fn()
+      .mockImplementation((user: User) => [{ id: 1 } as WorkHistory]),
+    addUserInfo: jest
+      .fn()
+      .mockImplementation((dto: AddUserInfoDto, user: User) => {}),
+  };
 
-    userController = new UserController(userService);
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      controllers: [UserController],
+      providers: [UserService],
+    })
+      .overrideProvider(UserService)
+      .useValue(mockUserService)
+      .compile();
+
+    userController = module.get<UserController>(UserController);
 
     reqUser = {
       user: {
@@ -47,7 +37,7 @@ describe('UserController', () => {
     };
   });
 
-  it('should be defined', () => {
+  it('user controller should be defined', () => {
     expect(userController).toBeDefined();
   });
 
@@ -61,13 +51,23 @@ describe('UserController', () => {
 
   describe('getUserWorkInformation', () => {
     it('should return work history', async (): Promise<void> => {
-      const result = [{ id: 1, work_history_descr: 'test' } as WorkHistory];
+      expect(await userController.getUserWorkInformation(reqUser)).toEqual([
+        { id: expect.any(Number) } as WorkHistory,
+      ]);
 
-      jest
-        .spyOn(userService, 'getWorkInfo')
-        .mockImplementation(async () => result);
+      expect(mockUserService.getWorkInfo).toHaveBeenCalledWith(reqUser.user);
+    });
+  });
 
-      expect(await userService.getWorkInfo(reqUser.user)).toBe(result);
+  describe('addUserInfo', () => {
+    it('should update a user', async (): Promise<void> => {
+      const payload: AddUserInfoDto = { first_name: 'John' };
+      await userController.addUserInfo(reqUser, payload);
+
+      expect(mockUserService.addUserInfo).toHaveBeenCalledWith(
+        payload,
+        reqUser.user,
+      );
     });
   });
 });
