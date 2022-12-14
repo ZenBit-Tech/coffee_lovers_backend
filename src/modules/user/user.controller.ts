@@ -45,7 +45,6 @@ import GetUserEducationDto from './dto/get-user-education.dto';
 import { Education } from '@/common/entities/Education.entity';
 import GetFreelancerDto from './dto/get-freelancer-params.dto';
 import getUserProposalsResponseDto from './dto/get-proposals-by-user.dto';
-import GetUserInfoByIdDto from './dto/get-freelancer-byid.dto';
 
 @ApiTags('user')
 @Controller('user')
