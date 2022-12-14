@@ -13,12 +13,14 @@ import {
   DefaultValuePipe,
   ParseIntPipe,
   Put,
+  Param,
 } from '@nestjs/common';
 import {
   ApiBody,
   ApiConsumes,
   ApiHeader,
   ApiOperation,
+  ApiParam,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
@@ -101,6 +103,16 @@ export class UserController {
   @HttpCode(HttpStatus.OK)
   passwordReset(@Body() dto: PasswordResetDto): Promise<void> {
     return this.userService.resetPassword(dto);
+  }
+
+  @ApiOperation({ summary: 'Check reset password link availability' })
+  @ApiResponse({ type: Boolean })
+  @ApiParam({ name: 'key', description: 'secret key' })
+  @Get('/passwordreset/:key')
+  passwordResetCheckAvailability(
+    @Param() params: { key: string },
+  ): Promise<boolean> {
+    return this.userService.passwordResetCheckAvailability(params.key);
   }
 
   @ApiOperation({ summary: 'set profile image for user' })

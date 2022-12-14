@@ -189,7 +189,7 @@ export class UserService {
     try {
       const user = await this.findByEmail(dto.email);
       if (!user) {
-        throw new BadRequestException('User not found');
+        return;
       }
       await this.mailService.sendResetPassword(user);
     } catch (error) {
@@ -213,6 +213,16 @@ export class UserService {
       if (error instanceof HttpException) {
         throw error;
       }
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async passwordResetCheckAvailability(key: string): Promise<boolean> {
+    try {
+      const user = await this.findOne({ reset_password_key: key });
+
+      return !!user;
+    } catch (error) {
       throw new InternalServerErrorException();
     }
   }
