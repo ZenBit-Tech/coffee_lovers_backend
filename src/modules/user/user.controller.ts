@@ -13,12 +13,14 @@ import {
   DefaultValuePipe,
   ParseIntPipe,
   Put,
+  Param,
 } from '@nestjs/common';
 import {
   ApiBody,
   ApiConsumes,
   ApiHeader,
   ApiOperation,
+  ApiParam,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
@@ -43,6 +45,7 @@ import GetUserEducationDto from './dto/get-user-education.dto';
 import { Education } from '@/common/entities/Education.entity';
 import GetFreelancerDto from './dto/get-freelancer-params.dto';
 import getUserProposalsResponseDto from './dto/get-proposals-by-user.dto';
+import GetUserInfoByIdDto from './dto/get-freelancer-byid.dto';
 
 @ApiTags('user')
 @Controller('user')
@@ -177,6 +180,20 @@ export class UserController {
     @Body() payload: AddUserWorkhistoryDto[],
   ): Promise<void> {
     return this.userService.addWorkhistoryInfo(payload, req.user);
+  }
+
+  @ApiOperation({ summary: 'get full freelancer info by id' })
+  @ApiResponse({ type: UserDto })
+  @ApiHeader({
+    name: 'Authorization',
+    description: 'Bearer token',
+  })
+  @ApiParam({ name: 'key', description: 'secret key' })
+  @Get('/freelancer/:key')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  getFreelancerPageInfoById(@Param() params: { key: number }): Promise<User> {
+    return this.userService.getFreelancerInfoById(params.key);
   }
 
   @ApiOperation({ summary: 'Get user information' })
