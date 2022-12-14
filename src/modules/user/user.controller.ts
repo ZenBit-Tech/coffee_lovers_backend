@@ -188,7 +188,7 @@ export class UserController {
     description: 'Bearer token',
   })
   @ApiParam({ name: 'key', description: 'secret key' })
-  @Get('/freelancer/:key')
+  @Get('/:key')
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
   getFreelancerPageInfoById(@Param() params: { key: number }): Promise<User> {

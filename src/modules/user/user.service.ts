@@ -28,7 +28,6 @@ import AddUserEducationDto from './dto/add-user-education.dto';
 import AddUserInfoDto from './dto/add-user-info.dto';
 import GetFreelancerDto from './dto/get-freelancer-params.dto';
 import getUserProposalsResponseDto from './dto/get-proposals-by-user.dto';
-import GetUserInfoByIdDto from './dto/get-freelancer-byid.dto';
 
 @Injectable()
 export class UserService {
