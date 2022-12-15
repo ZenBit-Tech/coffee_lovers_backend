@@ -10,7 +10,6 @@ import { Job } from '@entities/Job.entity';
 import { findJobsDefaultLimit, findJobsDefaultOffset } from '@constants/jobs';
 import { Request } from '@entities/Request.entity';
 import { RequestType } from '@constants/entities';
-import { Conversation } from '@/common/entities/Conversation.entity';
 import UserDto from '@/modules/user/dto/user.dto';
 import GetJobsDto from './dto/get-jobs.dto';
 import CreateJobDto from './dto/create-job.dto';
@@ -18,16 +17,17 @@ import FindJobsResponse from './dto/find-jobs-response.dto';
 import CreateProposalDto from './dto/create-proposal.dto';
 import getJobProposalsResponseDto from './dto/get-job-proposals-response.dto';
 import getJobByIdResponseDto from './dto/get-job-response.dto';
+import { Offer } from '@/common/entities/Offer.entity';
 
 @Injectable()
 export class JobsService {
   constructor(
     @InjectRepository(Job)
     private jobRepository: Repository<Job>,
+    @InjectRepository(Offer)
+    private offerRepository: Repository<Offer>,
     @InjectRepository(Request)
     private requestRepository: Repository<Request>,
-    @InjectRepository(Conversation)
-    private conversationRepository: Repository<Conversation>,
   ) {}
 
   async findOne(payload: object, leftJoins?: string[]): Promise<Job | null> {
@@ -266,45 +266,37 @@ export class JobsService {
     }
   }
 
-  async getJobConversations(
-    user: UserDto,
-    fr: number,
-  ): Promise<Conversation[]> {
-    try {
-      const conversations = await this.conversationRepository
-        .createQueryBuilder('conversations')
-        .leftJoinAndSelect('conversations.job', 'job')
-        .leftJoin('conversations.freelancer', 'freelancer')
-        .leftJoin('job.offers', 'offer', 'offer.status != :status', {
-          status: 'Accepted',
-        })
-        .where({ job_owner: user })
-        .where('freelancer.id = :id', { id: fr })
-        .getMany();
-
-      return conversations;
-    } catch (error) {
-      if (error instanceof HttpException) {
-        throw error;
-      }
-      throw new InternalServerErrorException();
-    }
-  }
-
   async getAvailableJobs(user: UserDto, fr: number): Promise<Job[]> {
     try {
-      const conversations = await this.getJobConversations(user, fr);
-      const conversationsJobIdArray = conversations.map((el) => el.job.id);
-
-      const jobs = await this.jobRepository
-        .createQueryBuilder('jobs')
+      const jobsResponse = await this.jobRepository
+        .createQueryBuilder('job')
+        .loadRelationCountAndMap(
+          'job.offersCount',
+          'job.offers',
+          'offer',
+          (qb) =>
+            qb
+              .where('offer.status = :status', {
+                status: 'Accepted',
+              })
+              .orWhere('offer.freelancer.id = :fr', { fr }),
+        )
+        .loadRelationCountAndMap(
+          'job.conversationsCount',
+          'job.conversations',
+          'conversation',
+          (qb) => qb.where('conversation.freelancer.id = :fr', { fr }),
+        )
+        .loadRelationCountAndMap(
+          'job.requestsCount',
+          'job.requests',
+          'request',
+          (qb) => qb.where('request.freelancer.id = :fr', { fr }),
+        )
         .where({ owner: user })
-        .andWhere('jobs.id NOT IN (:...id)', {
-          id: conversationsJobIdArray,
-        })
         .getMany();
 
-      return jobs;
+      return jobsResponse;
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
@@ -313,20 +305,25 @@ export class JobsService {
     }
   }
 
-  async getFreeJobs(user: UserDto): Promise<Job[]> {
+  async filterJobsWithoutOffer(user: UserDto, fr: number): Promise<Job[]> {
     try {
-      const conversations = await this.getJobConversations(user, 4);
-      const conversationsJobIdArray = conversations.map((el) => el.job.id);
-
-      const jobs = await this.jobRepository
-        .createQueryBuilder('jobs')
+      const jobsResponse = await this.jobRepository
+        .createQueryBuilder('job')
+        .loadRelationCountAndMap(
+          'job.offersCount',
+          'job.offers',
+          'offer',
+          (qb) =>
+            qb
+              .where('offer.status = :status', {
+                status: 'Accepted',
+              })
+              .orWhere('offer.freelancer.id = :fr', { fr }),
+        )
         .where({ owner: user })
-        .andWhere('jobs.id NOT IN (:...id)', {
-          id: conversationsJobIdArray,
-        })
         .getMany();
 
-      return jobs;
+      return jobsResponse;
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;

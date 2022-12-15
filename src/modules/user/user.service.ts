@@ -349,12 +349,11 @@ export class UserService {
         search,
         ...userPayload
       } = params;
-
       const query = this.userRepository
         .createQueryBuilder('user')
         .leftJoinAndSelect('user.category', 'category')
         .where(userPayload)
-        .andWhere('user.role >= :role', {
+        .andWhere('user.role = :role', {
           role: Role.FREELANCER,
         })
         .skip((page - 1) * take)

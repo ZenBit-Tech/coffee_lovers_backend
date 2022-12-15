@@ -23,6 +23,8 @@ import getJobProposalsResponseDto from './dto/get-job-proposals-response.dto';
 import getJobProposalsParamsDto from './dto/get-job-proposals-params-dto';
 import getJobByIdResponseDto from './dto/get-job-response.dto';
 import GetPostedJobsResponseDto from './dto/get-posted-jobs-response.dto';
+import getJobsWithoutOffer from './dto/get-jobs-withoutoffer.dto';
+import getAvailableJobs from './dto/get-available-jobs.dto';
 
 @ApiTags('jobs')
 @Controller('jobs')
@@ -81,10 +83,11 @@ export class JobsController {
   }
 
   @ApiOperation({
-    summary: 'Get jobs of jobowner without chat with current freelancer yet',
+    summary:
+      'Get user jobs and count accepted offers, conversations, requests ',
   })
   @ApiHeader(getAuthorizationApiHeader())
-  @ApiResponse({ type: Array<Job> })
+  @ApiResponse({ type: getAvailableJobs })
   @UseGuards(JwtAuthGuard)
   @Get('/userjobs/:fr')
   getUserJobs(@Request() req, @Param('fr') fr: string): Promise<Job[]> {
@@ -103,14 +106,13 @@ export class JobsController {
   }
 
   @ApiOperation({
-    summary:
-      'Get jobs of jobowner without approved offer with any freelancer yet',
+    summary: 'Get user jobs and count accepted offers',
   })
   @ApiHeader(getAuthorizationApiHeader())
-  @ApiResponse({ type: Array<Job> })
+  @ApiResponse({ type: getJobsWithoutOffer })
   @UseGuards(JwtAuthGuard)
-  @Get('/userjobs/:fr/free')
-  getJobsWithoutOffer(@Request() req): Promise<Job[]> {
-    return this.jobsService.getFreeJobs(req.user);
+  @Get('/withoutoffer/:fr')
+  getJobsMissingOffer(@Request() req, @Param('fr') fr: number): Promise<Job[]> {
+    return this.jobsService.filterJobsWithoutOffer(req.user, fr);
   }
 }
