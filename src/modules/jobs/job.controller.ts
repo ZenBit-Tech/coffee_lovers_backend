@@ -21,6 +21,7 @@ import FindJobsResponse from './dto/find-jobs-response.dto';
 import CreateProposalDto from './dto/create-proposal.dto';
 import getJobProposalsResponseDto from './dto/get-job-proposals-response.dto';
 import getJobProposalsParamsDto from './dto/get-job-proposals-params-dto';
+import UpdateJobDto from './dto/update-job.dto';
 import getJobByIdResponseDto from './dto/get-job-response.dto';
 import GetPostedJobsResponseDto from './dto/get-posted-jobs-response.dto';
 import getJobsWithoutOffer from './dto/get-jobs-withoutoffer.dto';
@@ -114,5 +115,14 @@ export class JobsController {
   @Get('/withoutoffer/:fr')
   getJobsMissingOffer(@Request() req, @Param('fr') fr: number): Promise<Job[]> {
     return this.jobsService.filterJobsWithoutOffer(req.user, fr);
+  }
+
+  @ApiOperation({ summary: 'Update job' })
+  @ApiHeader(getAuthorizationApiHeader())
+  @Post('/update')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  updateJob(@Request() req, @Body() payload: UpdateJobDto): Promise<void> {
+    return this.jobsService.updateJob(payload, req.user);
   }
 }

@@ -6,7 +6,11 @@ import {
   DurationAmount,
 } from '@constants/entities';
 
-export default class CreateJobDto {
+export default class UpdateJobDto {
+  @ApiProperty({ example: 1 })
+  @IsNumber()
+  id: number;
+
   @ApiProperty({ example: 'Landing page' })
   @IsOptional()
   @IsString()
@@ -22,30 +26,25 @@ export default class CreateJobDto {
   @IsNumber()
   hourly_rate?: number;
 
-  @ApiProperty({ example: 4 })
+  @ApiProperty({ example: [1, 2, 3] })
   @IsOptional()
-  @IsNumber()
-  category?: number;
+  @IsArray()
+  skills?: number[];
 
   @ApiProperty({ example: 'Upper-Intermediate' })
   @IsOptional()
   @IsString()
   english_level?: EnglishLevel;
 
-  @ApiProperty({ example: [1, 2, 3] })
-  @IsOptional()
-  @IsArray()
-  skills?: number[];
-
-  @ApiProperty({ example: 'Full-Time' })
-  @IsOptional()
-  @IsString()
-  duration_amount?: DurationAmount;
-
   @ApiProperty({ example: 5 })
   @IsOptional()
   @IsNumber()
   duration?: number;
+
+  @ApiProperty({ example: 'Month' })
+  @IsOptional()
+  @IsString()
+  duration_amount?: DurationAmount;
 
   @ApiProperty({ example: 'Full-Time' })
   @IsOptional()
