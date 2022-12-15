@@ -53,10 +53,7 @@ export class UserController {
 
   @ApiOperation({ summary: 'get information about current user' })
   @ApiResponse({ type: UserDto })
-  @ApiHeader({
-    name: 'Authorization',
-    description: 'Bearer token',
-  })
+  @ApiHeader(getAuthorizationApiHeader())
   @UseGuards(JwtAuthGuard)
   @Get('')
   getUserInformation(@Request() req: ReqUser): UserDto {
@@ -67,10 +64,7 @@ export class UserController {
     summary: 'get information about current user work experience',
   })
   @ApiResponse({ type: GetUserWorkhistoryDto })
-  @ApiHeader({
-    name: 'Authorization',
-    description: 'Bearer token',
-  })
+  @ApiHeader(getAuthorizationApiHeader())
   @UseGuards(JwtAuthGuard)
   @Get('/workhistory-info')
   getUserWorkInformation(@Request() req: ReqUser): Promise<WorkHistory[]> {
@@ -81,10 +75,7 @@ export class UserController {
     summary: 'get information about current user education',
   })
   @ApiResponse({ type: GetUserEducationDto })
-  @ApiHeader({
-    name: 'Authorization',
-    description: 'Bearer token',
-  })
+  @ApiHeader(getAuthorizationApiHeader())
   @UseGuards(JwtAuthGuard)
   @Get('/education-info')
   getUserEducationInformation(@Request() req: ReqUser): Promise<Education[]> {
@@ -107,10 +98,7 @@ export class UserController {
 
   @ApiOperation({ summary: 'set profile image for user' })
   @ApiResponse({ type: SetProfileImageDto })
-  @ApiHeader({
-    name: 'Authorization',
-    description: 'Bearer token',
-  })
+  @ApiHeader(getAuthorizationApiHeader())
   @ApiConsumes('multipart/form-data')
   @ApiBody({
     required: true,
@@ -137,10 +125,7 @@ export class UserController {
   }
 
   @ApiOperation({ summary: 'sent user information' })
-  @ApiHeader({
-    name: 'Authorization',
-    description: 'Bearer token',
-  })
+  @ApiHeader(getAuthorizationApiHeader())
   @Put('/')
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
@@ -152,10 +137,7 @@ export class UserController {
   }
 
   @ApiOperation({ summary: 'sent education information' })
-  @ApiHeader({
-    name: 'Authorization',
-    description: 'Bearer token',
-  })
+  @ApiHeader(getAuthorizationApiHeader())
   @Post('education-info')
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
@@ -167,10 +149,7 @@ export class UserController {
   }
 
   @ApiOperation({ summary: 'sent workhistory information' })
-  @ApiHeader({
-    name: 'Authorization',
-    description: 'Bearer token',
-  })
+  @ApiHeader(getAuthorizationApiHeader())
   @Post('workhistory-info')
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
@@ -183,10 +162,7 @@ export class UserController {
 
   @ApiOperation({ summary: 'get full freelancer info by id' })
   @ApiResponse({ type: UserDto })
-  @ApiHeader({
-    name: 'Authorization',
-    description: 'Bearer token',
-  })
+  @ApiHeader(getAuthorizationApiHeader())
   @ApiParam({ name: 'key', description: 'secret key' })
   @Get('/freelancer/:key')
   @UseGuards(JwtAuthGuard)
@@ -197,10 +173,7 @@ export class UserController {
 
   @ApiOperation({ summary: 'Get user information' })
   @ApiResponse({ type: UserDto })
-  @ApiHeader({
-    name: 'Authorization',
-    description: 'Bearer token',
-  })
+  @ApiHeader(getAuthorizationApiHeader())
   @UseGuards(JwtAuthGuard)
   @Get('/freelancer')
   getFreelancerInformation(
@@ -210,10 +183,7 @@ export class UserController {
   }
 
   @ApiOperation({ summary: 'Add new category for user or set category' })
-  @ApiHeader({
-    name: 'Authorization',
-    description: 'Bearer token',
-  })
+  @ApiHeader(getAuthorizationApiHeader())
   @Post('category')
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
@@ -225,10 +195,7 @@ export class UserController {
   }
 
   @ApiOperation({ summary: 'Get all available categories' })
-  @ApiHeader({
-    name: 'Authorization',
-    description: 'Bearer token',
-  })
+  @ApiHeader(getAuthorizationApiHeader())
   @Get('category')
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
