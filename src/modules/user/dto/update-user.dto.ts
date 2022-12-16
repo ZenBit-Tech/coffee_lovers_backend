@@ -8,6 +8,7 @@ import {
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { AvailableTime, EnglishLevel, Role } from '@constants/entities';
+import { Category } from '@entities/Category.entity';
 import {
   passwordMinLength,
   passwordValidationMessage,
@@ -68,10 +69,10 @@ export default class UpdateUserDto {
   @IsEnum(EnglishLevel)
   english_level?: EnglishLevel;
 
-  @ApiProperty({ example: 10 })
+  @ApiProperty({ example: { id: 1, name: 'Android' } })
   @IsOptional()
   @IsNumber()
-  category_id?: number;
+  category?: Category;
 
   @ApiProperty({ example: 'Freelancer' })
   @IsOptional()
