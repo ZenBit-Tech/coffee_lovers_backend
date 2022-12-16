@@ -1,5 +1,6 @@
 import {
   Injectable,
+  Inject,
   InternalServerErrorException,
   BadRequestException,
   HttpException,
@@ -12,6 +13,7 @@ import { User } from '@entities/User.entity';
 import { Education } from '@entities/Education.entity';
 import { WorkHistory } from '@entities/WorkHistory.entity';
 import { Request } from '@entities/Request.entity';
+import { forwardRef } from '@nestjs/common/utils';
 import { MailService } from '@/modules/mail/mail.service';
 import { FileService } from '@/modules/file/file.service';
 import { FileType } from '@/modules/file/types';
@@ -40,15 +42,17 @@ export class UserService {
 
     @InjectRepository(User)
     private userRepository: Repository<User>,
-    private configService: ConfigService,
-    private mailService: MailService,
-    private fileService: FileService,
 
     @InjectRepository(WorkHistory)
     private workHistoryRepository: Repository<WorkHistory>,
 
     @InjectRepository(Request)
     private requestRepository: Repository<Request>,
+
+    private readonly configService: ConfigService,
+    @Inject(forwardRef(() => MailService))
+    private readonly mailService: MailService,
+    private readonly fileService: FileService,
   ) {}
 
   async create(dto: CreateUserDto): Promise<InsertResult> {
@@ -232,7 +236,7 @@ export class UserService {
     }
   }
 
-  private async hashPassword(payload: UpdateUserDto): Promise<UpdateUserDto> {
+  async hashPassword(payload: UpdateUserDto): Promise<UpdateUserDto> {
     try {
       const user = { ...payload };
       if (user.password) {

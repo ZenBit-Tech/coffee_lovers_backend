@@ -56,7 +56,7 @@ describe('UserController', () => {
   });
 
   describe('getUserWorkInformation', () => {
-    it('should return work history', async (): Promise<void> => {
+    it('should call getWorkInfo in user service', async (): Promise<void> => {
       expect(await userController.getUserWorkInformation(reqUser)).toEqual([
         { id: expect.any(Number) } as WorkHistory,
       ]);
