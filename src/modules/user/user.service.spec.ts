@@ -48,7 +48,9 @@ describe('UserService', () => {
     }).compile();
 
     userService = module.get<UserService>(UserService);
+  });
 
+  afterEach(async () => {
     jest.clearAllMocks();
   });
 
@@ -110,14 +112,15 @@ describe('UserService', () => {
   });
 
   describe('passwordResetRequest', () => {
-    it('wrong email: should throw an error', async (): Promise<void> => {
+    it('wrong email: should not call sendResetPassword in mail service', async (): Promise<void> => {
       const dto = { email: 'test@test.com' };
 
       jest.spyOn(userService, 'findByEmail').mockResolvedValue(null);
+      jest.spyOn(mockMailService, 'sendResetPassword');
 
-      await expect(userService.sendPasswordResetMail(dto)).rejects.toEqual(
-        new BadRequestException('User not found'),
-      );
+      await userService.sendPasswordResetMail(dto);
+
+      expect(mockMailService.sendResetPassword).not.toBeCalled();
     });
 
     it('should call sendResetPassword in mail service', async (): Promise<void> => {
