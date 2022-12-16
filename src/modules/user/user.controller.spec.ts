@@ -43,10 +43,6 @@ describe('UserController', () => {
     };
   });
 
-  it('user controller should be defined', () => {
-    expect(userController).toBeDefined();
-  });
-
   describe('getUserInformation', () => {
     it('should return information about current user', async (): Promise<void> => {
       expect(await userController.getUserInformation(reqUser)).toBe(
