@@ -96,6 +96,16 @@ export class UserController {
     return this.userService.resetPassword(dto);
   }
 
+  @ApiOperation({ summary: 'Check reset password link availability' })
+  @ApiResponse({ type: Boolean })
+  @ApiParam({ name: 'key', description: 'secret key' })
+  @Get('/passwordreset/:key')
+  passwordResetCheckAvailability(
+    @Param() params: { key: string },
+  ): Promise<boolean> {
+    return this.userService.passwordResetCheckAvailability(params.key);
+  }
+
   @ApiOperation({ summary: 'set profile image for user' })
   @ApiResponse({ type: SetProfileImageDto })
   @ApiHeader(getAuthorizationApiHeader())
