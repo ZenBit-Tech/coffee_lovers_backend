@@ -3,6 +3,7 @@ import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { HttpStatus } from '@nestjs/common/enums';
 import { ExecutionContext } from '@nestjs/common/interfaces';
+import { ValidationPipe } from '@nestjs/common/pipes';
 import { JobsService } from '@/modules/jobs/job.service';
 import { JobsController } from '@/modules/jobs/job.controller';
 import { JwtAuthGuard } from '@/modules/auth/guards/jwt-auth.guard';
@@ -12,6 +13,7 @@ describe('JobController (e2e)', () => {
 
   const jobService = {
     getJobById: (jobId: number) => ({ id: jobId }),
+    getJobProposals: (jobId: number) => ({ job: { id: jobId }, proposals: [] }),
   };
 
   beforeEach(async () => {
@@ -36,13 +38,38 @@ describe('JobController (e2e)', () => {
       .compile();
 
     app = moduleFixture.createNestApplication();
+    app.useGlobalPipes(new ValidationPipe());
+
     await app.init();
   });
 
-  it('/jobs/:id/job (GET) job by id', () => {
-    return request(app.getHttpServer())
-      .get('/jobs/1/job')
-      .expect(HttpStatus.OK)
-      .expect(jobService.getJobById(1));
+  describe('/jobs/:id/job (GET) job by id', () => {
+    it('should return job by id', () => {
+      return request(app.getHttpServer())
+        .get('/jobs/1/job')
+        .expect(HttpStatus.OK)
+        .expect(jobService.getJobById(1));
+    });
+
+    it('wrong id type: should return status code 400', () => {
+      return request(app.getHttpServer())
+        .get('/jobs/k/job')
+        .expect(HttpStatus.BAD_REQUEST);
+    });
+  });
+
+  describe('/jobs/:id/proposals (GET) get proposals by job', () => {
+    it('should return proposals by job id', () => {
+      return request(app.getHttpServer())
+        .get('/jobs/1/proposals')
+        .expect(HttpStatus.OK)
+        .expect(jobService.getJobProposals(1));
+    });
+
+    it('wrong id type: should return status code 400', () => {
+      return request(app.getHttpServer())
+        .get('/jobs/k/proposals')
+        .expect(HttpStatus.BAD_REQUEST);
+    });
   });
 });

@@ -84,7 +84,7 @@ describe('UserService', () => {
   });
 
   describe('resetPassword', () => {
-    it('wrong reset key: should throw an error', async (): Promise<void> => {
+    it('wrong reset key: should throw bad request exception', async (): Promise<void> => {
       const dto = { password: 'Qwerty123', key: '123' };
       jest.spyOn(userService, 'findOne').mockImplementation(() => null);
 
