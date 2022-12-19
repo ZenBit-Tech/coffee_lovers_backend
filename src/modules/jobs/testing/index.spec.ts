@@ -1,8 +1,8 @@
 import { Repository } from 'typeorm';
 import { Job } from '@/common/entities/Job.entity';
-import { JobsController } from './job.controller';
-import { JobsService } from './job.service';
-import { UserService } from '../user/user.service';
+import { JobsController } from '../job.controller';
+import { JobsService } from '../job.service';
+import { UserService } from '../../user/user.service';
 
 describe('JobsController', () => {
   let jobsController: JobsController;
