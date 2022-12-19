@@ -20,7 +20,7 @@ import GetJobsDto from './dto/get-jobs.dto';
 import FindJobsResponse from './dto/find-jobs-response.dto';
 import CreateProposalDto from './dto/create-proposal.dto';
 import getJobProposalsResponseDto from './dto/get-job-proposals-response.dto';
-import getJobProposalsParamsDto from './dto/get-job-proposals-params-dto';
+import getJobInfoParamsDto from './dto/get-job-info-params-dto';
 import UpdateJobDto from './dto/update-job.dto';
 import getJobByIdResponseDto from './dto/get-job-response.dto';
 import GetPostedJobsResponseDto from './dto/get-posted-jobs-response.dto';
@@ -76,9 +76,9 @@ export class JobsController {
   @Get(':id/proposals')
   getJobProposals(
     @Request() req,
-    @Param() params: getJobProposalsParamsDto,
+    @Param() params: getJobInfoParamsDto,
   ): Promise<getJobProposalsResponseDto> {
-    return this.jobsService.getJobProposals(params.id, req.user);
+    return this.jobsService.getJobProposals(+params.id, req.user);
   }
 
   @ApiOperation({
@@ -98,9 +98,9 @@ export class JobsController {
   @UseGuards(JwtAuthGuard)
   @Get('/:id/job')
   getJobById(
-    @Param() params: getJobProposalsParamsDto,
+    @Param() params: getJobInfoParamsDto,
   ): Promise<getJobByIdResponseDto> {
-    return this.jobsService.getJobById(params.id);
+    return this.jobsService.getJobById(+params.id);
   }
 
   @ApiOperation({ summary: 'Update job' })

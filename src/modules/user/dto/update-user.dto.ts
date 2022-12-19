@@ -4,6 +4,7 @@ import {
   Matches,
   MinLength,
   IsNumber,
+  IsEnum,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { AvailableTime, EnglishLevel, Role } from '@constants/entities';
@@ -65,7 +66,7 @@ export default class UpdateUserDto {
 
   @ApiProperty({ example: 'Intermediate' })
   @IsOptional()
-  @IsString()
+  @IsEnum(EnglishLevel)
   english_level?: EnglishLevel;
 
   @ApiProperty({ example: { id: 1, name: 'Android' } })
