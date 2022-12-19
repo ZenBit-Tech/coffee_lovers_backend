@@ -41,5 +41,11 @@ export enum ContractStatus {
   CLOSED = 'Closed',
 }
 
+export enum JobStatus {
+  PENDING = 'Pending',
+  IN_PROGRESS = 'InProgress',
+  FINISHED = 'Finished',
+}
+
 export const coverLetterMaxLength = 1000;
 export const conversationMessageMaxLength = 1000;

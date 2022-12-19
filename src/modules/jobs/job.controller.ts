@@ -14,6 +14,7 @@ import { ApiHeader, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { getAuthorizationApiHeader } from '@utils/swagger';
 import { Job } from '@entities/Job.entity';
 import { JwtAuthGuard } from '@/modules/auth/guards/jwt-auth.guard';
+import { ReqUser } from '@/modules/user/dto/get-user-dto.dto';
 import { JobsService } from './job.service';
 import CreateJobDto from './dto/create-job.dto';
 import GetJobsDto from './dto/get-jobs.dto';
@@ -24,6 +25,7 @@ import getJobInfoParamsDto from './dto/get-job-info-params-dto';
 import UpdateJobDto from './dto/update-job.dto';
 import getJobByIdResponseDto from './dto/get-job-response.dto';
 import GetPostedJobsResponseDto from './dto/get-posted-jobs-response.dto';
+import SetStatusDto from './dto/set-status.dto';
 
 @ApiTags('jobs')
 @Controller('jobs')
@@ -110,5 +112,17 @@ export class JobsController {
   @HttpCode(HttpStatus.OK)
   updateJob(@Request() req, @Body() payload: UpdateJobDto): Promise<void> {
     return this.jobsService.updateJob(payload, req.user);
+  }
+
+  @ApiOperation({ summary: 'Update job status' })
+  @ApiHeader(getAuthorizationApiHeader())
+  @Post('/status')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  setJobStatus(
+    @Request() req: ReqUser,
+    @Body() payload: SetStatusDto,
+  ): Promise<void> {
+    return this.jobsService.setJobStatus(req.user, payload);
   }
 }

@@ -9,7 +9,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Job } from '@entities/Job.entity';
 import { findJobsDefaultLimit, findJobsDefaultOffset } from '@constants/jobs';
 import { Request } from '@entities/Request.entity';
-import { RequestType } from '@constants/entities';
+import { JobStatus, RequestType } from '@constants/entities';
+import { User } from '@entities/User.entity';
+import { isUserJobOwnerOfJob } from '@validation/jobs';
 import { Conversation } from '@/common/entities/Conversation.entity';
 import UserDto from '@/modules/user/dto/user.dto';
 import GetJobsDto from './dto/get-jobs.dto';
@@ -19,6 +21,7 @@ import FindJobsResponse from './dto/find-jobs-response.dto';
 import CreateProposalDto from './dto/create-proposal.dto';
 import getJobProposalsResponseDto from './dto/get-job-proposals-response.dto';
 import getJobByIdResponseDto from './dto/get-job-response.dto';
+import SetStatusDto from './dto/set-status.dto';
 
 @Injectable()
 export class JobsService {
@@ -68,6 +71,9 @@ export class JobsService {
         .leftJoinAndSelect('job.owner', 'user')
         .leftJoinAndSelect('job.category', 'category')
         .where(jobPayload)
+        .andWhere('job.status != :finishedStatus', {
+          finishedStatus: JobStatus.FINISHED,
+        })
         .limit(params.limit || findJobsDefaultLimit)
         .offset(params.offset || findJobsDefaultOffset)
         .orderBy('job.created_at', 'DESC');
@@ -220,9 +226,7 @@ export class JobsService {
   ): Promise<getJobProposalsResponseDto> {
     try {
       const job = await this.findOne({ id: jobId });
-      if (!(job && job.owner.id === user.id)) {
-        throw new ForbiddenException();
-      }
+      isUserJobOwnerOfJob(job, user as User);
 
       const proposals = await this.requestRepository
         .createQueryBuilder('request')
@@ -310,9 +314,8 @@ export class JobsService {
     try {
       const { id, skills, ...jobPayload } = payload;
       const job = await this.findOne({ id });
-      if (!(job && job.owner.id === user.id)) {
-        throw new ForbiddenException();
-      }
+      isUserJobOwnerOfJob(job, user as User);
+
       if (skills) {
         const jobWithSkills = await this.jobRepository
           .createQueryBuilder('job')
@@ -332,6 +335,25 @@ export class JobsService {
           ...jobPayload,
         })
         .where('id = :id', { id })
+        .execute();
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async setJobStatus(user: UserDto, payload: SetStatusDto): Promise<void> {
+    try {
+      const job = await this.findOne({ id: payload.jobId });
+      isUserJobOwnerOfJob(job, user as User);
+
+      await this.jobRepository
+        .createQueryBuilder()
+        .update(Job)
+        .set({ status: payload.status })
+        .where('id = :id', { id: payload.jobId })
         .execute();
     } catch (error) {
       if (error instanceof HttpException) {

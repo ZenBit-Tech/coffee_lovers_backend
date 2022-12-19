@@ -12,6 +12,7 @@ import {
   AvailableTime,
   EnglishLevel,
   DurationAmount,
+  JobStatus,
 } from '@constants/entities';
 import { User } from '@entities/User.entity';
 import { Category } from '@entities/Category.entity';
@@ -60,6 +61,14 @@ export class Job {
     default: null,
   })
   duration_amount: DurationAmount;
+
+  @Column({
+    type: 'enum',
+    enum: JobStatus,
+    nullable: false,
+    default: JobStatus.PENDING,
+  })
+  status: JobStatus;
 
   @CreateDateColumn()
   created_at: Date;
