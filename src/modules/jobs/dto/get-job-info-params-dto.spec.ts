@@ -9,13 +9,13 @@ describe('GetJobInfoParamsDto', () => {
     expect(errors.length).toBe(0);
   });
 
-  it('id does not exist: should be an error', async (): Promise<void> => {
+  it('job id does not exist: should be an error', async (): Promise<void> => {
     const dto = {};
     const errors = await validate(plainToClass(GetJobInfoParamsDto, dto));
     expect(errors.length).not.toBe(0);
   });
 
-  it('wrong id type: should be an error', async (): Promise<void> => {
+  it('wrong job id type: should be an error', async (): Promise<void> => {
     const dto = { id: 'test' };
     const errors = await validate(plainToClass(GetJobInfoParamsDto, dto));
     expect(errors.length).not.toBe(0);
