@@ -223,9 +223,7 @@ export class JobsService {
   ): Promise<getJobProposalsResponseDto> {
     try {
       const job = await this.findOne({ id: jobId });
-      if (!(job && job.owner.id === user.id)) {
-        throw new ForbiddenException();
-      }
+      isUserJobOwnerOfJob(job, user as User);
 
       const proposals = await this.requestRepository
         .createQueryBuilder('request')
@@ -313,9 +311,8 @@ export class JobsService {
     try {
       const { id, skills, ...jobPayload } = payload;
       const job = await this.findOne({ id });
-      if (!(job && job.owner.id === user.id)) {
-        throw new ForbiddenException();
-      }
+      isUserJobOwnerOfJob(job, user as User);
+
       if (skills) {
         const jobWithSkills = await this.jobRepository
           .createQueryBuilder('job')
