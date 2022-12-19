@@ -9,7 +9,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Job } from '@entities/Job.entity';
 import { findJobsDefaultLimit, findJobsDefaultOffset } from '@constants/jobs';
 import { Request } from '@entities/Request.entity';
-import { RequestType } from '@constants/entities';
+import { JobStatus, RequestType } from '@constants/entities';
 import { User } from '@entities/User.entity';
 import { isUserJobOwnerOfJob } from '@validation/jobs';
 import { Conversation } from '@/common/entities/Conversation.entity';
@@ -71,6 +71,9 @@ export class JobsService {
         .leftJoinAndSelect('job.owner', 'user')
         .leftJoinAndSelect('job.category', 'category')
         .where(jobPayload)
+        .andWhere('job.status != :finishedStatus', {
+          finishedStatus: JobStatus.FINISHED,
+        })
         .limit(params.limit || findJobsDefaultLimit)
         .offset(params.offset || findJobsDefaultOffset)
         .orderBy('job.created_at', 'DESC');
