@@ -11,6 +11,7 @@ import { findJobsDefaultLimit, findJobsDefaultOffset } from '@constants/jobs';
 import { Request } from '@entities/Request.entity';
 import { RequestType } from '@constants/entities';
 import { User } from '@entities/User.entity';
+import { isUserJobOwnerOfJob } from '@validation/jobs';
 import { Conversation } from '@/common/entities/Conversation.entity';
 import UserDto from '@/modules/user/dto/user.dto';
 import GetJobsDto from './dto/get-jobs.dto';
@@ -21,7 +22,6 @@ import CreateProposalDto from './dto/create-proposal.dto';
 import getJobProposalsResponseDto from './dto/get-job-proposals-response.dto';
 import getJobByIdResponseDto from './dto/get-job-response.dto';
 import SetStatusDto from './dto/set-status.dto';
-import { isUserJobOwnerOfJob } from '@/common/validation/jobs';
 
 @Injectable()
 export class JobsService {
