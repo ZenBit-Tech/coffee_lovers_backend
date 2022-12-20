@@ -11,10 +11,6 @@ export default class ReqBody {
   @IsNumber()
   hourly_rate: number;
 
-  @ApiProperty({ example: 1 })
-  @IsNumber()
-  job_id: number;
-
   @ApiProperty({ example: false })
   @IsOptional()
   @IsBoolean()

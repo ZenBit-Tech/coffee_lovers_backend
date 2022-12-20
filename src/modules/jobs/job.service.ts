@@ -294,7 +294,6 @@ export class JobsService {
           'request',
           (qb) => qb.where('request.freelancer.id = :fr', { fr }),
         )
-        .where({ owner: user })
         .getMany();
 
       return jobsResponse;

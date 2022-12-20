@@ -189,7 +189,7 @@ export class UserService {
     try {
       const user = await this.findByEmail(dto.email);
       if (!user) {
-        throw new BadRequestException('User not found');
+        return;
       }
       await this.mailService.sendResetPassword(user);
     } catch (error) {
@@ -213,6 +213,16 @@ export class UserService {
       if (error instanceof HttpException) {
         throw error;
       }
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async passwordResetCheckAvailability(key: string): Promise<boolean> {
+    try {
+      const user = await this.findOne({ reset_password_key: key });
+
+      return !!user;
+    } catch (error) {
       throw new InternalServerErrorException();
     }
   }
@@ -251,7 +261,7 @@ export class UserService {
 
   async addUserInfo(payload: AddUserInfoDto, user: UserDto): Promise<void> {
     try {
-      const { skills, ...payloadNoSkills } = payload;
+      const { skills, category_id, ...payloadNoSkills } = payload;
       if (skills) {
         const userWithSkills = await this.userRepository
           .createQueryBuilder('user')
@@ -264,7 +274,12 @@ export class UserService {
           .of(user.id)
           .addAndRemove(skills, userWithSkills.skills);
       }
-      await this.updateUserByEmail(user.email, payloadNoSkills);
+      await this.updateUserByEmail(user.email, {
+        ...payloadNoSkills,
+        category: {
+          id: category_id,
+        } as Category,
+      });
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
@@ -481,6 +496,23 @@ export class UserService {
         .set({ is_google: bool })
         .where('id = :id', { id })
         .execute();
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async getFreelancerInfoById(id: number): Promise<User> {
+    try {
+      const getUserInfo = await this.findOne(
+        { id },
+        [],
+        ['educations', 'workHistory', 'category', 'skills'],
+      );
+
+      return getUserInfo;
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;

@@ -19,7 +19,7 @@ import OfferBody from './dto/offer-body-dto copy';
 export class RequstController {
   constructor(private readonly requsetService: RequsetService) {}
 
-  @ApiOperation({ summary: 'get information about current user' })
+  @ApiOperation({ summary: 'Post invite' })
   @ApiHeader(getAuthorizationApiHeader())
   @UseGuards(JwtAuthGuard)
   @Post('/:fr/:job')
@@ -32,7 +32,7 @@ export class RequstController {
     return this.requsetService.addRequest(req.user, body, fr, job);
   }
 
-  @ApiOperation({ summary: 'get information about current user' })
+  @ApiOperation({ summary: 'Post offer' })
   @ApiHeader(getAuthorizationApiHeader())
   @UseGuards(JwtAuthGuard)
   @Post('/offer/:fr/:job')
