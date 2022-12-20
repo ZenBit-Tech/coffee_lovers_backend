@@ -24,7 +24,8 @@ import { filePath } from '@/modules/file/constants';
 import { PropertiesModule } from '@/modules/properties/properties.module';
 import { JobsModule } from '@/modules/jobs/job.module';
 import { ChatModule } from '@/modules/chat/chat.module';
-import { InviteModule } from './modules/interview-invite/invite.module';
+import { InviteModule } from './modules/conversations/conversations.module';
+import { RequestModule } from './modules/requests/request.module';
 
 @Module({
   imports: [
@@ -66,6 +67,7 @@ import { InviteModule } from './modules/interview-invite/invite.module';
     PropertiesModule,
     ChatModule,
     InviteModule,
+    RequestModule,
   ],
   controllers: [AppController],
   providers: [AppService],
