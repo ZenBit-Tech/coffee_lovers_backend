@@ -24,6 +24,7 @@ module.exports = {
     '@typescript-eslint/explicit-module-boundary-types': 'off',
     '@typescript-eslint/no-explicit-any': 'off',
     '@typescript-eslint/no-unused-vars': 'off',
+    '@typescript-eslint/ban-types': 'off',
     'class-methods-use-this': 'off',
     'padding-line-between-statements': 'off',
     'import/prefer-default-export': 'off',
