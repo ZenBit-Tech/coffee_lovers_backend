@@ -13,10 +13,13 @@ import { UserHandshake } from './types';
 import { CreateMessageDto } from './dto/create-message.dto';
 import { ConversationDto } from './dto/conversation.dto';
 import { MessageDto } from './dto/message.dto';
+import { ChatService } from './chat.service';
 
 @UseGuards(WsAuthGuard)
 @WebSocketGateway(+process.env['WS_PORT'], { cors: '*' })
 export class ChatGateway {
+  constructor(private readonly chatService: ChatService) {}
+
   @WebSocketServer()
   server: Server;
 
@@ -26,7 +29,12 @@ export class ChatGateway {
     @ConnectedSocket() client: Socket,
   ): void {
     const user = (client?.handshake as unknown as UserHandshake)?.user;
-    const message: MessageDto = { from: user.id, ...payload };
+    const message: MessageDto = {
+      from: user,
+      ...payload,
+      created_at: new Date(),
+    };
+    this.chatService.createMessage(payload, user);
     this.server
       .to(String(payload.conversation))
       .emit(ChatEvents.MESSAGE, message);
@@ -36,7 +44,7 @@ export class ChatGateway {
   handleJoinConversation(
     @MessageBody() payload: ConversationDto,
     @ConnectedSocket() client: Socket,
-  ) {
+  ): void {
     client.join(String(payload.conversation));
   }
 
@@ -44,7 +52,7 @@ export class ChatGateway {
   handleLeaveConversation(
     @MessageBody() payload: ConversationDto,
     @ConnectedSocket() client: Socket,
-  ) {
+  ): void {
     client.leave(String(payload.conversation));
   }
 }

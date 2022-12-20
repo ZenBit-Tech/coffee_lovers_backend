@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Request } from '@entities/Request.entity';
+import { forwardRef } from '@nestjs/common/utils';
 import { User } from '@/common/entities/User.entity';
 import { WorkHistory } from '@/common/entities/WorkHistory.entity';
 import { Education } from '@/common/entities/Education.entity';
@@ -21,7 +22,7 @@ import { Category } from '@/common/entities/Category.entity';
       Category,
       Request,
     ]),
-    MailModule,
+    forwardRef(() => MailModule),
     FileModule,
   ],
   controllers: [UserController],

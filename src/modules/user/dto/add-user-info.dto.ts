@@ -1,9 +1,15 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsOptional } from 'class-validator';
+import { IsArray, IsNumber, IsOptional } from 'class-validator';
 import UpdateUserDto from './update-user.dto';
 
 export default class AddUserInfoDto extends UpdateUserDto {
-  @ApiProperty({ example: 10 })
+  @ApiProperty({ example: [1, 2, 4] })
   @IsOptional()
+  @IsArray()
+  @IsNumber({}, { each: true })
   skills?: number[];
+
+  @ApiProperty({ example: 2 })
+  @IsOptional()
+  category_id?: number;
 }

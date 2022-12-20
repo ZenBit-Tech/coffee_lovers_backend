@@ -15,6 +15,11 @@ export enum AvailableTime {
   PART_TIME = 'Part-Time',
 }
 
+export enum DurationAmount {
+  MONTH = 'Month',
+  WEEK = 'Week',
+}
+
 export enum RequestType {
   PROPOSAL = 'Proposal',
   INTERVIEW = 'Interview',
@@ -34,6 +39,12 @@ export enum NotificationType {
 export enum ContractStatus {
   ACTIVE = 'Active',
   CLOSED = 'Closed',
+}
+
+export enum JobStatus {
+  PENDING = 'Pending',
+  IN_PROGRESS = 'InProgress',
+  FINISHED = 'Finished',
 }
 
 export const coverLetterMaxLength = 1000;

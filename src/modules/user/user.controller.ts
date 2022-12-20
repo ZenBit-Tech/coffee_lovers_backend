@@ -13,12 +13,14 @@ import {
   DefaultValuePipe,
   ParseIntPipe,
   Put,
+  Param,
 } from '@nestjs/common';
 import {
   ApiBody,
   ApiConsumes,
   ApiHeader,
   ApiOperation,
+  ApiParam,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
@@ -36,6 +38,7 @@ import AddUserEducationDto from './dto/add-user-education.dto';
 import AddUserWorkhistoryDto from './dto/add-user-workhistory.dto';
 import { ReqUser } from './dto/get-user-dto.dto';
 import AddUserInfoDto from './dto/add-user-info.dto';
+import { takeValue, pageNumber } from './constants';
 import GetUserWorkhistoryDto from './dto/get-user-workhistory.dto';
 import { WorkHistory } from '@/common/entities/WorkHistory.entity';
 import GetUserEducationDto from './dto/get-user-education.dto';
@@ -50,10 +53,7 @@ export class UserController {
 
   @ApiOperation({ summary: 'get information about current user' })
   @ApiResponse({ type: UserDto })
-  @ApiHeader({
-    name: 'Authorization',
-    description: 'Bearer token',
-  })
+  @ApiHeader(getAuthorizationApiHeader())
   @UseGuards(JwtAuthGuard)
   @Get('')
   getUserInformation(@Request() req: ReqUser): UserDto {
@@ -64,10 +64,7 @@ export class UserController {
     summary: 'get information about current user work experience',
   })
   @ApiResponse({ type: GetUserWorkhistoryDto })
-  @ApiHeader({
-    name: 'Authorization',
-    description: 'Bearer token',
-  })
+  @ApiHeader(getAuthorizationApiHeader())
   @UseGuards(JwtAuthGuard)
   @Get('/workhistory-info')
   getUserWorkInformation(@Request() req: ReqUser): Promise<WorkHistory[]> {
@@ -78,10 +75,7 @@ export class UserController {
     summary: 'get information about current user education',
   })
   @ApiResponse({ type: GetUserEducationDto })
-  @ApiHeader({
-    name: 'Authorization',
-    description: 'Bearer token',
-  })
+  @ApiHeader(getAuthorizationApiHeader())
   @UseGuards(JwtAuthGuard)
   @Get('/education-info')
   getUserEducationInformation(@Request() req: ReqUser): Promise<Education[]> {
@@ -102,12 +96,19 @@ export class UserController {
     return this.userService.resetPassword(dto);
   }
 
+  @ApiOperation({ summary: 'Check reset password link availability' })
+  @ApiResponse({ type: Boolean })
+  @ApiParam({ name: 'key', description: 'secret key' })
+  @Get('/passwordreset/:key')
+  passwordResetCheckAvailability(
+    @Param() params: { key: string },
+  ): Promise<boolean> {
+    return this.userService.passwordResetCheckAvailability(params.key);
+  }
+
   @ApiOperation({ summary: 'set profile image for user' })
   @ApiResponse({ type: SetProfileImageDto })
-  @ApiHeader({
-    name: 'Authorization',
-    description: 'Bearer token',
-  })
+  @ApiHeader(getAuthorizationApiHeader())
   @ApiConsumes('multipart/form-data')
   @ApiBody({
     required: true,
@@ -134,10 +135,7 @@ export class UserController {
   }
 
   @ApiOperation({ summary: 'sent user information' })
-  @ApiHeader({
-    name: 'Authorization',
-    description: 'Bearer token',
-  })
+  @ApiHeader(getAuthorizationApiHeader())
   @Put('/')
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
@@ -149,10 +147,7 @@ export class UserController {
   }
 
   @ApiOperation({ summary: 'sent education information' })
-  @ApiHeader({
-    name: 'Authorization',
-    description: 'Bearer token',
-  })
+  @ApiHeader(getAuthorizationApiHeader())
   @Post('education-info')
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
@@ -164,10 +159,7 @@ export class UserController {
   }
 
   @ApiOperation({ summary: 'sent workhistory information' })
-  @ApiHeader({
-    name: 'Authorization',
-    description: 'Bearer token',
-  })
+  @ApiHeader(getAuthorizationApiHeader())
   @Post('workhistory-info')
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
@@ -178,12 +170,20 @@ export class UserController {
     return this.userService.addWorkhistoryInfo(payload, req.user);
   }
 
+  @ApiOperation({ summary: 'get full freelancer info by id' })
+  @ApiResponse({ type: UserDto })
+  @ApiHeader(getAuthorizationApiHeader())
+  @ApiParam({ name: 'key', description: 'secret key' })
+  @Get('/freelancer/:key')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  getFreelancerPageInfoById(@Param() params: { key: number }): Promise<User> {
+    return this.userService.getFreelancerInfoById(params.key);
+  }
+
   @ApiOperation({ summary: 'Get user information' })
   @ApiResponse({ type: UserDto })
-  @ApiHeader({
-    name: 'Authorization',
-    description: 'Bearer token',
-  })
+  @ApiHeader(getAuthorizationApiHeader())
   @UseGuards(JwtAuthGuard)
   @Get('/freelancer')
   getFreelancerInformation(
@@ -193,10 +193,7 @@ export class UserController {
   }
 
   @ApiOperation({ summary: 'Add new category for user or set category' })
-  @ApiHeader({
-    name: 'Authorization',
-    description: 'Bearer token',
-  })
+  @ApiHeader(getAuthorizationApiHeader())
   @Post('category')
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
@@ -208,10 +205,7 @@ export class UserController {
   }
 
   @ApiOperation({ summary: 'Get all available categories' })
-  @ApiHeader({
-    name: 'Authorization',
-    description: 'Bearer token',
-  })
+  @ApiHeader(getAuthorizationApiHeader())
   @Get('category')
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
