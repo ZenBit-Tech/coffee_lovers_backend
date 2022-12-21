@@ -25,6 +25,7 @@ import { PropertiesModule } from '@/modules/properties/properties.module';
 import { JobsModule } from '@/modules/jobs/job.module';
 import { ChatModule } from '@/modules/chat/chat.module';
 import { InviteModule } from './modules/conversations/conversations.module';
+import { ContractsModule } from './modules/contracts/contracts.module';
 
 @Module({
   imports: [
@@ -66,6 +67,7 @@ import { InviteModule } from './modules/conversations/conversations.module';
     PropertiesModule,
     ChatModule,
     InviteModule,
+    ContractsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
