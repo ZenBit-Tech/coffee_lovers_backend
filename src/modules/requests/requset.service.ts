@@ -6,10 +6,12 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { JobsService } from 'src/modules/jobs/job.service';
-import { User } from '@/common/entities/User.entity';
-import { Request } from '@/common/entities/Request.entity';
+import { User } from '@entities/User.entity';
+import { Request } from '@entities/Request.entity';
+import { Offer } from '@entities/Offer.entity';
+import { RequestType } from '@constants/entities';
 import { UserService } from '@/modules/user/user.service';
-import { Offer } from '@/common/entities/Offer.entity';
+import UserDto from '@/modules/user/dto/user.dto';
 import OfferBody from './dto/offer-body-dto copy';
 import ReqBody from './dto/request-body-dto';
 
@@ -66,6 +68,38 @@ export class RequsetService {
         .into(Offer)
         .values({ ...body, freelancer, job, job_owner: user })
         .execute();
+    } catch (error) {
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async getOffersByUser(user: UserDto): Promise<Offer[]> {
+    try {
+      return await this.offerRepository
+        .createQueryBuilder('offer')
+        .leftJoinAndSelect('offer.job', 'job')
+        .leftJoinAndSelect('job.category', 'category')
+        .leftJoinAndSelect('offer.job_owner', 'job_owner')
+        .where({ freelancer: user })
+        .getMany();
+    } catch (error) {
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async getInterviewsByUser(user: UserDto): Promise<Request[]> {
+    try {
+      return await this.requestRepository
+        .createQueryBuilder('request')
+        .leftJoinAndSelect('request.job', 'job')
+        .leftJoinAndSelect('job.category', 'category')
+        .leftJoinAndSelect('request.job_owner', 'job_owner')
+        .where({
+          freelancer: user,
+          type: RequestType.INTERVIEW,
+          rejected: false,
+        })
+        .getMany();
     } catch (error) {
       throw new InternalServerErrorException();
     }

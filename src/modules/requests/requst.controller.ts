@@ -1,12 +1,15 @@
 import {
   Body,
   Controller,
+  Get,
   Param,
   Post,
   Request,
   UseGuards,
 } from '@nestjs/common';
 import { ApiHeader, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Offer } from '@entities/Offer.entity';
+import { Request as RequestEntity } from '@entities/Request.entity';
 import { getAuthorizationApiHeader } from '@/common/utils/swagger';
 import { JwtAuthGuard } from '@/modules/auth/guards/jwt-auth.guard';
 import { ReqUser } from '@/modules/user/dto/get-user-dto.dto';
@@ -43,5 +46,21 @@ export class RequstController {
     @Body() body: OfferBody,
   ): Promise<void> {
     return this.requsetService.addOffer(req.user, job, fr, body);
+  }
+
+  @ApiOperation({ summary: "Get all freelancer's offers" })
+  @ApiHeader(getAuthorizationApiHeader())
+  @UseGuards(JwtAuthGuard)
+  @Get('/offers')
+  getOffersByUser(@Request() req: ReqUser): Promise<Offer[]> {
+    return this.requsetService.getOffersByUser(req.user);
+  }
+
+  @ApiOperation({ summary: "Get all freelancer's interviews invintations" })
+  @ApiHeader(getAuthorizationApiHeader())
+  @UseGuards(JwtAuthGuard)
+  @Get('/interviews')
+  getInterviewsByUser(@Request() req: ReqUser): Promise<RequestEntity[]> {
+    return this.requsetService.getInterviewsByUser(req.user);
   }
 }

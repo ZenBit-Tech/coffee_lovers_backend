@@ -29,8 +29,8 @@ export class Offer {
   @Column({
     type: 'enum',
     enum: OfferStatus,
-    nullable: true,
-    default: null,
+    nullable: false,
+    default: OfferStatus.PENDING,
   })
   status: OfferStatus;
 
