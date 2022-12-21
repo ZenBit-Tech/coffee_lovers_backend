@@ -54,11 +54,14 @@ export class AuthService {
       };
 
       const user = await this.userService.findByEmail(dataLogin.email);
+
       if (!user) {
         const signupResponse = await this.signUp(dataLogin);
 
         return signupResponse;
       }
+      await this.userService.setIfGoogle(true, user.id);
+
       const loginResponse = await this.signIn(dataLogin);
 
       return loginResponse;

@@ -1,14 +1,9 @@
 import { Controller, UseGuards, Param, Get, Req } from '@nestjs/common';
 import { ApiHeader, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/modules/auth/guards/jwt-auth.guard';
-import { InviteService } from './conversations.service';
 import { getAuthorizationApiHeader } from '@/common/utils/swagger';
-import {
-  ConversResponse,
-  RequestResponse,
-} from './dto/conversations-freelancer.dto';
-import { Request } from '@/common/entities/Request.entity';
-import { Job } from '@/common/entities/Job.entity';
+import { ConversResponse } from './dto/conversations-freelancer.dto';
+import { InviteService } from './conversations.service';
 
 @ApiTags('invite')
 @Controller('invite')

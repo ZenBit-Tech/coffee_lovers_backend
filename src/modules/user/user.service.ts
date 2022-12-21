@@ -368,12 +368,11 @@ export class UserService {
         search,
         ...userPayload
       } = params;
-
       const query = this.userRepository
         .createQueryBuilder('user')
         .leftJoinAndSelect('user.category', 'category')
         .where(userPayload)
-        .andWhere('user.role >= :role', {
+        .andWhere('user.role = :role', {
           role: Role.FREELANCER,
         })
         .skip((page - 1) * take)
@@ -392,22 +391,14 @@ export class UserService {
       }
 
       if (search) {
-        query
-          .select()
-          .having('user.available_time = :available_time', {
-            available_time: search,
-          })
-          .orHaving('user.position = :position', { position: search })
-          .orHaving('user.category = :category', { category: search })
-          .orHaving('user.english_level = :english_level', {
-            english_level: search,
-          })
-          .orHaving('user.position = :position', { position: search })
-          .orHaving('user.hourly_rate = :hourly_rate', { hourly_rate: search });
+        query.andWhere(
+          'user.position LIKE :position OR user.category LIKE :position',
+          { position: `%${search}%` },
+        );
       }
 
       if (categories) {
-        query.andWhere('user.category.id IN (:...categories)', {
+        query.where('user.category.id IN (:...categories)', {
           categories,
         });
       }
@@ -493,6 +484,22 @@ export class UserService {
         .getOne();
 
       return userInfo;
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async setIfGoogle(bool: boolean, id: number): Promise<void> {
+    try {
+      await this.userRepository
+        .createQueryBuilder()
+        .update(User)
+        .set({ is_google: bool })
+        .where('id = :id', { id })
+        .execute();
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;

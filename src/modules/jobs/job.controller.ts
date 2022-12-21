@@ -25,6 +25,8 @@ import getJobInfoParamsDto from './dto/get-job-info-params-dto';
 import UpdateJobDto from './dto/update-job.dto';
 import getJobByIdResponseDto from './dto/get-job-response.dto';
 import GetPostedJobsResponseDto from './dto/get-posted-jobs-response.dto';
+import getJobsWithoutOffer from './dto/get-jobs-withoutoffer.dto';
+import getAvailableJobs from './dto/get-available-jobs.dto';
 import SetStatusDto from './dto/set-status.dto';
 
 @ApiTags('jobs')
@@ -84,10 +86,11 @@ export class JobsController {
   }
 
   @ApiOperation({
-    summary: 'Get jobs of jobowner without chat with current freelancer yet',
+    summary:
+      'Get user jobs and count accepted offers, conversations, requests ',
   })
   @ApiHeader(getAuthorizationApiHeader())
-  @ApiResponse({ type: Array<Job> })
+  @ApiResponse({ type: getAvailableJobs })
   @UseGuards(JwtAuthGuard)
   @Get('/userjobs/:fr')
   getUserJobs(@Request() req, @Param('fr') fr: string): Promise<Job[]> {
@@ -103,6 +106,17 @@ export class JobsController {
     @Param() params: getJobInfoParamsDto,
   ): Promise<getJobByIdResponseDto> {
     return this.jobsService.getJobById(+params.id);
+  }
+
+  @ApiOperation({
+    summary: 'Get user jobs and count accepted offers',
+  })
+  @ApiHeader(getAuthorizationApiHeader())
+  @ApiResponse({ type: getJobsWithoutOffer })
+  @UseGuards(JwtAuthGuard)
+  @Get('/withoutoffer/:fr')
+  getJobsMissingOffer(@Request() req, @Param('fr') fr: number): Promise<Job[]> {
+    return this.jobsService.filterJobsWithoutOffer(req.user, fr);
   }
 
   @ApiOperation({ summary: 'Update job' })
@@ -124,17 +138,5 @@ export class JobsController {
     @Body() payload: SetStatusDto,
   ): Promise<void> {
     return this.jobsService.setJobStatus(req.user, payload);
-  }
-
-  @ApiOperation({
-    summary:
-      'Get jobs of jobowner without approved offer with any freelancer yet',
-  })
-  @ApiHeader(getAuthorizationApiHeader())
-  @ApiResponse({ type: Array<Job> })
-  @UseGuards(JwtAuthGuard)
-  @Get('/userjobs/:fr/free')
-  getJobsWithoutOffer(@Request() req): Promise<Job[]> {
-    return this.jobsService.getFreeJobs(req.user);
   }
 }

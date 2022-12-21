@@ -30,5 +30,5 @@ export class Contract {
   status: ContractStatus;
 
   @Column()
-  end: Date | null;
+  end: Date;
 }
