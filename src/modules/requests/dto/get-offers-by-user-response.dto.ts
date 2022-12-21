@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Job } from '@entities/Job.entity';
-import { OfferStatus } from '@/common/constants/entities';
-import { User } from '@/common/entities/User.entity';
+import { User } from '@entities/User.entity';
+import { OfferStatus } from '@constants/entities';
 
 export default class GetOffersByUserResponseDto {
   @ApiProperty({ example: 1 })
