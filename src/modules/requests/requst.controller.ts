@@ -7,7 +7,7 @@ import {
   Request,
   UseGuards,
 } from '@nestjs/common';
-import { ApiHeader, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiHeader, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Offer } from '@entities/Offer.entity';
 import { Request as RequestEntity } from '@entities/Request.entity';
 import { getAuthorizationApiHeader } from '@/common/utils/swagger';
@@ -16,6 +16,8 @@ import { ReqUser } from '@/modules/user/dto/get-user-dto.dto';
 import { RequsetService } from './requset.service';
 import ReqBody from './dto/request-body-dto';
 import OfferBody from './dto/offer-body-dto copy';
+import GetOffersByUserResponseDto from './dto/get-offers-by-user-response.dto';
+import GetInterviewsByUserResponseDto from './dto/get-interviews-by-user-response.dto';
 
 @ApiTags('request')
 @Controller('request')
@@ -50,6 +52,7 @@ export class RequstController {
 
   @ApiOperation({ summary: "Get all freelancer's offers" })
   @ApiHeader(getAuthorizationApiHeader())
+  @ApiResponse({ type: [GetOffersByUserResponseDto] })
   @UseGuards(JwtAuthGuard)
   @Get('/offers')
   getOffersByUser(@Request() req: ReqUser): Promise<Offer[]> {
@@ -58,6 +61,7 @@ export class RequstController {
 
   @ApiOperation({ summary: "Get all freelancer's interviews invintations" })
   @ApiHeader(getAuthorizationApiHeader())
+  @ApiResponse({ type: [GetInterviewsByUserResponseDto] })
   @UseGuards(JwtAuthGuard)
   @Get('/interviews')
   getInterviewsByUser(@Request() req: ReqUser): Promise<RequestEntity[]> {
