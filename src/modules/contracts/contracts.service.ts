@@ -58,7 +58,6 @@ export class ContractsService {
 
       return closedContracts;
     } catch (error) {
-      console.log(error);
       throw new HttpException(
         'Internal error',
         HttpStatus.INTERNAL_SERVER_ERROR,
