@@ -34,8 +34,8 @@ export class Offer {
   })
   status: OfferStatus;
 
-  @CreateDateColumn()
-  start: Date | null;
+  @Column()
+  start: Date;
 
   @CreateDateColumn()
   created_at: Date;
