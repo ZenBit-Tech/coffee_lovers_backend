@@ -85,18 +85,6 @@ export class JobsController {
     return this.jobsService.getJobProposals(+params.id, req.user);
   }
 
-  @ApiOperation({
-    summary:
-      'Get user jobs and count accepted offers, conversations, requests ',
-  })
-  @ApiHeader(getAuthorizationApiHeader())
-  @ApiResponse({ type: getAvailableJobs })
-  @UseGuards(JwtAuthGuard)
-  @Get('/userjobs/:fr')
-  getUserJobs(@Request() req, @Param('fr') fr: string): Promise<Job[]> {
-    return this.jobsService.getAvailableJobs(req.user, +fr);
-  }
-
   @ApiOperation({ summary: 'Get job by id' })
   @ApiHeader(getAuthorizationApiHeader())
   @ApiResponse({ type: getJobByIdResponseDto })
@@ -116,7 +104,7 @@ export class JobsController {
   @UseGuards(JwtAuthGuard)
   @Get('/withoutoffer/:fr')
   getJobsMissingOffer(@Request() req, @Param('fr') fr: number): Promise<Job[]> {
-    return this.jobsService.filterJobsWithoutOffer(req.user, fr);
+    return this.jobsService.getAllUserJobs(req.user, fr);
   }
 
   @ApiOperation({ summary: 'Update job' })

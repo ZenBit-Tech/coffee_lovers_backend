@@ -272,59 +272,10 @@ export class JobsService {
     }
   }
 
-  async getAvailableJobs(user: UserDto, fr: number): Promise<Job[]> {
+  async getAllUserJobs(user: UserDto, fr: number): Promise<Job[]> {
     try {
       const jobsResponse = await this.jobRepository
         .createQueryBuilder('job')
-        .loadRelationCountAndMap(
-          'job.offersCount',
-          'job.offers',
-          'offer',
-          (qb) =>
-            qb
-              .where('offer.status = :status', {
-                status: 'Accepted',
-              })
-              .orWhere('offer.freelancer.id = :fr', { fr }),
-        )
-        .loadRelationCountAndMap(
-          'job.conversationsCount',
-          'job.conversations',
-          'conversation',
-          (qb) => qb.where('conversation.freelancer.id = :fr', { fr }),
-        )
-        .loadRelationCountAndMap(
-          'job.requestsCount',
-          'job.requests',
-          'request',
-          (qb) => qb.where('request.freelancer.id = :fr', { fr }),
-        )
-        .getMany();
-
-      return jobsResponse;
-    } catch (error) {
-      if (error instanceof HttpException) {
-        throw error;
-      }
-      throw new InternalServerErrorException();
-    }
-  }
-
-  async filterJobsWithoutOffer(user: UserDto, fr: number): Promise<Job[]> {
-    try {
-      const jobsResponse = await this.jobRepository
-        .createQueryBuilder('job')
-        .loadRelationCountAndMap(
-          'job.offersCount',
-          'job.offers',
-          'offer',
-          (qb) =>
-            qb
-              .where('offer.status = :status', {
-                status: 'Accepted',
-              })
-              .orWhere('offer.freelancer.id = :fr', { fr }),
-        )
         .where({ owner: user })
         .getMany();
 

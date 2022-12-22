@@ -1,4 +1,6 @@
 import {
+  HttpException,
+  HttpStatus,
   Inject,
   Injectable,
   InternalServerErrorException,
@@ -36,6 +38,23 @@ export class RequsetService {
     job_id: number,
   ): Promise<void> {
     try {
+      const checkRequest = await this.requestRepository
+        .createQueryBuilder('request')
+        .leftJoin('request.job_owner', 'job_owner')
+        .leftJoin('request.freelancer', 'freelancer')
+        .leftJoin('request.job', 'job')
+        .where('job_owner.id = :ownerId', { ownerId: user.id })
+        .andWhere('freelancer.id = :frId', { frId: fr })
+        .andWhere('job.id = :jobId', { jobId: job_id })
+        .getOne();
+
+      if (checkRequest) {
+        throw new HttpException(
+          'You have already sent request about this job',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
       const { job } = await this.jobsService.getJobById(job_id);
       const freelancer = await this.userService.getUserById(fr);
       this.requestRepository
@@ -57,6 +76,23 @@ export class RequsetService {
     body: OfferBody,
   ): Promise<void> {
     try {
+      const checkOffer = await this.offerRepository
+        .createQueryBuilder('offer')
+        .leftJoin('offer.job_owner', 'job_owner')
+        .leftJoin('offer.freelancer', 'freelancer')
+        .leftJoin('offer.job', 'job')
+        .where('job_owner.id = :ownerId', { ownerId: user.id })
+        .andWhere('freelancer.id = :frId', { frId: fr })
+        .andWhere('job.id = :jobId', { jobId })
+        .getOne();
+
+      if (checkOffer) {
+        throw new HttpException(
+          'You have already sent offer about this job',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
       const { job } = await this.jobsService.getJobById(jobId);
       const freelancer = await this.userService.getUserById(fr);
       this.offerRepository

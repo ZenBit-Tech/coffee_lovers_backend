@@ -14,8 +14,8 @@ import { RequsetService } from './requset.service';
 import ReqBody from './dto/request-body-dto';
 import OfferBody from './dto/offer-body-dto copy';
 
-@ApiTags('request')
-@Controller('request')
+@ApiTags('invite')
+@Controller('invite')
 export class RequstController {
   constructor(private readonly requsetService: RequsetService) {}
 
