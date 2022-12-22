@@ -1,8 +1,24 @@
 import { Role } from '@/common/constants/entities';
 import { User } from '@/common/entities/User.entity';
 
-export const checkAnotherRole = (user: User) =>
-  user.role === Role.FREELANCER ? 'job_owner' : 'freelancer';
+export const checkAnotherRole = (user: User): string | null => {
+  if (user.role === Role.FREELANCER) {
+    return 'job_owner';
+  }
+  if (user.role === Role.JOBOWNER) {
+    return 'freelancer';
+  }
 
-export const checkUserRole = (user: User) =>
-  user.role === Role.JOBOWNER ? 'job_owner' : 'freelancer';
+  return null;
+};
+
+export const checkUserRole = (user: User): string | null => {
+  if (user.role === Role.JOBOWNER) {
+    return 'job_owner';
+  }
+  if (user.role === Role.FREELANCER) {
+    return 'freelancer';
+  }
+
+  return null;
+};
