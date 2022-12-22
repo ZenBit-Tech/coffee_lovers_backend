@@ -1,9 +1,10 @@
 import { Controller, UseGuards, Param, Get, Req } from '@nestjs/common';
-import { ApiHeader, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiHeader, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/modules/auth/guards/jwt-auth.guard';
 import { getAuthorizationApiHeader } from '@/common/utils/swagger';
 import { Contract } from '@/common/entities/Contract.entity';
 import { ContractsService } from './contracts.service';
+import ContractsResponseDto from './dto/contracts-response.dto';
 
 enum EndpointsRoutes {
   active = 'active',
@@ -18,6 +19,7 @@ export class ContractsController {
   @ApiOperation({
     summary: 'Get active contracts',
   })
+  @ApiResponse({ type: ContractsResponseDto })
   @ApiHeader(getAuthorizationApiHeader())
   @UseGuards(JwtAuthGuard)
   @Get(`${EndpointsRoutes.active}`)
@@ -28,6 +30,7 @@ export class ContractsController {
   @ApiOperation({
     summary: 'Get closed contracts',
   })
+  @ApiResponse({ type: ContractsResponseDto })
   @ApiHeader(getAuthorizationApiHeader())
   @UseGuards(JwtAuthGuard)
   @Get(`${EndpointsRoutes.closed}`)
