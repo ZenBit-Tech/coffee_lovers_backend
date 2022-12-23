@@ -25,6 +25,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { Favorites } from '@/common/entities/Favorites.entity';
 import { UserService } from '@/modules/user/user.service';
 import { JwtAuthGuard } from '@/modules/auth/guards/jwt-auth.guard';
 import { getAuthorizationApiHeader } from '@/common/utils/swagger';
@@ -45,6 +46,7 @@ import GetUserEducationDto from './dto/get-user-education.dto';
 import { Education } from '@/common/entities/Education.entity';
 import GetFreelancerDto from './dto/get-freelancer-params.dto';
 import getUserProposalsResponseDto from './dto/get-proposals-by-user.dto';
+import SetFavoritesDto from './dto/set-favorites.dto';
 
 @ApiTags('user')
 @Controller('user')
@@ -211,6 +213,27 @@ export class UserController {
   @HttpCode(HttpStatus.OK)
   getCategories(): Promise<Category[]> {
     return this.userService.getCategoryInfo();
+  }
+
+  @ApiOperation({ summary: 'add or delete new favorite' })
+  @ApiHeader(getAuthorizationApiHeader())
+  @Post('favorites')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  setFavorite(
+    @Request() req: ReqUser,
+    @Body() payload: SetFavoritesDto,
+  ): Promise<void> {
+    return this.userService.setFavorite(req.user, payload);
+  }
+
+  @ApiOperation({ summary: 'get all favorites' })
+  @ApiHeader(getAuthorizationApiHeader())
+  @Get('favorites')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  getFavorites(@Request() req: ReqUser): Promise<Favorites[]> {
+    return this.userService.getFavorites(req.user);
   }
 
   @ApiOperation({
