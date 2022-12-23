@@ -32,6 +32,7 @@ import GetFreelancerDto from './dto/get-freelancer-params.dto';
 import getUserProposalsResponseDto from './dto/get-proposals-by-user.dto';
 import { Favorites } from '@/common/entities/Favorites.entity';
 import SetFavoritesDto from './dto/set-favorites.dto';
+import GetFavoritesDto from './dto/get-favorites.dto';
 
 @Injectable()
 export class UserService {
@@ -555,7 +556,7 @@ export class UserService {
     }
   }
 
-  async getFavorites(user: UserDto): Promise<Favorites[]> {
+  async getFavorites(user: UserDto): Promise<GetFavoritesDto[]> {
     try {
       const favorites = await this.favoritesRepository
         .createQueryBuilder('favorites')

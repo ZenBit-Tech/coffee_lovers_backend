@@ -47,6 +47,7 @@ import { Education } from '@/common/entities/Education.entity';
 import GetFreelancerDto from './dto/get-freelancer-params.dto';
 import getUserProposalsResponseDto from './dto/get-proposals-by-user.dto';
 import SetFavoritesDto from './dto/set-favorites.dto';
+import GetFavoritesDto from './dto/get-favorites.dto';
 
 @ApiTags('user')
 @Controller('user')
@@ -228,11 +229,12 @@ export class UserController {
   }
 
   @ApiOperation({ summary: 'get all favorites' })
+  @ApiResponse({ type: GetFavoritesDto })
   @ApiHeader(getAuthorizationApiHeader())
   @Get('favorites')
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
-  getFavorites(@Request() req: ReqUser): Promise<Favorites[]> {
+  getFavorites(@Request() req: ReqUser): Promise<GetFavoritesDto[]> {
     return this.userService.getFavorites(req.user);
   }
 
