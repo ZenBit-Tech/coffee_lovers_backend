@@ -19,6 +19,7 @@ import { FileService } from '@/modules/file/file.service';
 import { FileType } from '@/modules/file/types';
 import { RequestType, Role } from '@/common/constants/entities';
 import { Category } from '@/common/entities/Category.entity';
+import { Favorites } from '@/common/entities/Favorites.entity';
 import CreateUserDto from './dto/create-user.dto';
 import UpdateUserDto from './dto/update-user.dto';
 import PasswordResetRequestDto from './dto/password-reset-request.dto';
@@ -30,7 +31,7 @@ import AddUserEducationDto from './dto/add-user-education.dto';
 import AddUserInfoDto from './dto/add-user-info.dto';
 import GetFreelancerDto from './dto/get-freelancer-params.dto';
 import getUserProposalsResponseDto from './dto/get-proposals-by-user.dto';
-import { Favorites } from '@/common/entities/Favorites.entity';
+
 import SetFavoritesDto from './dto/set-favorites.dto';
 import GetFavoritesDto from './dto/get-favorites.dto';
 
