@@ -51,8 +51,7 @@ export default class ContractsResponseDto {
       email: 'kasircivanna@gmail.com',
       first_name: 'Ivanna',
       last_name: 'Kashyrets',
-      profile_image:
-        'https://img.freepik.com/free-photo/lifestyle-people-emotions-and-casual-concept-confident-nice-smiling-asian-woman-cross-arms-chest-confident-ready-to-help-listening-to-coworkers-taking-part-conversation_1258-59335.jpg?w=2000',
+      profile_image: 'http://localhost:4200/index.jpg',
       available_time: null,
       description:
         'Вочевидь, зараз не всі пригадають цю серпневу дату – вісімнадцяте святкування Дня Незалежності України. Відлік десятилітньої історії Вишиванкового фестивалю розпочався саме тоді, коли сімдесят дев’ять людей, убраних у виши́ванки, утворили вздовж Потьомкін',
