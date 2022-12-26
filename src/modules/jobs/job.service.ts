@@ -195,9 +195,13 @@ export class JobsService {
 
       isUserJobOwnerOfJob(job, user as User);
 
-      const hires = await this.contractService.findContractsByOffersId(
-        job.offers.map((offer) => offer.id),
-      );
+      let hires = [];
+
+      if (job.offers.length) {
+        hires = await this.contractService.findContractsByOffersId(
+          job.offers.map((offer) => offer.id),
+        );
+      }
 
       return {
         job,
