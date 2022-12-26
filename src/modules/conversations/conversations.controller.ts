@@ -5,8 +5,8 @@ import { getAuthorizationApiHeader } from '@/common/utils/swagger';
 import { ConversResponse } from './dto/conversations-freelancer.dto';
 import { InviteService } from './conversations.service';
 
-@ApiTags('request')
-@Controller('request')
+@ApiTags('invite')
+@Controller('invite')
 export class InviteController {
   constructor(private readonly inviteService: InviteService) {}
 
