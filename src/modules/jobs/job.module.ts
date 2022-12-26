@@ -11,7 +11,6 @@ import { Offer } from '@/common/entities/Offer.entity';
 import { ContractsModule } from '@/modules/contracts/contracts.module';
 import { JobsController } from './job.controller';
 import { JobsService } from './job.service';
-import { ContractsService } from '../contracts/contracts.service';
 
 @Module({
   imports: [
