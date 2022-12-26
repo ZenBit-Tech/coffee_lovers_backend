@@ -18,6 +18,8 @@ import { UserService } from '@/modules/user/user.service';
 import UserDto from '@/modules/user/dto/user.dto';
 import OfferBody from './dto/offer-body-dto copy';
 import ReqBody from './dto/request-body-dto';
+import FindRequestDto from './dto/find-request.dto';
+import FindOfferDto from './dto/find-offer.dto';
 
 @Injectable()
 export class RequsetService {
@@ -38,7 +40,7 @@ export class RequsetService {
     private contractRepository: Repository<Contract>,
   ) {}
 
-  async findRequest(payload: object): Promise<Request> {
+  async findRequest(payload: FindRequestDto): Promise<Request> {
     try {
       return await this.requestRepository
         .createQueryBuilder('request')
@@ -50,7 +52,7 @@ export class RequsetService {
     }
   }
 
-  async findOffer(payload: object): Promise<Offer> {
+  async findOffer(payload: FindOfferDto): Promise<Offer> {
     try {
       return await this.offerRepository
         .createQueryBuilder('offer')
