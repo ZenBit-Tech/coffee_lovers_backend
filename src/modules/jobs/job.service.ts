@@ -12,9 +12,8 @@ import { Request } from '@entities/Request.entity';
 import { JobStatus, RequestType } from '@constants/entities';
 import { User } from '@entities/User.entity';
 import { isUserJobOwnerOfJob } from '@validation/jobs';
-import { Conversation } from '@/common/entities/Conversation.entity';
 import UserDto from '@/modules/user/dto/user.dto';
-import { Offer } from '@/common/entities/Offer.entity';
+import { ContractsService } from '@/modules/contracts/contracts.service';
 import GetJobsDto from './dto/get-jobs.dto';
 import CreateJobDto from './dto/create-job.dto';
 import UpdateJobDto from './dto/update-job.dto';
@@ -29,10 +28,9 @@ export class JobsService {
   constructor(
     @InjectRepository(Job)
     private jobRepository: Repository<Job>,
-    @InjectRepository(Offer)
-    private offerRepository: Repository<Offer>,
     @InjectRepository(Request)
     private requestRepository: Repository<Request>,
+    private contractService: ContractsService,
   ) {}
 
   async findOne(payload: object, leftJoins?: string[]): Promise<Job | null> {
@@ -180,6 +178,35 @@ export class JobsService {
         .where({ owner: user })
         .getMany();
     } catch (error) {
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async getPostedJobDetails(user: UserDto, id: number) {
+    try {
+      const job = await this.jobRepository
+        .createQueryBuilder('job')
+        .leftJoinAndSelect('job.owner', 'user')
+        .leftJoinAndSelect('job.category', 'category')
+        .leftJoinAndSelect('job.skills', 'skill')
+        .leftJoinAndSelect('job.offers', 'offer')
+        .where({ id })
+        .getOne();
+
+      isUserJobOwnerOfJob(job, user as User);
+
+      const hires = await this.contractService.findContractsByOffersId(
+        job.offers.map((offer) => offer.id),
+      );
+
+      return {
+        job,
+        hires,
+      };
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
       throw new InternalServerErrorException();
     }
   }

@@ -48,8 +48,16 @@ export class JobsController {
   @ApiResponse({ type: [GetPostedJobsResponseDto] })
   @UseGuards(JwtAuthGuard)
   @Get('/posted')
-  async getPostedJobs(@Request() req): Promise<Job[]> {
+  getPostedJobs(@Request() req): Promise<Job[]> {
     return this.jobsService.getPostedJobs(req.user);
+  }
+
+  @ApiOperation({ summary: 'Get details of posted job' })
+  @ApiHeader(getAuthorizationApiHeader())
+  @UseGuards(JwtAuthGuard)
+  @Get('/posted/:id')
+  getPostedJobDetails(@Request() req: ReqUser, @Param('id') id: number) {
+    return this.jobsService.getPostedJobDetails(req.user, id);
   }
 
   @ApiOperation({ summary: 'Add job' })

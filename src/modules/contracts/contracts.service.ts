@@ -1,4 +1,9 @@
-import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '@/common/entities/User.entity';
@@ -12,6 +17,18 @@ export class ContractsService {
     @InjectRepository(Contract)
     private contractRepository: Repository<Contract>,
   ) {}
+
+  async findContractsByOffersId(offers: number[]): Promise<Contract[]> {
+    try {
+      return await this.contractRepository
+        .createQueryBuilder('contract')
+        .leftJoinAndSelect('contract.offer', 'offer')
+        .where('contract.offer.id IN (:...offers)', { offers })
+        .getMany();
+    } catch (error) {
+      throw new InternalServerErrorException();
+    }
+  }
 
   async getActiveContracts(user: User): Promise<Contract[]> {
     try {

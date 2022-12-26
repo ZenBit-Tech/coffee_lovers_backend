@@ -8,8 +8,10 @@ import { UserModule } from '@/modules/user/user.module';
 import { User } from '@/common/entities/User.entity';
 import { Conversation } from '@/common/entities/Conversation.entity';
 import { Offer } from '@/common/entities/Offer.entity';
+import { ContractsModule } from '@/modules/contracts/contracts.module';
 import { JobsController } from './job.controller';
 import { JobsService } from './job.service';
+import { ContractsService } from '../contracts/contracts.service';
 
 @Module({
   imports: [
@@ -19,8 +21,10 @@ import { JobsService } from './job.service';
     TypeOrmModule.forFeature([Job, Offer, Request, User, Conversation]),
     UserModule,
     PropertiesModule,
+    ContractsModule,
   ],
   controllers: [JobsController],
   providers: [JobsService],
+  exports: [JobsService],
 })
 export class JobsModule {}

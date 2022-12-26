@@ -9,5 +9,6 @@ import { Contract } from '@/common/entities/Contract.entity';
   imports: [TypeOrmModule.forFeature([Contract]), UserModule],
   controllers: [ContractsController],
   providers: [ContractsService],
+  exports: [ContractsService],
 })
 export class ContractsModule {}
