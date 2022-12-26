@@ -1,4 +1,5 @@
 import {
+  HttpException,
   Inject,
   Injectable,
   InternalServerErrorException,
@@ -8,8 +9,11 @@ import { Repository } from 'typeorm';
 import { JobsService } from 'src/modules/jobs/job.service';
 import { User } from '@entities/User.entity';
 import { Request } from '@entities/Request.entity';
+import { Contract } from '@entities/Contract.entity';
 import { Offer } from '@entities/Offer.entity';
-import { RequestType } from '@constants/entities';
+import { ContractStatus, OfferStatus, RequestType } from '@constants/entities';
+import { isOfferPendingForUser } from '@validation/offers';
+import { isRequestForFreelancer } from '@validation/requests';
 import { UserService } from '@/modules/user/user.service';
 import UserDto from '@/modules/user/dto/user.dto';
 import OfferBody from './dto/offer-body-dto copy';
@@ -29,7 +33,34 @@ export class RequsetService {
 
     @InjectRepository(Offer)
     private offerRepository: Repository<Offer>,
+
+    @InjectRepository(Contract)
+    private contractRepository: Repository<Contract>,
   ) {}
+
+  async findRequest(payload: object): Promise<Request> {
+    try {
+      return await this.requestRepository
+        .createQueryBuilder('request')
+        .where(payload)
+        .leftJoinAndSelect('request.freelancer', 'freelancer')
+        .getOne();
+    } catch (error) {
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async findOffer(payload: object): Promise<Offer> {
+    try {
+      return await this.offerRepository
+        .createQueryBuilder('offer')
+        .where(payload)
+        .leftJoinAndSelect('offer.freelancer', 'freelancer')
+        .getOne();
+    } catch (error) {
+      throw new InternalServerErrorException();
+    }
+  }
 
   async addRequest(
     user: User,
@@ -87,6 +118,49 @@ export class RequsetService {
     }
   }
 
+  async acceptOffer(user: UserDto, id: number): Promise<void> {
+    try {
+      const offer = await this.findOffer({ id });
+      isOfferPendingForUser(user, offer);
+      await this.requestRepository
+        .createQueryBuilder()
+        .update(Offer)
+        .set({ status: OfferStatus.ACCEPTED })
+        .where({ id })
+        .execute();
+
+      await this.contractRepository
+        .createQueryBuilder()
+        .insert()
+        .into(Contract)
+        .values([{ offer, status: ContractStatus.ACTIVE }])
+        .execute();
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async declineOffer(user: UserDto, id: number): Promise<void> {
+    try {
+      const offer = await this.findOffer({ id });
+      isOfferPendingForUser(user, offer);
+      await this.requestRepository
+        .createQueryBuilder()
+        .update(Offer)
+        .set({ status: OfferStatus.DECLINED })
+        .where({ id })
+        .execute();
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new InternalServerErrorException();
+    }
+  }
+
   async getInterviewsByUser(user: UserDto): Promise<Request[]> {
     try {
       return await this.requestRepository
@@ -101,6 +175,25 @@ export class RequsetService {
         })
         .getMany();
     } catch (error) {
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async deleteInterview(user: UserDto, id: number): Promise<void> {
+    try {
+      const request = await this.findRequest({ id });
+      isRequestForFreelancer(user, request);
+
+      await this.requestRepository
+        .createQueryBuilder()
+        .update(Request)
+        .set({ rejected: true })
+        .where({ id })
+        .execute();
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
       throw new InternalServerErrorException();
     }
   }

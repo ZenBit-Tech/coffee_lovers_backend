@@ -1,7 +1,10 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   Param,
   Post,
   Request,
@@ -66,5 +69,38 @@ export class RequstController {
   @Get('/interviews')
   getInterviewsByUser(@Request() req: ReqUser): Promise<RequestEntity[]> {
     return this.requsetService.getInterviewsByUser(req.user);
+  }
+
+  @ApiOperation({ summary: 'Accept offer by id' })
+  @ApiHeader(getAuthorizationApiHeader())
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  @Post('/accept/offer/:id')
+  acceptOffer(@Request() req: ReqUser, @Param('id') id: number): Promise<void> {
+    return this.requsetService.acceptOffer(req.user, id);
+  }
+
+  @ApiOperation({ summary: 'Decline offer by id' })
+  @ApiHeader(getAuthorizationApiHeader())
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  @Post('/decline/offer/:id')
+  declineOffer(
+    @Request() req: ReqUser,
+    @Param('id') id: number,
+  ): Promise<void> {
+    return this.requsetService.declineOffer(req.user, id);
+  }
+
+  @ApiOperation({ summary: 'Delete interview by id' })
+  @ApiHeader(getAuthorizationApiHeader())
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  @Delete('interview/:id')
+  deleteInterview(
+    @Request() req: ReqUser,
+    @Param('id') id: number,
+  ): Promise<void> {
+    return this.requsetService.deleteInterview(req.user, id);
   }
 }
