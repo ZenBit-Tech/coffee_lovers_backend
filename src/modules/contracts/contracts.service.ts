@@ -23,6 +23,7 @@ export class ContractsService {
       return await this.contractRepository
         .createQueryBuilder('contract')
         .leftJoinAndSelect('contract.offer', 'offer')
+        .leftJoinAndSelect('offer.freelancer', 'user')
         .where('contract.offer.id IN (:...offers)', { offers })
         .getMany();
     } catch (error) {

@@ -28,6 +28,7 @@ import GetPostedJobsResponseDto from './dto/get-posted-jobs-response.dto';
 import getJobsWithoutOffer from './dto/get-jobs-withoutoffer.dto';
 import getAvailableJobs from './dto/get-available-jobs.dto';
 import SetStatusDto from './dto/set-status.dto';
+import GetPostedJobsDetailsResponse from './dto/get-posted-jobs-details-response.dto';
 
 @ApiTags('jobs')
 @Controller('jobs')
@@ -54,6 +55,7 @@ export class JobsController {
 
   @ApiOperation({ summary: 'Get details of posted job' })
   @ApiHeader(getAuthorizationApiHeader())
+  @ApiResponse({ type: GetPostedJobsDetailsResponse })
   @UseGuards(JwtAuthGuard)
   @Get('/posted/:id')
   getPostedJobDetails(@Request() req: ReqUser, @Param('id') id: number) {
