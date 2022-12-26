@@ -15,9 +15,9 @@ export default class GetPostedJobsDetailsResponse {
       created_at: '2022-12-06T09:57:29.161Z',
       owner: {
         id: 1,
-        email: 'kukserg123@gmail.com',
-        first_name: 'Serhii',
-        last_name: 'Kukharchuk',
+        email: 'test@test.com',
+        first_name: 'John',
+        last_name: 'Doe',
         profile_image: 'img/660ba6e4-557b-4033-8e79-656ea305f342.jpg',
       },
       category: {
