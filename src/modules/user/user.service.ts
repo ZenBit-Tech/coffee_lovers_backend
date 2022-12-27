@@ -19,6 +19,7 @@ import { FileService } from '@/modules/file/file.service';
 import { FileType } from '@/modules/file/types';
 import { RequestType, Role } from '@/common/constants/entities';
 import { Category } from '@/common/entities/Category.entity';
+import { Favorites } from '@/common/entities/Favorites.entity';
 import CreateUserDto from './dto/create-user.dto';
 import UpdateUserDto from './dto/update-user.dto';
 import PasswordResetRequestDto from './dto/password-reset-request.dto';
@@ -30,6 +31,9 @@ import AddUserEducationDto from './dto/add-user-education.dto';
 import AddUserInfoDto from './dto/add-user-info.dto';
 import GetFreelancerDto from './dto/get-freelancer-params.dto';
 import getUserProposalsResponseDto from './dto/get-proposals-by-user.dto';
+
+import SetFavoritesDto from './dto/set-favorites.dto';
+import GetFavoritesDto from './dto/get-favorites.dto';
 
 @Injectable()
 export class UserService {
@@ -48,6 +52,9 @@ export class UserService {
 
     @InjectRepository(Request)
     private requestRepository: Repository<Request>,
+
+    @InjectRepository(Favorites)
+    private favoritesRepository: Repository<Favorites>,
 
     private readonly configService: ConfigService,
     @Inject(forwardRef(() => MailService))
@@ -517,6 +524,49 @@ export class UserService {
       );
 
       return getUserInfo;
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async setFavorite(user: UserDto, payload: SetFavoritesDto): Promise<void> {
+    try {
+      if (payload.is_favorite) {
+        await this.favoritesRepository
+          .createQueryBuilder()
+          .insert()
+          .into(Favorites)
+          .values([{ freelancer: { id: payload.id }, job_owner: user }])
+          .execute();
+      } else {
+        await this.favoritesRepository
+          .createQueryBuilder('favorites')
+          .delete()
+          .from(Favorites)
+          .where({ freelancer: { id: payload.id }, job_owner: user })
+          .execute();
+      }
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async getFavorites(user: UserDto): Promise<GetFavoritesDto[]> {
+    try {
+      const favorites = await this.favoritesRepository
+        .createQueryBuilder('favorites')
+        .where({ job_owner: user })
+        .leftJoinAndSelect('favorites.freelancer', 'freelancer')
+        .leftJoinAndSelect('freelancer.category', 'category')
+        .getMany();
+
+      return favorites;
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
