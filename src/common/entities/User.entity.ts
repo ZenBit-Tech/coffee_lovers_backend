@@ -20,6 +20,7 @@ import { Skill } from '@entities/Skill.entity';
 import { WorkHistory } from '@entities/WorkHistory.entity';
 import { Notification } from '@entities/Notification.entity';
 import { Offer } from '@entities/Offer.entity';
+import { Favorites } from './Favorites.entity';
 
 @Entity()
 export class User {
@@ -116,4 +117,8 @@ export class User {
   @OneToMany(() => Offer, (offer) => offer.job_owner)
   @OneToMany(() => Offer, (offer) => offer.freelancer)
   offers: Offer[];
+
+  @OneToMany(() => Favorites, (favorite) => favorite.job_owner)
+  @OneToMany(() => Favorites, (favorite) => favorite.freelancer)
+  favorites: Favorites[];
 }
