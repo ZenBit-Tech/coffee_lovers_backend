@@ -1,12 +1,12 @@
 import { validate } from 'class-validator';
 import { plainToClass } from 'class-transformer';
-import ReqBody from './request-body-dto';
-import OfferBody from './offer-body-dto copy';
 import {
   PostRequestMock,
   SendOfferMock,
 } from '@/modules/requests/mockData/mockUserData';
-import { hRate, hRateErr } from '../constants/mock-test-const';
+import { hRate, hRateErr } from '@/modules/requests/constants/mock-test-const';
+import ReqBody from './request-body-dto';
+import OfferBody from './offer-body-dto copy';
 
 describe('PostRequestParams', () => {
   it('should be validated successfully', async (): Promise<void> => {
