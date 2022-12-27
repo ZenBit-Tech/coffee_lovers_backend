@@ -9,7 +9,6 @@ import { HttpStatus } from '@nestjs/common/enums';
 import { UserService } from '@/modules/user/user.service';
 import { JwtAuthGuard } from '@/modules/auth/guards/jwt-auth.guard';
 import { UserController } from '@/modules/user/user.controller';
-import { educationPayload } from '@/common/utils/tests';
 
 describe('UserController (e2e)', () => {
   let app: INestApplication;

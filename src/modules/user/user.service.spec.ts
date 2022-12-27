@@ -6,13 +6,12 @@ import { Education } from '@entities/Education.entity';
 import { WorkHistory } from '@entities/WorkHistory.entity';
 import { Request } from '@entities/Request.entity';
 import { Category } from '@entities/Category.entity';
+import { getRepositoryProvider, mockRepository } from '@utils/tests';
 import {
   educationPayload,
   workhistoryPayload,
-  getRepositoryProvider,
-  mockRepository,
   fullFreelancerMockData,
-} from '@utils/tests';
+} from '@/common/constants/mockdata';
 import { MailService } from '@/modules/mail/mail.service';
 import { FileService } from '@/modules/file/file.service';
 import { UserService } from './user.service';

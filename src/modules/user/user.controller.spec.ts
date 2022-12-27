@@ -2,6 +2,10 @@ import { User } from '@entities/User.entity';
 import { WorkHistory } from '@entities/WorkHistory.entity';
 import { Test, TestingModule } from '@nestjs/testing';
 import { Education } from '@/common/entities/Education.entity';
+import {
+  educationPayload,
+  workhistoryPayload,
+} from '@/common/constants/mockdata';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
 import { ReqUser } from './dto/get-user-dto.dto';
@@ -10,7 +14,6 @@ import PasswordResetRequestDto from './dto/password-reset-request.dto';
 import PasswordResetDto from './dto/password-reset.dto';
 import AddUserEducationDto from './dto/add-user-education.dto';
 import AddUserWorkhistoryDto from './dto/add-user-workhistory.dto';
-import { educationPayload, workhistoryPayload } from '@/common/utils/tests';
 
 describe('UserController', () => {
   let userController: UserController;
