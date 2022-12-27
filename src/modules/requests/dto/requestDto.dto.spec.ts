@@ -6,6 +6,7 @@ import {
   PostRequestMock,
   SendOfferMock,
 } from '@/modules/requests/mockData/mockUserData';
+import { hRate, hRateErr } from '../constants/mock-test-const';
 
 describe('PostRequestParams', () => {
   it('should be validated successfully', async (): Promise<void> => {
@@ -21,7 +22,7 @@ describe('PostRequestParams', () => {
   });
 
   it('wrong request property type, should be an error', async (): Promise<void> => {
-    const dto = { ...PostRequestMock, cover_letter: 5 };
+    const dto = { ...PostRequestMock, cover_letter: hRate };
     const errors = await validate(plainToClass(ReqBody, dto));
     expect(errors.length).not.toBe(0);
   });
@@ -41,7 +42,7 @@ describe('PostOfferParams', () => {
   });
 
   it('wrong type for hourly rate, should be an error', async (): Promise<void> => {
-    const dto = { ...SendOfferMock, hourly_rate: '5' };
+    const dto = { ...SendOfferMock, hourly_rate: hRateErr };
     const errors = await validate(plainToClass(OfferBody, dto));
     expect(errors.length).not.toBe(0);
   });
