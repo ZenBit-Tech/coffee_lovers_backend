@@ -25,6 +25,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { Type } from 'class-transformer';
 import { UserService } from '@/modules/user/user.service';
 import { JwtAuthGuard } from '@/modules/auth/guards/jwt-auth.guard';
 import { getAuthorizationApiHeader } from '@/common/utils/swagger';
@@ -148,6 +149,7 @@ export class UserController {
 
   @ApiOperation({ summary: 'sent education information' })
   @ApiHeader(getAuthorizationApiHeader())
+  @ApiBody({ isArray: true, type: AddUserEducationDto })
   @Post('education-info')
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
@@ -160,6 +162,7 @@ export class UserController {
 
   @ApiOperation({ summary: 'sent workhistory information' })
   @ApiHeader(getAuthorizationApiHeader())
+  @ApiBody({ isArray: true, type: AddUserWorkhistoryDto })
   @Post('workhistory-info')
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)

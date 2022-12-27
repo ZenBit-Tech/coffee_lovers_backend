@@ -9,12 +9,15 @@ import { HttpStatus } from '@nestjs/common/enums';
 import { UserService } from '@/modules/user/user.service';
 import { JwtAuthGuard } from '@/modules/auth/guards/jwt-auth.guard';
 import { UserController } from '@/modules/user/user.controller';
+import { educationPayload } from '@/common/utils/tests';
 
 describe('UserController (e2e)', () => {
   let app: INestApplication;
 
   const userService = {
     getWorkInfo: () => [],
+    getEducationInfo: () => [],
+    getFreelancerPageInfoById: () => {},
     addUserInfo: () => {},
     sendPasswordResetMail: () => {},
     resetPassword: () => {},
@@ -63,6 +66,13 @@ describe('UserController (e2e)', () => {
       .get('/user/workhistory-info')
       .expect(HttpStatus.OK)
       .expect(userService.getWorkInfo());
+  });
+
+  it('/user/education-info (GET) education', () => {
+    return request(app.getHttpServer())
+      .get('/user/education-info')
+      .expect(HttpStatus.OK)
+      .expect(userService.getEducationInfo());
   });
 
   describe('/user (PUT) update user', () => {

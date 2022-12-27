@@ -6,7 +6,13 @@ import { Education } from '@entities/Education.entity';
 import { WorkHistory } from '@entities/WorkHistory.entity';
 import { Request } from '@entities/Request.entity';
 import { Category } from '@entities/Category.entity';
-import { getRepositoryProvider, mockRepository } from '@utils/tests';
+import {
+  educationPayload,
+  workhistoryPayload,
+  getRepositoryProvider,
+  mockRepository,
+  fullFreelancerMockData,
+} from '@utils/tests';
 import { MailService } from '@/modules/mail/mail.service';
 import { FileService } from '@/modules/file/file.service';
 import { UserService } from './user.service';
@@ -61,6 +67,29 @@ describe('UserService', () => {
     });
   });
 
+  describe('getEducationInfo', () => {
+    it('should return education information', async (): Promise<void> => {
+      const user = { id: 1 } as UserDto;
+      expect(await userService.getEducationInfo(user)).toEqual([]);
+    });
+  });
+
+  describe('getFreelancerInfoById', () => {
+    it('should return freelancer full info by id', async (): Promise<void> => {
+      const id = 1;
+      expect(await userService.getFreelancerInfoById(id)).toEqual({});
+    });
+    it('should return freelancer full info by id from findOne method', async (): Promise<void> => {
+      const id = 1;
+      jest
+        .spyOn(userService, 'findOne')
+        .mockResolvedValue(fullFreelancerMockData);
+      expect(await userService.getFreelancerInfoById(id)).toEqual(
+        fullFreelancerMockData,
+      );
+    });
+  });
+
   describe('addUserInfo', () => {
     it('should update user information (without skills)', async (): Promise<void> => {
       const user = { id: 1 } as UserDto;
@@ -80,6 +109,64 @@ describe('UserService', () => {
       await userService.addUserInfo(payload, user);
 
       expect(mockRepository.createQueryBuilder).toHaveBeenCalledTimes(3);
+    });
+  });
+
+  describe('addEducationToUser', () => {
+    it('should create/update user education information', async (): Promise<void> => {
+      const user = {
+        id: 6,
+      } as User;
+      jest.spyOn(mockRepository, 'createQueryBuilder');
+      await userService.addEducationToUser(user, educationPayload);
+
+      expect(mockRepository.createQueryBuilder).toHaveBeenCalledTimes(2);
+    });
+  });
+
+  describe('addEducationInfo', () => {
+    it('should pass data to addEducationToUser method', async (): Promise<void> => {
+      const user = { id: 1, email: 'test@test.com' } as User;
+      const currentUser = { id: 2, email: 'test2@test.com' } as User;
+
+      jest.spyOn(userService, 'findByEmail').mockResolvedValue(currentUser);
+      jest.spyOn(userService, 'addEducationToUser');
+
+      await userService.addEducationInfo(educationPayload, user);
+
+      expect(userService.addEducationToUser).toBeCalledWith(
+        currentUser,
+        educationPayload,
+      );
+    });
+  });
+
+  describe('addWorkToUser', () => {
+    it('should create/update user workhistory information', async (): Promise<void> => {
+      const user = {
+        id: 6,
+      } as User;
+      jest.spyOn(mockRepository, 'createQueryBuilder');
+      await userService.addWorkToUser(user, workhistoryPayload);
+
+      expect(mockRepository.createQueryBuilder).toHaveBeenCalledTimes(2);
+    });
+  });
+
+  describe('addWorkhistoryInfo', () => {
+    it('should pass data to addWorkToUser method', async (): Promise<void> => {
+      const user = { id: 1, email: 'test@test.com' } as User;
+      const currentUser = { id: 2, email: 'test2@test.com' } as User;
+
+      jest.spyOn(userService, 'findByEmail').mockResolvedValue(currentUser);
+      jest.spyOn(userService, 'addWorkToUser');
+
+      await userService.addWorkhistoryInfo(workhistoryPayload, user);
+
+      expect(userService.addWorkToUser).toBeCalledWith(
+        currentUser,
+        workhistoryPayload,
+      );
     });
   });
 
