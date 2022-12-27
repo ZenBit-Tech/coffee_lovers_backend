@@ -22,6 +22,7 @@ import CreateProposalDto from './dto/create-proposal.dto';
 import getJobProposalsResponseDto from './dto/get-job-proposals-response.dto';
 import getJobByIdResponseDto from './dto/get-job-response.dto';
 import SetStatusDto from './dto/set-status.dto';
+import GetPostedJobsDetailsResponse from './dto/get-posted-jobs-details-response.dto';
 
 @Injectable()
 export class JobsService {
@@ -182,7 +183,10 @@ export class JobsService {
     }
   }
 
-  async getPostedJobDetails(user: UserDto, id: number) {
+  async getPostedJobDetails(
+    user: UserDto,
+    id: number,
+  ): Promise<GetPostedJobsDetailsResponse> {
     try {
       const job = await this.jobRepository
         .createQueryBuilder('job')

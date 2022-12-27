@@ -58,7 +58,10 @@ export class JobsController {
   @ApiResponse({ type: GetPostedJobsDetailsResponse })
   @UseGuards(JwtAuthGuard)
   @Get('/posted/:id')
-  getPostedJobDetails(@Request() req: ReqUser, @Param('id') id: number) {
+  getPostedJobDetails(
+    @Request() req: ReqUser,
+    @Param('id') id: number,
+  ): Promise<GetPostedJobsDetailsResponse> {
     return this.jobsService.getPostedJobDetails(req.user, id);
   }
 
