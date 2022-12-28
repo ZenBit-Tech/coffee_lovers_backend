@@ -1,3 +1,4 @@
+import { Favorites } from '@entities/Favorites.entity';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -55,6 +56,7 @@ import { RequestModule } from './modules/requests/request.module';
         Notification,
         Offer,
         Contract,
+        Favorites,
       ],
       synchronize: true,
     }),
