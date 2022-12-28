@@ -6,7 +6,7 @@ import { User } from '@entities/User.entity';
 import { Offer } from '@entities/Offer.entity';
 import { Contract } from '@entities/Contract.entity';
 import { UserModule } from '@/modules/user/user.module';
-import { JobsModule } from '@/modules//jobs/job.module';
+import { JobsModule } from '@/modules/jobs/job.module';
 import { RequsetService } from './requset.service';
 import { RequstController } from './requst.controller';
 
