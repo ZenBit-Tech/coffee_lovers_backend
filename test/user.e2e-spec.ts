@@ -22,7 +22,6 @@ describe('UserController (e2e)', () => {
     getEducationInfo: () => [],
     addWorkhistoryInfo: () => {},
     addEducationInfo: () => {},
-    getFreelancerPageInfoById: () => {},
     addUserInfo: () => {},
     sendPasswordResetMail: () => {},
     resetPassword: () => {},
