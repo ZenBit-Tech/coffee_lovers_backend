@@ -93,7 +93,7 @@ describe('UserController', () => {
   });
 
   describe('getFreelancerPageInfoById', () => {
-    it('should call getFreelancerPageInfoById in user service', async (): Promise<void> => {
+    it('should call getFreelancerPageInfoById and return user object', async (): Promise<void> => {
       const params = { key: 1 };
 
       expect(await userController.getFreelancerPageInfoById(params)).toEqual({
