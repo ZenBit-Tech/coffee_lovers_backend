@@ -10,8 +10,6 @@ import {
   UseInterceptors,
   UploadedFile,
   Query,
-  DefaultValuePipe,
-  ParseIntPipe,
   Put,
   Param,
 } from '@nestjs/common';
@@ -46,6 +44,8 @@ import GetUserEducationDto from './dto/get-user-education.dto';
 import { Education } from '@/common/entities/Education.entity';
 import GetFreelancerDto from './dto/get-freelancer-params.dto';
 import getUserProposalsResponseDto from './dto/get-proposals-by-user.dto';
+import SetFavoritesDto from './dto/set-favorites.dto';
+import GetFavoritesDto from './dto/get-favorites.dto';
 
 @ApiTags('user')
 @Controller('user')
@@ -216,6 +216,28 @@ export class UserController {
   @HttpCode(HttpStatus.OK)
   getCategories(): Promise<Category[]> {
     return this.userService.getCategoryInfo();
+  }
+
+  @ApiOperation({ summary: 'add or delete new favorite' })
+  @ApiHeader(getAuthorizationApiHeader())
+  @Post('favorites')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  setFavorite(
+    @Request() req: ReqUser,
+    @Body() payload: SetFavoritesDto,
+  ): Promise<void> {
+    return this.userService.setFavorite(req.user, payload);
+  }
+
+  @ApiOperation({ summary: 'get all favorites' })
+  @ApiResponse({ type: GetFavoritesDto })
+  @ApiHeader(getAuthorizationApiHeader())
+  @Get('favorites')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  getFavorites(@Request() req: ReqUser): Promise<GetFavoritesDto[]> {
+    return this.userService.getFavorites(req.user);
   }
 
   @ApiOperation({
