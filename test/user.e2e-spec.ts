@@ -9,6 +9,10 @@ import { HttpStatus } from '@nestjs/common/enums';
 import { UserService } from '@/modules/user/user.service';
 import { JwtAuthGuard } from '@/modules/auth/guards/jwt-auth.guard';
 import { UserController } from '@/modules/user/user.controller';
+import {
+  educationPayload,
+  workhistoryPayload,
+} from '@/common/constants/mockdata';
 
 describe('UserController (e2e)', () => {
   let app: INestApplication;
@@ -16,6 +20,8 @@ describe('UserController (e2e)', () => {
   const userService = {
     getWorkInfo: () => [],
     getEducationInfo: () => [],
+    addWorkhistoryInfo: () => {},
+    addEducationInfo: () => {},
     getFreelancerPageInfoById: () => {},
     addUserInfo: () => {},
     sendPasswordResetMail: () => {},
@@ -66,12 +72,56 @@ describe('UserController (e2e)', () => {
       .expect(HttpStatus.OK)
       .expect(userService.getWorkInfo());
   });
+  describe('/user/education-info (GET) education', () => {
+    it('should return status code 200', () => {
+      return request(app.getHttpServer())
+        .get('/user/education-info')
+        .expect(HttpStatus.OK)
+        .expect(userService.getEducationInfo());
+    });
+    it('should return status code 404', () => {
+      return request(app.getHttpServer())
+        .get('/user/education-infoo')
+        .expect(HttpStatus.NOT_FOUND);
+    });
+  });
 
-  it('/user/education-info (GET) education', () => {
-    return request(app.getHttpServer())
-      .get('/user/education-info')
-      .expect(HttpStatus.OK)
-      .expect(userService.getEducationInfo());
+  describe('/user/education-info (POST) update/set education', () => {
+    it('should return status code 200', () => {
+      return request(app.getHttpServer())
+        .post('/user/education-info')
+        .send(educationPayload)
+        .expect(HttpStatus.OK);
+    });
+
+    it('wrong type/expects more(less) fields: should return status code 400', () => {
+      return request(app.getHttpServer())
+        .post('/user/education-info')
+        .send([{ education_from: 2010 }])
+        .expect(HttpStatus.BAD_REQUEST);
+    });
+  });
+
+  describe('/user/workhistory-info (POST) update/set workhistory', () => {
+    it('should return status code 200', () => {
+      return request(app.getHttpServer())
+        .post('/user/workhistory-info')
+        .send(workhistoryPayload)
+        .expect(HttpStatus.OK);
+    });
+
+    it('wrong type/expects more(less) fields: should return status code 400', () => {
+      return request(app.getHttpServer())
+        .post('/user/workhistory-info')
+        .send([
+          {
+            work_history_descr: 'Worked at Google, PERN stack',
+            work_history_from: 2020,
+            work_history_to: '2022',
+          },
+        ])
+        .expect(HttpStatus.BAD_REQUEST);
+    });
   });
 
   describe('/user (PUT) update user', () => {

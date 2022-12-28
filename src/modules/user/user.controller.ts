@@ -25,7 +25,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { Type } from 'class-transformer';
+import { ParseArrayPipe } from '@nestjs/common/pipes';
 import { UserService } from '@/modules/user/user.service';
 import { JwtAuthGuard } from '@/modules/auth/guards/jwt-auth.guard';
 import { getAuthorizationApiHeader } from '@/common/utils/swagger';
@@ -155,7 +155,8 @@ export class UserController {
   @HttpCode(HttpStatus.OK)
   addEducationInfo(
     @Request() req: ReqUser,
-    @Body() payload: AddUserEducationDto[],
+    @Body(new ParseArrayPipe({ items: AddUserEducationDto }))
+    payload: AddUserEducationDto[],
   ): Promise<void> {
     return this.userService.addEducationInfo(payload, req.user);
   }
@@ -168,7 +169,8 @@ export class UserController {
   @HttpCode(HttpStatus.OK)
   addWorkhistoryInfo(
     @Request() req: ReqUser,
-    @Body() payload: AddUserWorkhistoryDto[],
+    @Body(new ParseArrayPipe({ items: AddUserWorkhistoryDto }))
+    payload: AddUserWorkhistoryDto[],
   ): Promise<void> {
     return this.userService.addWorkhistoryInfo(payload, req.user);
   }

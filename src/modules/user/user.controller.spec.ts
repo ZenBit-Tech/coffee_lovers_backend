@@ -81,7 +81,7 @@ describe('UserController', () => {
   });
 
   describe('getUserEducationInformation', () => {
-    it('should call geEduInfo in user service', async (): Promise<void> => {
+    it('should GET data if data type is correct (return array of objects)', async (): Promise<void> => {
       expect(await userController.getUserEducationInformation(reqUser)).toEqual(
         [{ id: expect.any(Number) } as Education],
       );
@@ -90,10 +90,16 @@ describe('UserController', () => {
         reqUser.user,
       );
     });
+
+    it('should reject if data type is NOT correct', async (): Promise<void> => {
+      expect(
+        await userController.getUserEducationInformation(reqUser),
+      ).not.toEqual([{ id: expect.any(String) } as Education]);
+    });
   });
 
   describe('getFreelancerPageInfoById', () => {
-    it('should call getFreelancerPageInfoById and return user object', async (): Promise<void> => {
+    it('checks that user exist and returns user object', async (): Promise<void> => {
       const params = { key: 1 };
 
       expect(await userController.getFreelancerPageInfoById(params)).toEqual({
@@ -102,6 +108,21 @@ describe('UserController', () => {
 
       expect(mockUserService.getFreelancerInfoById).toHaveBeenCalledWith(
         params.key,
+      );
+    });
+
+    it('checks that wrong freelancer would not be returned', async (): Promise<void> => {
+      const params = { key: 1 };
+      const wrongParams = { key: 2 };
+
+      expect(
+        await userController.getFreelancerPageInfoById(params),
+      ).not.toEqual({
+        id: wrongParams.key,
+      } as User);
+
+      expect(mockUserService.getFreelancerInfoById).not.toHaveBeenCalledWith(
+        wrongParams.key,
       );
     });
   });
@@ -119,7 +140,7 @@ describe('UserController', () => {
   });
 
   describe('addEducationInfo', () => {
-    it('should call addEducationInfo in user service', async (): Promise<void> => {
+    it('should POST data if data type is correct (pass data to user.service)', async (): Promise<void> => {
       await userController.addEducationInfo(reqUser, educationPayload);
 
       expect(mockUserService.addEducationInfo).toHaveBeenCalledWith(
@@ -127,14 +148,43 @@ describe('UserController', () => {
         reqUser.user,
       );
     });
+    it('should not POST data to user service', async (): Promise<void> => {
+      await userController.addEducationInfo(reqUser, educationPayload);
+
+      expect(mockUserService.addEducationInfo).not.toHaveBeenCalledWith(
+        [
+          {
+            education_descr: 'I studied computer sciency at MIT',
+            education_from: 2010,
+            education_to: '2015',
+          },
+        ],
+        reqUser.user,
+      );
+    });
   });
 
   describe('addWorkhistoryInfo', () => {
-    it('should call addWorkhistoryInfo in user service', async (): Promise<void> => {
+    it('should POST data if data type is correct (pass data to user.service)', async (): Promise<void> => {
       await userController.addWorkhistoryInfo(reqUser, workhistoryPayload);
 
       expect(mockUserService.addWorkhistoryInfo).toHaveBeenCalledWith(
         workhistoryPayload,
+        reqUser.user,
+      );
+    });
+
+    it('should not POST data to user service', async (): Promise<void> => {
+      await userController.addWorkhistoryInfo(reqUser, workhistoryPayload);
+
+      expect(mockUserService.addWorkhistoryInfo).not.toHaveBeenCalledWith(
+        [
+          {
+            work_history_descr: 'Worked at Google, PERN stack',
+            work_history_from: 2020,
+            work_history_to: '2022',
+          },
+        ],
         reqUser.user,
       );
     });
