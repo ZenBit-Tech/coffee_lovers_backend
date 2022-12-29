@@ -25,8 +25,6 @@ import getJobInfoParamsDto from './dto/get-job-info-params-dto';
 import UpdateJobDto from './dto/update-job.dto';
 import getJobByIdResponseDto from './dto/get-job-response.dto';
 import GetPostedJobsResponseDto from './dto/get-posted-jobs-response.dto';
-import getJobsWithoutOffer from './dto/get-jobs-withoutoffer.dto';
-import getAvailableJobs from './dto/get-available-jobs.dto';
 import SetStatusDto from './dto/set-status.dto';
 
 @ApiTags('jobs')
@@ -94,17 +92,6 @@ export class JobsController {
     @Param() params: getJobInfoParamsDto,
   ): Promise<getJobByIdResponseDto> {
     return this.jobsService.getJobById(+params.id);
-  }
-
-  @ApiOperation({
-    summary: 'Get user jobs and count accepted offers',
-  })
-  @ApiHeader(getAuthorizationApiHeader())
-  @ApiResponse({ type: getJobsWithoutOffer })
-  @UseGuards(JwtAuthGuard)
-  @Get('/withoutoffer/:fr')
-  getJobsMissingOffer(@Request() req, @Param('fr') fr: number): Promise<Job[]> {
-    return this.jobsService.getAllUserJobs(req.user, fr);
   }
 
   @ApiOperation({ summary: 'Update job' })

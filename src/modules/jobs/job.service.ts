@@ -12,7 +12,6 @@ import { Request } from '@entities/Request.entity';
 import { JobStatus, RequestType } from '@constants/entities';
 import { User } from '@entities/User.entity';
 import { isUserJobOwnerOfJob } from '@validation/jobs';
-import { Conversation } from '@/common/entities/Conversation.entity';
 import UserDto from '@/modules/user/dto/user.dto';
 import { Offer } from '@/common/entities/Offer.entity';
 import GetJobsDto from './dto/get-jobs.dto';
@@ -264,22 +263,6 @@ export class JobsService {
       return {
         job,
       };
-    } catch (error) {
-      if (error instanceof HttpException) {
-        throw error;
-      }
-      throw new InternalServerErrorException();
-    }
-  }
-
-  async getAllUserJobs(user: UserDto, fr: number): Promise<Job[]> {
-    try {
-      const jobsResponse = await this.jobRepository
-        .createQueryBuilder('job')
-        .where({ owner: user })
-        .getMany();
-
-      return jobsResponse;
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;

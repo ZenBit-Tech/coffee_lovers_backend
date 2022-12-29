@@ -6,7 +6,7 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Brackets, Repository } from 'typeorm';
 import { JobsService } from 'src/modules/jobs/job.service';
 import { User } from '@/common/entities/User.entity';
 import { Request } from '@/common/entities/Request.entity';
@@ -14,6 +14,9 @@ import { UserService } from '@/modules/user/user.service';
 import { Offer } from '@/common/entities/Offer.entity';
 import OfferBody from './dto/offer-body-dto copy';
 import ReqBody from './dto/request-body-dto';
+import { Job } from '@/common/entities/Job.entity';
+import { RequestType } from '@/common/constants/entities';
+import UserDto from '../user/dto/user.dto';
 
 @Injectable()
 export class RequsetService {
@@ -26,6 +29,9 @@ export class RequsetService {
 
     @InjectRepository(Request)
     private requestRepository: Repository<Request>,
+
+    @InjectRepository(Job)
+    private jobRepository: Repository<Job>,
 
     @InjectRepository(Offer)
     private offerRepository: Repository<Offer>,
@@ -65,6 +71,7 @@ export class RequsetService {
         .values({ ...body, freelancer, job, job_owner: user })
         .execute();
     } catch (error) {
+      console.log(error);
       throw new InternalServerErrorException();
     }
   }
@@ -103,6 +110,68 @@ export class RequsetService {
         .values({ ...body, freelancer, job, job_owner: user })
         .execute();
     } catch (error) {
+      console.log(error);
+
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async getJobsWithoutOffer(user: UserDto, fr: number): Promise<Job[]> {
+    try {
+      const jobsResponse = await this.jobRepository
+        .createQueryBuilder('job')
+        .leftJoinAndSelect('job.offers', 'offer')
+        .leftJoinAndSelect('job.requests', 'request')
+        .loadRelationCountAndMap('job.count', 'job.offers', 'offer', (qb) =>
+          qb.where('offer.freelancer.id = :user_id', {
+            user_id: fr,
+          }),
+        )
+        .where({ owner: user })
+        .andWhere(
+          new Brackets((qb) => {
+            qb.where(`request.freelancer.id = :fr`, { fr }).andWhere(
+              `request.type != :type`,
+              {
+                type: RequestType.PROPOSAL,
+              },
+            );
+          }),
+        )
+        .getMany();
+
+      return jobsResponse;
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async getJobsWithoutInvite(user: UserDto, fr: number): Promise<Job[]> {
+    try {
+      const jobsResponse = await this.jobRepository
+        .createQueryBuilder('job')
+        .leftJoinAndSelect('job.offers', 'offer')
+        .leftJoinAndSelect('job.requests', 'request')
+        .where({ owner: user })
+        .loadRelationCountAndMap('job.count', 'job.requests', 'request', (qb) =>
+          qb.where(
+            'request.freelancer.id = :user_id AND request.type = :type',
+            {
+              user_id: fr,
+              type: 'Interview',
+            },
+          ),
+        )
+        .getMany();
+
+      return jobsResponse;
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
       throw new InternalServerErrorException();
     }
   }
