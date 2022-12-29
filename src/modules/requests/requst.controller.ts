@@ -1,13 +1,18 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   Param,
   Post,
   Request,
   UseGuards,
 } from '@nestjs/common';
 import { ApiHeader, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Offer } from '@entities/Offer.entity';
+import { Request as RequestEntity } from '@entities/Request.entity';
 import { getAuthorizationApiHeader } from '@/common/utils/swagger';
 import { JwtAuthGuard } from '@/modules/auth/guards/jwt-auth.guard';
 import { ReqUser } from '@/modules/user/dto/get-user-dto.dto';
@@ -17,6 +22,8 @@ import OfferBody from './dto/offer-body-dto copy';
 import getJobsWithoutOffer from './dto/get-jobs-withoutoffer.dto';
 import { Job } from '@/common/entities/Job.entity';
 import GetAvailableJobsAndCount from './dto/available-gobs-count.dto';
+import GetOffersByUserResponseDto from './dto/get-offers-by-user-response.dto';
+import GetInterviewsByUserResponseDto from './dto/get-interviews-by-user-response.dto';
 
 @ApiTags('request')
 @Controller('request')
@@ -72,5 +79,56 @@ export class RequstController {
     @Param('fr') fr: number,
   ): Promise<Job[]> {
     return this.requsetService.getJobsWithoutInvite(req.user, fr);
+  }
+
+  @ApiOperation({ summary: "Get all freelancer's offers" })
+  @ApiHeader(getAuthorizationApiHeader())
+  @ApiResponse({ type: [GetOffersByUserResponseDto] })
+  @UseGuards(JwtAuthGuard)
+  @Get('/offers')
+  getOffersByUser(@Request() req: ReqUser): Promise<Offer[]> {
+    return this.requsetService.getOffersByUser(req.user);
+  }
+
+  @ApiOperation({ summary: "Get all freelancer's interviews invintations" })
+  @ApiHeader(getAuthorizationApiHeader())
+  @ApiResponse({ type: [GetInterviewsByUserResponseDto] })
+  @UseGuards(JwtAuthGuard)
+  @Get('/interviews')
+  getInterviewsByUser(@Request() req: ReqUser): Promise<RequestEntity[]> {
+    return this.requsetService.getInterviewsByUser(req.user);
+  }
+
+  @ApiOperation({ summary: 'Accept offer by id' })
+  @ApiHeader(getAuthorizationApiHeader())
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  @Post('/accept/offer/:id')
+  acceptOffer(@Request() req: ReqUser, @Param('id') id: number): Promise<void> {
+    return this.requsetService.acceptOffer(req.user, id);
+  }
+
+  @ApiOperation({ summary: 'Decline offer by id' })
+  @ApiHeader(getAuthorizationApiHeader())
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  @Post('/decline/offer/:id')
+  declineOffer(
+    @Request() req: ReqUser,
+    @Param('id') id: number,
+  ): Promise<void> {
+    return this.requsetService.declineOffer(req.user, id);
+  }
+
+  @ApiOperation({ summary: 'Delete interview by id' })
+  @ApiHeader(getAuthorizationApiHeader())
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  @Delete('interview/:id')
+  deleteInterview(
+    @Request() req: ReqUser,
+    @Param('id') id: number,
+  ): Promise<void> {
+    return this.requsetService.deleteInterview(req.user, id);
   }
 }
