@@ -148,7 +148,7 @@ describe('UserController', () => {
         reqUser.user,
       );
     });
-    it('should not POST data to user service', async (): Promise<void> => {
+    it('should not POST data to user service (wrong type in education_from field)', async (): Promise<void> => {
       await userController.addEducationInfo(reqUser, educationPayload);
 
       expect(mockUserService.addEducationInfo).not.toHaveBeenCalledWith(
@@ -174,7 +174,7 @@ describe('UserController', () => {
       );
     });
 
-    it('should not POST data to user service', async (): Promise<void> => {
+    it('should not POST data to user service (wrong type in work_history_from field)', async (): Promise<void> => {
       await userController.addWorkhistoryInfo(reqUser, workhistoryPayload);
 
       expect(mockUserService.addWorkhistoryInfo).not.toHaveBeenCalledWith(
