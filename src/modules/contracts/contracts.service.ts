@@ -1,9 +1,9 @@
-import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '@/common/entities/User.entity';
 import { Contract } from '@/common/entities/Contract.entity';
-import { ContractStatus, Role } from '@/common/constants/entities';
+import { ContractStatus } from '@/common/constants/entities';
 import { checkAnotherRole, checkUserRole } from './constants';
 
 @Injectable()
