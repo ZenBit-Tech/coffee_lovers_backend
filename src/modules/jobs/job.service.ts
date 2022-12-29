@@ -12,8 +12,8 @@ import { Request } from '@entities/Request.entity';
 import { JobStatus, RequestType } from '@constants/entities';
 import { User } from '@entities/User.entity';
 import { isUserJobOwnerOfJob } from '@validation/jobs';
+import { Contract } from '@entities/Contract.entity';
 import UserDto from '@/modules/user/dto/user.dto';
-import { ContractsService } from '@/modules/contracts/contracts.service';
 import GetJobsDto from './dto/get-jobs.dto';
 import CreateJobDto from './dto/create-job.dto';
 import UpdateJobDto from './dto/update-job.dto';
@@ -31,7 +31,6 @@ export class JobsService {
     private jobRepository: Repository<Job>,
     @InjectRepository(Request)
     private requestRepository: Repository<Request>,
-    private contractService: ContractsService,
   ) {}
 
   async findOne(payload: object, leftJoins?: string[]): Promise<Job | null> {
@@ -188,28 +187,29 @@ export class JobsService {
     id: number,
   ): Promise<GetPostedJobsDetailsResponse> {
     try {
-      const job = await this.jobRepository
+      const data = await this.jobRepository
         .createQueryBuilder('job')
         .leftJoinAndSelect('job.owner', 'user')
         .leftJoinAndSelect('job.category', 'category')
         .leftJoinAndSelect('job.skills', 'skill')
         .leftJoinAndSelect('job.offers', 'offer')
+        .leftJoinAndSelect('offer.freelancer', 'freelancer')
+        .innerJoinAndMapOne(
+          'offer.contract',
+          Contract,
+          'contract',
+          'offer.id = contract.offerId',
+        )
         .where({ id })
         .getOne();
 
-      isUserJobOwnerOfJob(job, user as User);
+      isUserJobOwnerOfJob(data, user as User);
 
-      let hires = [];
-
-      if (job.offers.length) {
-        hires = await this.contractService.findContractsByOffersId(
-          job.offers.map((offer) => offer.id),
-        );
-      }
+      const { offers, ...job } = data;
 
       return {
-        job,
-        hires,
+        job: job as Job,
+        hires: offers,
       };
     } catch (error) {
       if (error instanceof HttpException) {

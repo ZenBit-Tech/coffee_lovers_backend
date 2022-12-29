@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Contract } from '@entities/Contract.entity';
 import { Job } from '@entities/Job.entity';
+import { Offer } from '@entities/Offer.entity';
 import { mockContract1, mockJob1, mockOffer1 } from '@/common/mocks/jobs';
 import { mockFreelancer1, mockJobOwner1 } from '@/common/mocks/users';
 import {
@@ -24,13 +24,11 @@ export default class GetPostedJobsDetailsResponse {
   @ApiProperty({
     example: [
       {
-        ...mockContract1,
-        offer: {
-          ...mockOffer1,
-          freelancer: mockFreelancer1,
-        },
+        ...mockOffer1,
+        freelancer: mockFreelancer1,
+        contract: mockContract1,
       },
     ],
   })
-  hires: Contract[];
+  hires: Offer[];
 }

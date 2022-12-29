@@ -18,19 +18,6 @@ export class ContractsService {
     private contractRepository: Repository<Contract>,
   ) {}
 
-  async findContractsByOffersId(offers: number[]): Promise<Contract[]> {
-    try {
-      return await this.contractRepository
-        .createQueryBuilder('contract')
-        .leftJoinAndSelect('contract.offer', 'offer')
-        .leftJoinAndSelect('offer.freelancer', 'user')
-        .where('contract.offer.id IN (:...offers)', { offers })
-        .getMany();
-    } catch (error) {
-      throw new InternalServerErrorException();
-    }
-  }
-
   async getActiveContracts(user: User): Promise<Contract[]> {
     try {
       const activeContracts = await this.contractRepository
