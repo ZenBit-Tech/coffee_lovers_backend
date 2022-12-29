@@ -10,8 +10,6 @@ import {
   UseInterceptors,
   UploadedFile,
   Query,
-  DefaultValuePipe,
-  ParseIntPipe,
   Put,
   Param,
 } from '@nestjs/common';
@@ -25,7 +23,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { Favorites } from '@/common/entities/Favorites.entity';
+import { ParseArrayPipe } from '@nestjs/common/pipes';
 import { UserService } from '@/modules/user/user.service';
 import { JwtAuthGuard } from '@/modules/auth/guards/jwt-auth.guard';
 import { getAuthorizationApiHeader } from '@/common/utils/swagger';
@@ -151,24 +149,28 @@ export class UserController {
 
   @ApiOperation({ summary: 'sent education information' })
   @ApiHeader(getAuthorizationApiHeader())
+  @ApiBody({ isArray: true, type: AddUserEducationDto })
   @Post('education-info')
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
   addEducationInfo(
     @Request() req: ReqUser,
-    @Body() payload: AddUserEducationDto[],
+    @Body(new ParseArrayPipe({ items: AddUserEducationDto }))
+    payload: AddUserEducationDto[],
   ): Promise<void> {
     return this.userService.addEducationInfo(payload, req.user);
   }
 
   @ApiOperation({ summary: 'sent workhistory information' })
   @ApiHeader(getAuthorizationApiHeader())
+  @ApiBody({ isArray: true, type: AddUserWorkhistoryDto })
   @Post('workhistory-info')
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
   addWorkhistoryInfo(
     @Request() req: ReqUser,
-    @Body() payload: AddUserWorkhistoryDto[],
+    @Body(new ParseArrayPipe({ items: AddUserWorkhistoryDto }))
+    payload: AddUserWorkhistoryDto[],
   ): Promise<void> {
     return this.userService.addWorkhistoryInfo(payload, req.user);
   }
