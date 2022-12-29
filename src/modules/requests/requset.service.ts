@@ -71,7 +71,6 @@ export class RequsetService {
         .values({ ...body, freelancer, job, job_owner: user })
         .execute();
     } catch (error) {
-      console.log(error);
       throw new InternalServerErrorException();
     }
   }
@@ -110,8 +109,6 @@ export class RequsetService {
         .values({ ...body, freelancer, job, job_owner: user })
         .execute();
     } catch (error) {
-      console.log(error);
-
       throw new InternalServerErrorException();
     }
   }
