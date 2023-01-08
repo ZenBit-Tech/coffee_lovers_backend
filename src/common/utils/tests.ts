@@ -4,6 +4,11 @@ import { EntityClassOrSchema } from '@nestjs/typeorm/dist/interfaces/entity-clas
 export const createQueryBuilder = {
   select: () => createQueryBuilder,
   update: () => createQueryBuilder,
+  delete: () => createQueryBuilder,
+  from: () => createQueryBuilder,
+  insert: () => createQueryBuilder,
+  into: () => createQueryBuilder,
+  values: () => createQueryBuilder,
   set: () => createQueryBuilder,
   addSelect: () => createQueryBuilder,
   groupBy: () => createQueryBuilder,

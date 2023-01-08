@@ -28,6 +28,7 @@ import GetPostedJobsResponseDto from './dto/get-posted-jobs-response.dto';
 import getJobsWithoutOffer from './dto/get-jobs-withoutoffer.dto';
 import getAvailableJobs from './dto/get-available-jobs.dto';
 import SetStatusDto from './dto/set-status.dto';
+import GetPostedJobsDetailsResponse from './dto/get-posted-jobs-details-response.dto';
 
 @ApiTags('jobs')
 @Controller('jobs')
@@ -48,8 +49,20 @@ export class JobsController {
   @ApiResponse({ type: [GetPostedJobsResponseDto] })
   @UseGuards(JwtAuthGuard)
   @Get('/posted')
-  async getPostedJobs(@Request() req): Promise<Job[]> {
+  getPostedJobs(@Request() req): Promise<Job[]> {
     return this.jobsService.getPostedJobs(req.user);
+  }
+
+  @ApiOperation({ summary: 'Get details of posted job' })
+  @ApiHeader(getAuthorizationApiHeader())
+  @ApiResponse({ type: GetPostedJobsDetailsResponse })
+  @UseGuards(JwtAuthGuard)
+  @Get('/posted/:id')
+  getPostedJobDetails(
+    @Request() req: ReqUser,
+    @Param('id') id: number,
+  ): Promise<GetPostedJobsDetailsResponse> {
+    return this.jobsService.getPostedJobDetails(req.user, id);
   }
 
   @ApiOperation({ summary: 'Add job' })

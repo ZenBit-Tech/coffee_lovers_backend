@@ -12,9 +12,8 @@ import { Request } from '@entities/Request.entity';
 import { JobStatus, RequestType } from '@constants/entities';
 import { User } from '@entities/User.entity';
 import { isUserJobOwnerOfJob } from '@validation/jobs';
-import { Conversation } from '@/common/entities/Conversation.entity';
+import { Contract } from '@entities/Contract.entity';
 import UserDto from '@/modules/user/dto/user.dto';
-import { Offer } from '@/common/entities/Offer.entity';
 import GetJobsDto from './dto/get-jobs.dto';
 import CreateJobDto from './dto/create-job.dto';
 import UpdateJobDto from './dto/update-job.dto';
@@ -23,14 +22,13 @@ import CreateProposalDto from './dto/create-proposal.dto';
 import getJobProposalsResponseDto from './dto/get-job-proposals-response.dto';
 import getJobByIdResponseDto from './dto/get-job-response.dto';
 import SetStatusDto from './dto/set-status.dto';
+import GetPostedJobsDetailsResponse from './dto/get-posted-jobs-details-response.dto';
 
 @Injectable()
 export class JobsService {
   constructor(
     @InjectRepository(Job)
     private jobRepository: Repository<Job>,
-    @InjectRepository(Offer)
-    private offerRepository: Repository<Offer>,
     @InjectRepository(Request)
     private requestRepository: Repository<Request>,
   ) {}
@@ -180,6 +178,43 @@ export class JobsService {
         .where({ owner: user })
         .getMany();
     } catch (error) {
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async getPostedJobDetails(
+    user: UserDto,
+    id: number,
+  ): Promise<GetPostedJobsDetailsResponse> {
+    try {
+      const data = await this.jobRepository
+        .createQueryBuilder('job')
+        .leftJoinAndSelect('job.owner', 'user')
+        .leftJoinAndSelect('job.category', 'category')
+        .leftJoinAndSelect('job.skills', 'skill')
+        .leftJoinAndSelect('job.offers', 'offer')
+        .leftJoinAndSelect('offer.freelancer', 'freelancer')
+        .innerJoinAndMapOne(
+          'offer.contract',
+          Contract,
+          'contract',
+          'offer.id = contract.offerId',
+        )
+        .where({ id })
+        .getOne();
+
+      isUserJobOwnerOfJob(data, user as User);
+
+      const { offers, ...job } = data;
+
+      return {
+        job: job as Job,
+        hires: offers,
+      };
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
       throw new InternalServerErrorException();
     }
   }
