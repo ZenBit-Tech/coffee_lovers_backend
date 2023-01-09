@@ -11,7 +11,7 @@ export default class getJobsWithoutOffer {
       available_time: 'Part-Time',
       english_level: 'No English',
       created_at: null,
-      offersCount: 1,
+      count: 1,
     },
   })
   job: Job;

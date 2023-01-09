@@ -1,6 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsNumber, IsOptional, IsString } from 'class-validator';
-import { RequestType } from '@/common/constants/entities';
+import {
+  IsBoolean,
+  IsNumber,
+  IsOptional,
+  IsString,
+  MaxLength,
+} from 'class-validator';
+import { coverLetterMaxLength, RequestType } from '@/common/constants/entities';
 
 export default class ReqBody {
   @ApiProperty({ example: 'Proposal' })
@@ -16,7 +22,9 @@ export default class ReqBody {
   @IsBoolean()
   reject: boolean;
 
-  @ApiProperty({ example: 'Your cover letter with skills description' })
+  @ApiProperty({ example: 'Hello world' })
+  @IsOptional()
+  @MaxLength(coverLetterMaxLength)
   @IsString()
   cover_letter: string;
 }
