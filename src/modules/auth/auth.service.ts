@@ -17,6 +17,7 @@ import SignInDto from '@/modules/auth/dto/signIn.dto';
 import TokenDto from '@/modules/auth/dto/token.dto';
 import AuthResponseDto from '@/modules/auth/dto/auth-response.dto';
 import { CredentialDto } from '@/modules/auth/googleauth/dto/credential';
+import AuthGoogleResponseDto from './dto/auth-response.dto copy';
 
 @Injectable()
 export class AuthService {
@@ -27,7 +28,9 @@ export class AuthService {
     private readonly configService: ConfigService,
   ) {}
 
-  async googleLogin(@Body() body: CredentialDto): Promise<AuthResponseDto> {
+  async googleLogin(
+    @Body() body: CredentialDto,
+  ): Promise<AuthGoogleResponseDto> {
     try {
       const client = new OAuth2Client(
         this.configService.get<string>('GOOGLE_CLIENT_ID'),
@@ -58,13 +61,13 @@ export class AuthService {
       if (!user) {
         const signupResponse = await this.signUp(dataLogin);
 
-        return signupResponse;
+        return { role: false, access_token: signupResponse.access_token };
       }
       await this.userService.setIfGoogle(true, user.id);
 
       const loginResponse = await this.signIn(dataLogin);
 
-      return loginResponse;
+      return { role: true, access_token: loginResponse.access_token };
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
