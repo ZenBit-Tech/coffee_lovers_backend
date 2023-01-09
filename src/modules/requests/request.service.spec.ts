@@ -43,7 +43,6 @@ describe('UserService', () => {
     const moduleRef = await Test.createTestingModule({
       providers: [
         RequsetService,
-        UserService,
         getRepositoryProvider(Request),
         getRepositoryProvider(User),
         getRepositoryProvider(Job),
@@ -80,7 +79,7 @@ describe('UserService', () => {
   describe('addOffer', () => {
     it('conversations not found: should call checkChatAvailability , should get response object with freelancer and empty array', async (): Promise<void> => {
       const currentUser = { id: 7 } as User;
-      const jobId = 6;
+      const jobId = 6 as number;
       const frelancer = { id: mockFreelancerId } as User;
       const jobRes = { job: { id: jobId } } as getJobByIdResponseDto;
       const offerBody = { hourly_rate: 4 } as OfferBody;
@@ -110,7 +109,7 @@ describe('UserService', () => {
   describe('addRequest', () => {
     it('conversations not found: should call checkChatAvailability , should get response object with freelancer and empty array', async (): Promise<void> => {
       const currentUser = { id: 7 } as User;
-      const jobId = 6;
+      const jobId = 6 as number;
       const frelancer = { id: mockFreelancerId } as User;
       const jobRes = { job: { id: jobId } } as getJobByIdResponseDto;
       const reqBody = { hourly_rate: 4 } as ReqBody;

@@ -9,7 +9,7 @@ import { FileService } from '@/modules/file/file.service';
 import { UserService } from '@/modules/user/user.service';
 import { InviteService } from './conversations.service';
 
-describe('JobsService', () => {
+describe('InviteService', () => {
   let inviteService: InviteService;
   let userService: UserService;
 
@@ -75,7 +75,10 @@ describe('JobsService', () => {
     const freelancerId = 3 as number;
     const user = { id: 1 } as User;
     const freelancer = { id: freelancerId } as User;
-    const response = { freelancer: { id: freelancerId } as User, data: [] };
+    const response = {
+      freelancer: { id: freelancerId } as User,
+      data: [],
+    };
 
     jest.spyOn(userService, 'getUserById').mockResolvedValue(freelancer);
     jest

@@ -12,8 +12,8 @@ describe('RequestController', () => {
   let requestController: RequstController;
 
   const mockRequestService = {
-    addOffer: jest.fn().mockImplementation(() => null),
-    addRequest: jest.fn().mockImplementation(() => null),
+    addOffer: jest.fn().mockImplementation(() => {}),
+    addRequest: jest.fn().mockImplementation(() => {}),
   };
 
   beforeEach(async () => {

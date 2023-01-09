@@ -31,8 +31,8 @@ export const UserMock: User = {
 };
 
 export const SendOfferMock = {
-  hourly_rate: 20 as number,
-  status: 'Accepted' as OfferStatus,
+  hourly_rate: 20,
+  status: 'Accepted',
 };
 
 export const PostRequestMock = {

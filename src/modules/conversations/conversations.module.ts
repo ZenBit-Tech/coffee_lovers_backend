@@ -12,9 +12,6 @@ import { InviteService } from './conversations.service';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      envFilePath: `.${process.env.NODE_ENV}.env`,
-    }),
     TypeOrmModule.forFeature([Offer, Conversation, Job, User, Request]),
     UserModule,
   ],
