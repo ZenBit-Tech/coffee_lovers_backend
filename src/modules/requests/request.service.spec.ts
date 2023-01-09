@@ -1,24 +1,20 @@
 import { Test } from '@nestjs/testing';
 import { getRepositoryProvider, mockRepository } from '@utils/tests';
 import { ConfigService } from '@nestjs/config';
-import { RequsetService } from './requset.service';
-import { UserService } from '../user/user.service';
-import { JobsService } from '../jobs/job.service';
-import {
-  addRequestBody,
-  mockFreelancerId,
-  mockJobId,
-} from './mockData/requestData';
+import { UserService } from '@/modules/user/user.service';
+import { JobsService } from '@/modules/jobs/job.service';
 import { Job } from '@/common/entities/Job.entity';
 import { User } from '@/common/entities/User.entity';
-import { FileService } from '../file/file.service';
-import getJobByIdResponseDto from '../jobs/dto/get-job-response.dto';
-import OfferBody from './dto/offer-body-dto copy';
+import { FileService } from '@/modules/file/file.service';
+import getJobByIdResponseDto from '@/modules/jobs/dto/get-job-response.dto';
 import { Request } from '@/common/entities/Request.entity';
 import { Offer } from '@/common/entities/Offer.entity';
 import { Contract } from '@/common/entities/Contract.entity';
+import OfferBody from './dto/offer-body-dto copy';
 import { freelancerId } from './constants/mock-test-const';
 import ReqBody from './dto/request-body-dto';
+import { RequsetService } from './requset.service';
+import { mockFreelancerId } from './mockData/requestData';
 
 describe('UserService', () => {
   let requestService: RequsetService;

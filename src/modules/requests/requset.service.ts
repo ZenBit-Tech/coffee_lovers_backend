@@ -7,14 +7,14 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Brackets, Repository } from 'typeorm';
-import { JobsService } from 'src/modules/jobs/job.service';
 import { User } from '@entities/User.entity';
 import { Request } from '@entities/Request.entity';
 import { Contract } from '@entities/Contract.entity';
 import { Offer } from '@entities/Offer.entity';
 import { ContractStatus, OfferStatus, RequestType } from '@constants/entities';
-import { isOfferPendingForUser } from '@validation/offers';
-import { isRequestForFreelancer } from '@validation/requests';
+import { isOfferPendingForUser } from '@/common/validation/offers';
+import { isRequestForFreelancer } from '@/common/validation/requests';
+import { JobsService } from '@/modules/jobs/job.service';
 import { UserService } from '@/modules/user/user.service';
 import OfferBody from './dto/offer-body-dto copy';
 import ReqBody from './dto/request-body-dto';
