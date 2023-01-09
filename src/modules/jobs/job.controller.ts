@@ -27,7 +27,6 @@ import getJobByIdResponseDto from './dto/get-job-response.dto';
 import GetPostedJobsResponseDto from './dto/get-posted-jobs-response.dto';
 import getJobsWithoutOffer from './dto/get-jobs-withoutoffer.dto';
 import getAvailableJobs from './dto/get-available-jobs.dto';
-import SetStatusDto from './dto/set-status.dto';
 import GetPostedJobsDetailsResponse from './dto/get-posted-jobs-details-response.dto';
 
 @ApiTags('jobs')
@@ -141,15 +140,15 @@ export class JobsController {
     return this.jobsService.updateJob(payload, req.user);
   }
 
-  @ApiOperation({ summary: 'Update job status' })
+  @ApiOperation({ summary: 'Stop hiring candidates on posted job' })
   @ApiHeader(getAuthorizationApiHeader())
-  @Post('/status')
+  @Post('/stophiring/:jobId')
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
-  setJobStatus(
+  stopHiring(
     @Request() req: ReqUser,
-    @Body() payload: SetStatusDto,
+    @Param('jobId') jobId: number,
   ): Promise<void> {
-    return this.jobsService.setJobStatus(req.user, payload);
+    return this.jobsService.stopHiring(req.user, jobId);
   }
 }
