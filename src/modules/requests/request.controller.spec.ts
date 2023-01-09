@@ -1,12 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { RequstController } from './requst.controller';
 import { RequsetService } from './requset.service';
-import {
-  PostRequestMock,
-  SendOfferMock,
-  UserMock,
-} from './mockData/mockUserData';
+import { PostRequestMock, SendOfferMock } from './mockData/mockUserData';
 import { freelancerId, jobIdMock } from './constants/mock-test-const';
+import { mockJobOwner1 } from '@/common/mocks/users';
+import { User } from '@/common/entities/User.entity';
 
 describe('RequestController', () => {
   let requestController: RequstController;
@@ -33,7 +31,7 @@ describe('RequestController', () => {
       expect(
         await requestController.createOffer(
           {
-            user: UserMock,
+            user: mockJobOwner1 as User,
           },
           freelancerId,
           jobIdMock,
@@ -41,7 +39,7 @@ describe('RequestController', () => {
         ),
       ).toEqual(
         mockRequestService.addOffer(
-          UserMock,
+          mockJobOwner1 as User,
           jobIdMock,
           freelancerId,
           SendOfferMock,
@@ -49,7 +47,7 @@ describe('RequestController', () => {
       );
 
       expect(mockRequestService.addOffer).toHaveBeenCalledWith(
-        UserMock,
+        mockJobOwner1 as User,
         jobIdMock,
         freelancerId,
         SendOfferMock,
@@ -60,7 +58,7 @@ describe('RequestController', () => {
       expect(
         await requestController.createRequest(
           {
-            user: UserMock,
+            user: mockJobOwner1 as User,
           },
           freelancerId,
           jobIdMock,
@@ -68,7 +66,7 @@ describe('RequestController', () => {
         ),
       ).toEqual(
         mockRequestService.addRequest(
-          UserMock,
+          mockJobOwner1 as User,
           PostRequestMock,
           freelancerId,
           jobIdMock,
@@ -76,7 +74,7 @@ describe('RequestController', () => {
       );
 
       expect(mockRequestService.addRequest).toHaveBeenCalledWith(
-        UserMock,
+        mockJobOwner1 as User,
         PostRequestMock,
         freelancerId,
         jobIdMock,
