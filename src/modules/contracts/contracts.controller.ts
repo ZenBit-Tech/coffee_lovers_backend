@@ -9,6 +9,7 @@ import ContractsResponseDto from './dto/contracts-response.dto';
 enum EndpointsRoutes {
   active = 'active',
   closed = 'closed',
+  all = 'all',
 }
 
 @ApiTags('contracts')
@@ -36,5 +37,16 @@ export class ContractsController {
   @Get(`${EndpointsRoutes.closed}`)
   getClosedContractsFreelancer(@Req() req): Promise<Contract[]> {
     return this.contractsService.getClosedContracts(req.user);
+  }
+
+  @ApiOperation({
+    summary: 'Get all hired freelancers',
+  })
+  @ApiResponse({ type: ContractsResponseDto })
+  @ApiHeader(getAuthorizationApiHeader())
+  @UseGuards(JwtAuthGuard)
+  @Get(`${EndpointsRoutes.all}`)
+  getAllHiredFreelancers(@Req() req): Promise<Contract[]> {
+    return this.contractsService.getAllHiredFreelancers(req.user);
   }
 }
