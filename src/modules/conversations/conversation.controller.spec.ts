@@ -1,9 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ReqUser } from '@/modules/user/dto/get-user-dto.dto';
-import { InviteController } from './conversations.controller';
-import { InviteService } from './conversations.service';
 import { Conversation } from '@/common/entities/Conversation.entity';
 import { User } from '@/common/entities/User.entity';
+import { InviteController } from './conversations.controller';
+import { InviteService } from './conversations.service';
 
 describe('InviteController', () => {
   let inviteController: InviteController;

@@ -1,10 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { mockJobOwner1 } from '@/common/mocks/users';
+import { User } from '@/common/entities/User.entity';
 import { RequstController } from './requst.controller';
 import { RequsetService } from './requset.service';
 import { PostRequestMock, SendOfferMock } from './mockData/mockUserData';
 import { freelancerId, jobIdMock } from './constants/mock-test-const';
-import { mockJobOwner1 } from '@/common/mocks/users';
-import { User } from '@/common/entities/User.entity';
 
 describe('RequestController', () => {
   let requestController: RequstController;
