@@ -1,6 +1,7 @@
 import { OfferStatus, RequestType } from '@/common/constants/entities';
+import { User } from '@/common/entities/User.entity';
 
-export const UserMock = {
+export const UserMock: User = {
   id: 5,
   email: 'kasirecIvanna@dd.com',
   password: 'password',
@@ -26,6 +27,7 @@ export const UserMock = {
   requests: null,
   notifications: null,
   offers: null,
+  favorites: [],
 };
 
 export const SendOfferMock = {

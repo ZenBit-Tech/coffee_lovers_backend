@@ -15,13 +15,13 @@ describe('PostRequestParams', () => {
     expect(errors.length).toBe(0);
   });
 
-  it('payload has no properties, should be an error', async (): Promise<void> => {
+  it('if payload has no properties, should be an error', async (): Promise<void> => {
     const dto = {};
     const errors = await validate(plainToClass(ReqBody, dto));
     expect(errors.length).not.toBe(0);
   });
 
-  it('wrong request property type, should be an error', async (): Promise<void> => {
+  it('if wrong request property type, should be an error', async (): Promise<void> => {
     const dto = { ...PostRequestMock, cover_letter: hRate };
     const errors = await validate(plainToClass(ReqBody, dto));
     expect(errors.length).not.toBe(0);
@@ -35,13 +35,13 @@ describe('PostOfferParams', () => {
     expect(errors.length).toBe(0);
   });
 
-  it('payload has no properties, should be an error', async (): Promise<void> => {
+  it('if payload has no properties, should be an error', async (): Promise<void> => {
     const dto = {};
     const errors = await validate(plainToClass(OfferBody, dto));
     expect(errors.length).not.toBe(0);
   });
 
-  it('wrong type for hourly rate, should be an error', async (): Promise<void> => {
+  it('if wrong type for hourly rate, should be an error', async (): Promise<void> => {
     const dto = { ...SendOfferMock, hourly_rate: hRateErr };
     const errors = await validate(plainToClass(OfferBody, dto));
     expect(errors.length).not.toBe(0);

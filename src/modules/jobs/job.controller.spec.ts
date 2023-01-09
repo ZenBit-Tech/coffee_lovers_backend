@@ -19,6 +19,21 @@ describe('JobsController', () => {
         job: { id },
         proposals: [{ id: 1 }],
       })),
+    getAvailableJobs: jest
+      .fn()
+      .mockImplementation((req: object, fr: string) => [
+        {
+          id: fr,
+        },
+      ]),
+
+    filterJobsWithoutOffer: jest
+      .fn()
+      .mockImplementation((user: object, fr: string) => [
+        {
+          id: fr,
+        },
+      ]),
   };
 
   beforeEach(async () => {
@@ -60,6 +75,36 @@ describe('JobsController', () => {
       expect(mockJobService.getJobProposals).toHaveBeenCalledWith(
         +params.id,
         reqUser.user,
+      );
+    });
+  });
+
+  describe('getAvailableJobs', () => {
+    it('should return jobs without invite', async (): Promise<void> => {
+      const req = { user: { id: 4 } } as ReqUser;
+      const freelancer = '4' as string;
+      expect(await jobsController.getUserJobs(req, freelancer)).toEqual(
+        mockJobService.getAvailableJobs(req, +freelancer),
+      );
+
+      expect(mockJobService.getAvailableJobs).toHaveBeenCalledWith(
+        req,
+        +freelancer,
+      );
+    });
+  });
+
+  describe('getJobsMissingOffer', () => {
+    it('should return jobs without offer', async (): Promise<void> => {
+      const req = { user: { id: 4 } } as ReqUser;
+      const freelancer = '4' as string;
+      expect(await jobsController.getUserJobs(req, freelancer)).toEqual(
+        mockJobService.filterJobsWithoutOffer(req, +freelancer),
+      );
+
+      expect(mockJobService.filterJobsWithoutOffer).toHaveBeenCalledWith(
+        req,
+        +freelancer,
       );
     });
   });
