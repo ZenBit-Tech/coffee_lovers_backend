@@ -4,6 +4,7 @@ import {
   InternalServerErrorException,
   ForbiddenException,
   BadRequestException,
+  Inject,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Brackets } from 'typeorm';
@@ -12,7 +13,10 @@ import { Request } from '@entities/Request.entity';
 import { RequestType, Role } from '@constants/entities';
 import { Message } from '@entities/Message.entity';
 import { UserColumns } from '@constants/chat';
+import { User } from '@entities/User.entity';
+import { Job } from '@entities/Job.entity';
 import UserDto from '@/modules/user/dto/user.dto';
+import { RequsetService } from '@/modules/requests/requset.service';
 import CreateConversationDto from './dto/create-conversation.dto';
 import { CreateMessageDto } from './dto/create-message.dto';
 import { GetConversationsDto } from './dto/get-conversations.dto';
@@ -26,6 +30,9 @@ export class ChatService {
     private requestRepository: Repository<Request>,
     @InjectRepository(Message)
     private messageRepository: Repository<Message>,
+
+    @Inject(RequsetService)
+    private requestService: RequsetService,
   ) {}
 
   async createConversation(
@@ -61,7 +68,17 @@ export class ChatService {
       const requestCount = await findRequestQuery.getCount();
 
       if (!requestCount) {
-        throw new ForbiddenException();
+        if (user.role === Role.FREELANCER) {
+          const offer = await this.requestService.findOffer({
+            freelancer: { id: user.id } as User,
+            job: { id: payload.job } as Job,
+          });
+          if (!offer) {
+            throw new ForbiddenException();
+          }
+        } else {
+          throw new ForbiddenException();
+        }
       }
 
       const conversationPayload = {
