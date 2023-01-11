@@ -9,8 +9,7 @@ import {
 import getJobByIdResponseDto from '@/modules/jobs/dto/get-job-response.dto';
 import { Job } from '@/common/entities/Job.entity';
 import { mockJobOwnerOfTypeUser } from './users';
-import { mockCategory1 } from './properties';
-import { Category } from '../entities/Category.entity';
+import { Category } from '@/common/entities/Category.entity';
 
 export const mockJob1 = {
   id: 1,
@@ -65,5 +64,5 @@ export const mockJobOfTypeJob: Job = {
 };
 
 export const mockJobById: getJobByIdResponseDto = {
-  job: new Job(),
+  job: mockJobOfTypeJob,
 };

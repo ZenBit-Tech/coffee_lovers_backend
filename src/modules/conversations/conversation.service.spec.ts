@@ -6,12 +6,12 @@ import { ConfigService } from '@nestjs/config';
 import { getRepositoryProvider } from '@/common/utils/tests';
 import { FileService } from '@/modules/file/file.service';
 import { UserService } from '@/modules/user/user.service';
-import { InviteService } from './conversations.service';
 import {
   mockFreelancerOfTypeUser,
   mockJobOwnerOfTypeUser,
 } from '@/common/mocks/users';
 import { mockConversation } from '@/common/mocks/conversations';
+import { InviteService } from './conversations.service';
 
 describe('InviteService', () => {
   let inviteService: InviteService;

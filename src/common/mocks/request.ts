@@ -1,6 +1,6 @@
 import ReqBody from '@/modules/requests/dto/request-body-dto';
 import { ReqUser } from '@/modules/user/dto/get-user-dto.dto';
-import { RequestType } from '../constants/entities';
+import { RequestType } from '@/common/constants/entities';
 import { mockJobOwnerOfTypeUser } from './users';
 
 export const mockRquestBody: ReqBody = {

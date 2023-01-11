@@ -1,7 +1,5 @@
 import { AvailableTime, EnglishLevel, Role } from '@constants/entities';
-import UserDto from '@/modules/user/dto/user.dto';
-import { Category } from '@/common/entities/Category.entity';
-import { User } from '../entities/User.entity';
+import { User } from '@/common/entities/User.entity';
 
 export const mockJobOwner1 = {
   id: 1,
@@ -31,12 +29,12 @@ export const mockJobOwnerOfTypeUser: User = {
   role: Role.FREELANCER,
   available_time: AvailableTime.FULL_TIME,
   description: 'User description',
-  position: 'Full stacj developer',
+  position: 'Full stack developer',
   hourly_rate: 50,
   other_experience: '',
   english_level: EnglishLevel.NO_ENGLISH,
   skills: [],
-  category: new Category(),
+  category: null,
   password: '',
   is_google: false,
   reset_password_key: '',
@@ -60,12 +58,12 @@ export const mockFreelancerOfTypeUser: User = {
   role: Role.FREELANCER,
   available_time: AvailableTime.FULL_TIME,
   description: 'User description',
-  position: 'Full stacj developer',
+  position: 'Full stack developer',
   hourly_rate: 50,
   other_experience: '',
   english_level: EnglishLevel.NO_ENGLISH,
   skills: [],
-  category: new Category(),
+  category: null,
   password: '',
   is_google: false,
   reset_password_key: '',

@@ -1,6 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { mockJobOwner1, mockJobOwnerOfTypeUser } from '@/common/mocks/users';
-import { User } from '@/common/entities/User.entity';
+import { mockJobOwnerOfTypeUser } from '@/common/mocks/users';
 import { RequstController } from './requst.controller';
 import { RequsetService } from './requset.service';
 import { PostRequestMock, SendOfferMock } from './mockData/mockUserData';
