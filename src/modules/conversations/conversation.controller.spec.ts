@@ -1,21 +1,18 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ReqUser } from '@/modules/user/dto/get-user-dto.dto';
-import { Conversation } from '@/common/entities/Conversation.entity';
-import { User } from '@/common/entities/User.entity';
+import { mockRquestUser } from '@/common/mocks/request';
 import { InviteController } from './conversations.controller';
 import { InviteService } from './conversations.service';
 
 describe('InviteController', () => {
   let inviteController: InviteController;
-  const mockConversastion = { id: 23 } as Conversation;
 
   const mockInviteService = {
     checkChatAvailability: jest
       .fn()
       .mockImplementation((req: ReqUser, fr: number) => [
         {
-          freelancer: { id: fr } as User,
-          data: [mockConversastion],
+          freelancer: fr,
         },
       ]),
   };
@@ -33,15 +30,16 @@ describe('InviteController', () => {
   });
 
   describe('checkChatOpened', () => {
-    it('should return freelancer and array of conversations', async (): Promise<void> => {
-      const freelancerId = 1 as number;
-      const request = { user: { id: 4 } as User } as ReqUser;
+    it('should be called with jobowner request and freelancer id', async (): Promise<void> => {
+      const freelancerId = 1;
       expect(
-        await inviteController.checkChatOpened(request, freelancerId),
-      ).toEqual(mockInviteService.checkChatAvailability(request, freelancerId));
+        await inviteController.checkChatOpened(mockRquestUser, freelancerId),
+      ).toEqual(
+        mockInviteService.checkChatAvailability(mockRquestUser, freelancerId),
+      );
 
       expect(mockInviteService.checkChatAvailability).toHaveBeenCalledWith(
-        request,
+        mockRquestUser,
         freelancerId,
       );
     });

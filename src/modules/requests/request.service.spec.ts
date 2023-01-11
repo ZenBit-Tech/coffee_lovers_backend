@@ -6,15 +6,17 @@ import { JobsService } from '@/modules/jobs/job.service';
 import { Job } from '@/common/entities/Job.entity';
 import { User } from '@/common/entities/User.entity';
 import { FileService } from '@/modules/file/file.service';
-import getJobByIdResponseDto from '@/modules/jobs/dto/get-job-response.dto';
 import { Request } from '@/common/entities/Request.entity';
 import { Offer } from '@/common/entities/Offer.entity';
 import { Contract } from '@/common/entities/Contract.entity';
-import OfferBody from './dto/offer-body-dto copy';
+import {
+  mockFreelancerOfTypeUser,
+  mockJobOwnerOfTypeUser,
+} from '@/common/mocks/users';
+import { mockJobById, mockJobOfTypeJob, mockOffer1 } from '@/common/mocks/jobs';
+import { mockRquestBody } from '@/common/mocks/request';
 import { freelancerId } from './constants/mock-test-const';
-import ReqBody from './dto/request-body-dto';
 import { RequsetService } from './requset.service';
-import { mockFreelancerId } from './mockData/requestData';
 
 describe('UserService', () => {
   let requestService: RequsetService;
@@ -26,10 +28,9 @@ describe('UserService', () => {
   };
 
   const mockJobService = {
-    getJobById: (id: number) =>
-      ({
-        id,
-      } as Job),
+    getJobById: (id: number) => ({
+      id,
+    }),
   };
 
   const mockUserService = {
@@ -78,29 +79,25 @@ describe('UserService', () => {
 
   describe('addOffer', () => {
     it('conversations not found: should call checkChatAvailability , should get response object with freelancer and empty array', async (): Promise<void> => {
-      const currentUser = { id: 7 } as User;
-      const jobId = 6 as number;
-      const frelancer = { id: mockFreelancerId } as User;
-      const jobRes = { job: { id: jobId } } as getJobByIdResponseDto;
-      const offerBody = { hourly_rate: 4 } as OfferBody;
-
       jest.spyOn(mockRepository, 'createQueryBuilder');
-      jest.spyOn(jobService, 'getJobById').mockResolvedValue(jobRes);
-      jest.spyOn(userService, 'getUserById').mockResolvedValue(frelancer);
+      jest.spyOn(jobService, 'getJobById').mockResolvedValue(mockJobById);
+      jest
+        .spyOn(userService, 'getUserById')
+        .mockResolvedValue(mockFreelancerOfTypeUser);
       jest.spyOn(requestService, 'addOffer').mockResolvedValue();
 
       await requestService.addOffer(
-        currentUser,
-        jobId,
+        mockJobOwnerOfTypeUser,
+        mockJobOfTypeJob.id,
         freelancerId,
-        offerBody,
+        mockOffer1,
       );
 
       expect(requestService.addOffer).toBeCalledWith(
-        currentUser,
-        jobId,
+        mockJobOwnerOfTypeUser,
+        mockJobOfTypeJob.id,
         freelancerId,
-        offerBody,
+        mockOffer1,
       );
       expect(requestService.addOffer).toBeCalledTimes(1);
     });
@@ -108,29 +105,25 @@ describe('UserService', () => {
 
   describe('addRequest', () => {
     it('conversations not found: should call checkChatAvailability , should get response object with freelancer and empty array', async (): Promise<void> => {
-      const currentUser = { id: 7 } as User;
-      const jobId = 6 as number;
-      const frelancer = { id: mockFreelancerId } as User;
-      const jobRes = { job: { id: jobId } } as getJobByIdResponseDto;
-      const reqBody = { hourly_rate: 4 } as ReqBody;
-
       jest.spyOn(mockRepository, 'createQueryBuilder');
-      jest.spyOn(jobService, 'getJobById').mockResolvedValue(jobRes);
-      jest.spyOn(userService, 'getUserById').mockResolvedValue(frelancer);
+      jest.spyOn(jobService, 'getJobById').mockResolvedValue(mockJobById);
+      jest
+        .spyOn(userService, 'getUserById')
+        .mockResolvedValue(mockFreelancerOfTypeUser);
       jest.spyOn(requestService, 'addRequest').mockResolvedValue();
 
       await requestService.addRequest(
-        currentUser,
-        reqBody,
-        freelancerId,
-        jobId,
+        mockJobOwnerOfTypeUser,
+        mockRquestBody,
+        mockFreelancerOfTypeUser.id,
+        mockJobOfTypeJob.id,
       );
 
       expect(requestService.addRequest).toBeCalledWith(
-        currentUser,
-        reqBody,
-        freelancerId,
-        jobId,
+        mockJobOwnerOfTypeUser,
+        mockRquestBody,
+        mockFreelancerOfTypeUser.id,
+        mockJobOfTypeJob.id,
       );
       expect(requestService.addRequest).toBeCalledTimes(1);
     });

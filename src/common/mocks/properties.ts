@@ -1,3 +1,5 @@
+import { Category } from '../entities/Category.entity';
+
 export const mockSkill1 = {
   id: 1,
   name: 'HTML',
@@ -16,4 +18,11 @@ export const mockSkill3 = {
 export const mockCategory1 = {
   id: 1,
   name: 'Web development',
+};
+
+export const mockCategoryOfType: Category = {
+  id: 1,
+  name: 'Web development',
+  jobs: [],
+  user: [],
 };

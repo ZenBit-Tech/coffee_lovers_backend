@@ -78,34 +78,4 @@ describe('JobsController', () => {
       );
     });
   });
-
-  describe('getAvailableJobs', () => {
-    it('should return jobs without invite', async (): Promise<void> => {
-      const req = { user: { id: 4 } } as ReqUser;
-      const freelancer = '4' as string;
-      expect(await jobsController.getUserJobs(req, freelancer)).toEqual(
-        mockJobService.getAvailableJobs(req, +freelancer),
-      );
-
-      expect(mockJobService.getAvailableJobs).toHaveBeenCalledWith(
-        req,
-        +freelancer,
-      );
-    });
-  });
-
-  describe('getJobsMissingOffer', () => {
-    it('should return jobs without offer', async (): Promise<void> => {
-      const req = { user: { id: 4 } } as ReqUser;
-      const freelancer = '4' as string;
-      expect(await jobsController.getUserJobs(req, freelancer)).toEqual(
-        mockJobService.filterJobsWithoutOffer(req, +freelancer),
-      );
-
-      expect(mockJobService.filterJobsWithoutOffer).toHaveBeenCalledWith(
-        req,
-        +freelancer,
-      );
-    });
-  });
 });

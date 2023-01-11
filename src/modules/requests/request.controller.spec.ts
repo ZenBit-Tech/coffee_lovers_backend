@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { mockJobOwner1 } from '@/common/mocks/users';
+import { mockJobOwner1, mockJobOwnerOfTypeUser } from '@/common/mocks/users';
 import { User } from '@/common/entities/User.entity';
 import { RequstController } from './requst.controller';
 import { RequsetService } from './requset.service';
@@ -31,7 +31,7 @@ describe('RequestController', () => {
       expect(
         await requestController.createOffer(
           {
-            user: mockJobOwner1 as User,
+            user: mockJobOwnerOfTypeUser,
           },
           freelancerId,
           jobIdMock,
@@ -39,7 +39,7 @@ describe('RequestController', () => {
         ),
       ).toEqual(
         mockRequestService.addOffer(
-          mockJobOwner1 as User,
+          mockJobOwnerOfTypeUser,
           jobIdMock,
           freelancerId,
           SendOfferMock,
@@ -47,7 +47,7 @@ describe('RequestController', () => {
       );
 
       expect(mockRequestService.addOffer).toHaveBeenCalledWith(
-        mockJobOwner1 as User,
+        mockJobOwnerOfTypeUser,
         jobIdMock,
         freelancerId,
         SendOfferMock,
@@ -58,7 +58,7 @@ describe('RequestController', () => {
       expect(
         await requestController.createRequest(
           {
-            user: mockJobOwner1 as User,
+            user: mockJobOwnerOfTypeUser,
           },
           freelancerId,
           jobIdMock,
@@ -66,7 +66,7 @@ describe('RequestController', () => {
         ),
       ).toEqual(
         mockRequestService.addRequest(
-          mockJobOwner1 as User,
+          mockJobOwnerOfTypeUser,
           PostRequestMock,
           freelancerId,
           jobIdMock,
@@ -74,7 +74,7 @@ describe('RequestController', () => {
       );
 
       expect(mockRequestService.addRequest).toHaveBeenCalledWith(
-        mockJobOwner1 as User,
+        mockJobOwnerOfTypeUser,
         PostRequestMock,
         freelancerId,
         jobIdMock,

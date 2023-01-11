@@ -4,10 +4,14 @@ import { Request } from '@entities/Request.entity';
 import { Conversation } from '@entities/Conversation.entity';
 import { ConfigService } from '@nestjs/config';
 import { getRepositoryProvider } from '@/common/utils/tests';
-import { User } from '@/common/entities/User.entity';
 import { FileService } from '@/modules/file/file.service';
 import { UserService } from '@/modules/user/user.service';
 import { InviteService } from './conversations.service';
+import {
+  mockFreelancerOfTypeUser,
+  mockJobOwnerOfTypeUser,
+} from '@/common/mocks/users';
+import { mockConversation } from '@/common/mocks/conversations';
 
 describe('InviteService', () => {
   let inviteService: InviteService;
@@ -53,40 +57,44 @@ describe('InviteService', () => {
 
   describe('checkChatAvailability', () => {
     it('conversations found: should call checkChatAvailability , should get response object with freelancer and array of Conversations', async (): Promise<void> => {
-      const freelancerId = 3 as number;
-      const user = { id: 1 } as User;
-      const freelancer = { id: freelancerId } as User;
       const response = {
-        freelancer: { id: freelancerId } as User,
-        data: [{ id: 35 } as Conversation],
+        freelancer: mockFreelancerOfTypeUser,
+        data: [mockConversation],
       };
 
-      jest.spyOn(userService, 'getUserById').mockResolvedValue(freelancer);
+      jest
+        .spyOn(userService, 'getUserById')
+        .mockResolvedValue(mockFreelancerOfTypeUser);
       jest
         .spyOn(inviteService, 'checkChatAvailability')
         .mockResolvedValue(response);
 
       expect(
-        await inviteService.checkChatAvailability(user, freelancerId),
+        await inviteService.checkChatAvailability(
+          mockJobOwnerOfTypeUser,
+          mockFreelancerOfTypeUser.id,
+        ),
       ).toBe(response);
     });
   });
   it('conversations not found: should call checkChatAvailability , should get response object with freelancer and empty array', async (): Promise<void> => {
-    const freelancerId = 3 as number;
-    const user = { id: 1 } as User;
-    const freelancer = { id: freelancerId } as User;
     const response = {
-      freelancer: { id: freelancerId } as User,
+      freelancer: mockFreelancerOfTypeUser,
       data: [],
     };
 
-    jest.spyOn(userService, 'getUserById').mockResolvedValue(freelancer);
+    jest
+      .spyOn(userService, 'getUserById')
+      .mockResolvedValue(mockFreelancerOfTypeUser);
     jest
       .spyOn(inviteService, 'checkChatAvailability')
       .mockResolvedValue(response);
 
-    expect(await inviteService.checkChatAvailability(user, freelancerId)).toBe(
-      response,
-    );
+    expect(
+      await inviteService.checkChatAvailability(
+        mockJobOwnerOfTypeUser,
+        mockFreelancerOfTypeUser.id,
+      ),
+    ).toBe(response);
   });
 });
