@@ -36,7 +36,7 @@ export class ChatService {
   ) {}
 
   async createConversation(
-    user: UserDto,
+    user: User,
     payload: CreateConversationDto,
   ): Promise<void> {
     try {
@@ -70,8 +70,8 @@ export class ChatService {
       if (!requestCount) {
         if (user.role === Role.FREELANCER) {
           const offer = await this.requestService.findOffer({
-            freelancer: { id: user.id } as User,
-            job: { id: payload.job } as Job,
+            freelancer: user,
+            job: { id: payload.job },
           });
           if (!offer) {
             throw new ForbiddenException();
