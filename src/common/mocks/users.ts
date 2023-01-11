@@ -1,4 +1,5 @@
 import { AvailableTime, EnglishLevel } from '@constants/entities';
+import AuthGoogleResponseDto from '@/modules/auth/dto/auth-response.dto copy';
 
 export const mockJobOwner1 = {
   id: 1,
@@ -17,4 +18,9 @@ export const mockFreelancer1 = {
   available_time: AvailableTime.FULL_TIME,
   position: 'Full-Stack Developer',
   english_level: EnglishLevel.INTERMEDIATE,
+};
+
+export const mockCredential: AuthGoogleResponseDto = {
+  access_token: 'my_access_token',
+  role: false,
 };
