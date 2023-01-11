@@ -7,7 +7,7 @@ import {
 } from 'typeorm';
 import { Job } from '@entities/Job.entity';
 import { User } from '@entities/User.entity';
-import { OfferStatus } from '@constants/entities';
+import { coverLetterMaxLength, OfferStatus } from '@constants/entities';
 
 @Entity()
 export class Offer {
@@ -36,6 +36,14 @@ export class Offer {
 
   @Column()
   start: string;
+
+  @Column({
+    type: 'varchar',
+    length: coverLetterMaxLength,
+    default: null,
+    nullable: true,
+  })
+  cover_letter: string;
 
   @CreateDateColumn()
   created_at: Date;

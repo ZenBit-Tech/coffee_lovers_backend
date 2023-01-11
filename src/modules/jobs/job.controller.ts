@@ -25,9 +25,8 @@ import getJobInfoParamsDto from './dto/get-job-info-params-dto';
 import UpdateJobDto from './dto/update-job.dto';
 import getJobByIdResponseDto from './dto/get-job-response.dto';
 import GetPostedJobsResponseDto from './dto/get-posted-jobs-response.dto';
-import getJobsWithoutOffer from './dto/get-jobs-withoutoffer.dto';
-import getAvailableJobs from './dto/get-available-jobs.dto';
 import SetStatusDto from './dto/set-status.dto';
+import GetPostedJobsDetailsResponse from './dto/get-posted-jobs-details-response.dto';
 
 @ApiTags('jobs')
 @Controller('jobs')
@@ -48,8 +47,20 @@ export class JobsController {
   @ApiResponse({ type: [GetPostedJobsResponseDto] })
   @UseGuards(JwtAuthGuard)
   @Get('/posted')
-  async getPostedJobs(@Request() req): Promise<Job[]> {
+  getPostedJobs(@Request() req): Promise<Job[]> {
     return this.jobsService.getPostedJobs(req.user);
+  }
+
+  @ApiOperation({ summary: 'Get details of posted job' })
+  @ApiHeader(getAuthorizationApiHeader())
+  @ApiResponse({ type: GetPostedJobsDetailsResponse })
+  @UseGuards(JwtAuthGuard)
+  @Get('/posted/:id')
+  getPostedJobDetails(
+    @Request() req: ReqUser,
+    @Param('id') id: number,
+  ): Promise<GetPostedJobsDetailsResponse> {
+    return this.jobsService.getPostedJobDetails(req.user, id);
   }
 
   @ApiOperation({ summary: 'Add job' })
@@ -85,18 +96,6 @@ export class JobsController {
     return this.jobsService.getJobProposals(+params.id, req.user);
   }
 
-  @ApiOperation({
-    summary:
-      'Get user jobs and count accepted offers, conversations, requests ',
-  })
-  @ApiHeader(getAuthorizationApiHeader())
-  @ApiResponse({ type: getAvailableJobs })
-  @UseGuards(JwtAuthGuard)
-  @Get('/userjobs/:fr')
-  getUserJobs(@Request() req, @Param('fr') fr: string): Promise<Job[]> {
-    return this.jobsService.getAvailableJobs(req.user, +fr);
-  }
-
   @ApiOperation({ summary: 'Get job by id' })
   @ApiHeader(getAuthorizationApiHeader())
   @ApiResponse({ type: getJobByIdResponseDto })
@@ -106,17 +105,6 @@ export class JobsController {
     @Param() params: getJobInfoParamsDto,
   ): Promise<getJobByIdResponseDto> {
     return this.jobsService.getJobById(+params.id);
-  }
-
-  @ApiOperation({
-    summary: 'Get user jobs and count accepted offers',
-  })
-  @ApiHeader(getAuthorizationApiHeader())
-  @ApiResponse({ type: getJobsWithoutOffer })
-  @UseGuards(JwtAuthGuard)
-  @Get('/withoutoffer/:fr')
-  getJobsMissingOffer(@Request() req, @Param('fr') fr: number): Promise<Job[]> {
-    return this.jobsService.filterJobsWithoutOffer(req.user, fr);
   }
 
   @ApiOperation({ summary: 'Update job' })
