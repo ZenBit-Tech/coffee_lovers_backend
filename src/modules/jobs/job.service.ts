@@ -358,10 +358,10 @@ export class JobsService {
     }
   }
 
-  async stopHiring(user: UserDto, jobId: number): Promise<void> {
+  async stopHiring(user: User, jobId: number): Promise<void> {
     try {
       const job = await this.findOne({ id: jobId });
-      isUserJobOwnerOfJob(job, user as User);
+      isUserJobOwnerOfJob(job, user);
 
       await this.setJobStatus(jobId, JobStatus.FINISHED);
     } catch (error) {
