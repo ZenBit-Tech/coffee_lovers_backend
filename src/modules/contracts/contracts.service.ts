@@ -105,13 +105,10 @@ export class ContractsService {
     }
   }
 
-  async closeContract(user: UserDto, contractId: number): Promise<void> {
+  async closeContract(user: User, contractId: number): Promise<void> {
     try {
       const contract = await this.findOne({ id: contractId });
-      isUserJobOwnerOfJob(
-        { owner: contract.offer.job_owner } as Job,
-        user as User,
-      );
+      isUserJobOwnerOfJob({ owner: contract.offer.job_owner } as Job, user);
 
       await this.setContractStatus(contractId, ContractStatus.CLOSED);
     } catch (error) {
