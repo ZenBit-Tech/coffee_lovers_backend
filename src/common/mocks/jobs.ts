@@ -8,8 +8,8 @@ import {
 } from '@constants/entities';
 import getJobByIdResponseDto from '@/modules/jobs/dto/get-job-response.dto';
 import { Job } from '@/common/entities/Job.entity';
-import { mockJobOwnerOfTypeUser } from './users';
 import { Category } from '@/common/entities/Category.entity';
+import { mockJobOwnerOfTypeUser } from './users';
 
 export const mockJob1 = {
   id: 1,

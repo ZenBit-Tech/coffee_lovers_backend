@@ -1,4 +1,4 @@
-import { Conversation } from '../entities/Conversation.entity';
+import { Conversation } from '@/common/entities/Conversation.entity';
 import { mockJobOfTypeJob } from './jobs';
 import { mockFreelancerOfTypeUser, mockJobOwnerOfTypeUser } from './users';
 
