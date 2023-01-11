@@ -118,4 +118,24 @@ export class ContractsService {
       throw new InternalServerErrorException();
     }
   }
+
+  async getAllHiredFreelancers(user: User): Promise<Contract[]> {
+    try {
+      const allHiredFreelancers = await this.contractRepository
+        .createQueryBuilder('contracts')
+        .leftJoinAndSelect('contracts.offer', 'offer')
+        .leftJoinAndSelect('offer.job', 'job')
+        .leftJoinAndSelect('offer.freelancer', 'freelancer')
+        .where(`offer.${checkUserRole(user)}.id = :id`, { id: user.id })
+        .orderBy('contracts.end', 'DESC')
+        .getMany();
+
+      return allHiredFreelancers;
+    } catch (error) {
+      throw new HttpException(
+        'Internal error',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
 }

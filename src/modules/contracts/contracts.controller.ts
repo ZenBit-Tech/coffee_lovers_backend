@@ -11,6 +11,7 @@ enum EndpointsRoutes {
   active = 'active',
   closed = 'closed',
   closeContract = '/close/:contractId',
+  all = 'all',
 }
 
 @ApiTags('contracts')
@@ -51,5 +52,16 @@ export class ContractsController {
     @Param('contractId') contractId: number,
   ): Promise<void> {
     return this.contractsService.closeContract(req.user, contractId);
+  }
+
+  @ApiOperation({
+    summary: 'Get all hired freelancers',
+  })
+  @ApiResponse({ type: ContractsResponseDto })
+  @ApiHeader(getAuthorizationApiHeader())
+  @UseGuards(JwtAuthGuard)
+  @Get(`${EndpointsRoutes.all}`)
+  getAllHiredFreelancers(@Req() req): Promise<Contract[]> {
+    return this.contractsService.getAllHiredFreelancers(req.user);
   }
 }
