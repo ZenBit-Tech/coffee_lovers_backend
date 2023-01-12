@@ -20,14 +20,14 @@ import {
 } from '@constants/entities';
 import { isOfferPendingForUser } from '@validation/offers';
 import { isRequestForFreelancer } from '@validation/requests';
+import { checkAnotherRole, checkUserRole } from '@/modules/contracts/constants';
 import { UserService } from '@/modules/user/user.service';
+import { Job } from '@/common/entities/Job.entity';
+import UserDto from '@/modules/user/dto/user.dto';
 import OfferBody from './dto/offer-body-dto copy';
 import ReqBody from './dto/request-body-dto';
-import { Job } from '@/common/entities/Job.entity';
-import UserDto from '../user/dto/user.dto';
 import FindRequestDto from './dto/find-request.dto';
 import FindOfferDto from './dto/find-offer.dto';
-import { checkAnotherRole, checkUserRole } from '../contracts/constants';
 
 @Injectable()
 export class RequsetService {
