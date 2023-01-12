@@ -41,8 +41,7 @@ export default class GetHiresDto {
         last_name: 'Kashyrets',
         profile_image: 'http://localhost:4200/index.jpg',
         available_time: null,
-        description:
-          'Вочевидь, зараз не всі пригадають цю серпневу дату – вісімнадцяте святкування Дня Незалежності України. Відлік десятилітньої історії Вишиванкового фестивалю розпочався саме тоді, коли сімдесят дев’ять людей, убраних у виши́ванки, утворили вздовж Потьомкін',
+        description: 'ipsim lorem x20',
         hourly_rate: 20,
         position: 'Full-stack developer',
         other_experience: null,
