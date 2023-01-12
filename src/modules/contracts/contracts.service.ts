@@ -1,10 +1,13 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import GetFreelancerDto from 'src/modules/user/dto/get-freelancer-params.dto';
 import { User } from '@/common/entities/User.entity';
 import { Contract } from '@/common/entities/Contract.entity';
 import { ContractStatus } from '@/common/constants/entities';
 import { checkAnotherRole, checkUserRole } from './constants';
+import GetHiresDto from './dto/get-hires.dto';
+import { Favorites } from '@/common/entities/Favorites.entity';
 
 @Injectable()
 export class ContractsService {
@@ -65,18 +68,29 @@ export class ContractsService {
     }
   }
 
-  async getAllHiredFreelancers(user: User): Promise<Contract[]> {
+  async getAllHiredFreelancers(
+    user: User,
+    params: GetFreelancerDto,
+  ): Promise<GetHiresDto> {
     try {
-      const allHiredFreelancers = await this.contractRepository
+      const [allHiredFreelancers, totalCount] = await this.contractRepository
         .createQueryBuilder('contracts')
         .leftJoinAndSelect('contracts.offer', 'offer')
         .leftJoinAndSelect('offer.job', 'job')
         .leftJoinAndSelect('offer.freelancer', 'freelancer')
         .where(`offer.${checkUserRole(user)}.id = :id`, { id: user.id })
-        .orderBy('contracts.end', 'DESC')
-        .getMany();
+        .leftJoinAndMapOne(
+          'freelancer.isFavorite',
+          Favorites,
+          'favorites',
+          'favorites.jobOwnerId = :jobOwnerId AND favorites.freelancerId = freelancer.id',
+          { jobOwnerId: user.id },
+        )
+        .skip((params.page - 1) * params.take)
+        .take(params.take)
+        .getManyAndCount();
 
-      return allHiredFreelancers;
+      return { allHiredFreelancers, totalCount };
     } catch (error) {
       throw new HttpException(
         'Internal error',

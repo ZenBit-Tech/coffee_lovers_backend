@@ -362,6 +362,7 @@ export class UserService {
   }
 
   async getFheelancerInformation(
+    user: User,
     params: GetFreelancerDto,
   ): Promise<[User[], number]> {
     try {
@@ -378,6 +379,13 @@ export class UserService {
       const query = this.userRepository
         .createQueryBuilder('user')
         .leftJoinAndSelect('user.category', 'category')
+        .leftJoinAndMapOne(
+          'user.isFavorite',
+          Favorites,
+          'favorites',
+          'favorites.jobOwnerId = :jobOwnerId AND favorites.freelancerId = user.id',
+          { jobOwnerId: user.id },
+        )
         .where(userPayload)
         .andWhere('user.role = :role', {
           role: Role.FREELANCER,
@@ -557,16 +565,18 @@ export class UserService {
     }
   }
 
-  async getFavorites(user: UserDto): Promise<GetFavoritesDto[]> {
+  async getFavorites(user: UserDto, params: any): Promise<GetFavoritesDto> {
     try {
-      const favorites = await this.favoritesRepository
+      const [favorites, totalCount] = await this.favoritesRepository
         .createQueryBuilder('favorites')
         .where({ job_owner: user })
         .leftJoinAndSelect('favorites.freelancer', 'freelancer')
         .leftJoinAndSelect('freelancer.category', 'category')
-        .getMany();
+        .skip((params.page - 1) * params.take)
+        .take(params.take)
+        .getManyAndCount();
 
-      return favorites;
+      return { favorites, totalCount };
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
