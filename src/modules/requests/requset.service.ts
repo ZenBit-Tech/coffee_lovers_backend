@@ -22,6 +22,7 @@ import { Job } from '@/common/entities/Job.entity';
 import UserDto from '../user/dto/user.dto';
 import FindRequestDto from './dto/find-request.dto';
 import FindOfferDto from './dto/find-offer.dto';
+import { checkAnotherRole, checkUserRole } from '../contracts/constants';
 
 @Injectable()
 export class RequsetService {
@@ -205,14 +206,17 @@ export class RequsetService {
     }
   }
 
-  async getOffersByUser(user: UserDto): Promise<Offer[]> {
+  async getOffersByUser(user: User): Promise<Offer[]> {
     try {
       return await this.offerRepository
         .createQueryBuilder('offer')
         .leftJoinAndSelect('offer.job', 'job')
         .leftJoinAndSelect('job.category', 'category')
-        .leftJoinAndSelect('offer.job_owner', 'job_owner')
-        .where({ freelancer: user })
+        .leftJoinAndSelect(
+          `offer.${checkAnotherRole(user)}`,
+          `${checkAnotherRole(user)}`,
+        )
+        .where(`offer.${checkUserRole(user)}.id = :id`, { id: user.id })
         .getMany();
     } catch (error) {
       throw new InternalServerErrorException();
