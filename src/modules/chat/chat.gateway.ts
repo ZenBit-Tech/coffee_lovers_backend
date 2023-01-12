@@ -16,7 +16,11 @@ import { MessageDto } from './dto/message.dto';
 import { ChatService } from './chat.service';
 
 @UseGuards(WsAuthGuard)
-@WebSocketGateway(+process.env['WS_PORT'], { cors: '*' })
+@WebSocketGateway(+process.env['WS_PORT'], {
+  cors: {
+    origin: '*',
+  },
+})
 export class ChatGateway {
   constructor(private readonly chatService: ChatService) {}
 

@@ -9,7 +9,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Job } from '@entities/Job.entity';
 import { findJobsDefaultLimit, findJobsDefaultOffset } from '@constants/jobs';
 import { Request } from '@entities/Request.entity';
-import { JobStatus, RequestType } from '@constants/entities';
+import { JobStatus, RequestType, OfferStatus } from '@constants/entities';
 import { User } from '@entities/User.entity';
 import { isUserJobOwnerOfJob } from '@validation/jobs';
 import { Contract } from '@entities/Contract.entity';
@@ -21,7 +21,6 @@ import FindJobsResponse from './dto/find-jobs-response.dto';
 import CreateProposalDto from './dto/create-proposal.dto';
 import getJobProposalsResponseDto from './dto/get-job-proposals-response.dto';
 import getJobByIdResponseDto from './dto/get-job-response.dto';
-import SetStatusDto from './dto/set-status.dto';
 import GetPostedJobsDetailsResponse from './dto/get-posted-jobs-details-response.dto';
 
 @Injectable()
@@ -192,9 +191,14 @@ export class JobsService {
         .leftJoinAndSelect('job.owner', 'user')
         .leftJoinAndSelect('job.category', 'category')
         .leftJoinAndSelect('job.skills', 'skill')
-        .leftJoinAndSelect('job.offers', 'offer')
+        .leftJoinAndSelect(
+          'job.offers',
+          'offer',
+          'offer.status = :offerStatus',
+          { offerStatus: OfferStatus.ACCEPTED },
+        )
         .leftJoinAndSelect('offer.freelancer', 'freelancer')
-        .innerJoinAndMapOne(
+        .leftJoinAndMapOne(
           'offer.contract',
           Contract,
           'contract',
@@ -341,21 +345,26 @@ export class JobsService {
     }
   }
 
-  async setJobStatus(user: UserDto, payload: SetStatusDto): Promise<void> {
+  async setJobStatus(jobId: number, status: JobStatus): Promise<void> {
     try {
-      const job = await this.findOne({ id: payload.jobId });
-      isUserJobOwnerOfJob(job, user as User);
-
       await this.jobRepository
         .createQueryBuilder()
         .update(Job)
-        .set({ status: payload.status })
-        .where('id = :id', { id: payload.jobId })
+        .set({ status })
+        .where('id = :id', { id: jobId })
         .execute();
     } catch (error) {
-      if (error instanceof HttpException) {
-        throw error;
-      }
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async stopHiring(user: User, jobId: number): Promise<void> {
+    try {
+      const job = await this.findOne({ id: jobId });
+      isUserJobOwnerOfJob(job, user);
+
+      await this.setJobStatus(jobId, JobStatus.FINISHED);
+    } catch (error) {
       throw new InternalServerErrorException();
     }
   }
