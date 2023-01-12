@@ -1,7 +1,5 @@
 import { IsNumber } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { Favorites } from '@entities/Favorites.entity';
-import ContractsResponseDto from './contracts-response.dto';
 import { Contract } from '@/common/entities/Contract.entity';
 
 export default class GetHiresDto {

@@ -8,12 +8,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import GetFreelancerDto from 'src/modules/user/dto/get-freelancer-params.dto';
 import { isUserJobOwnerOfJob } from '@validation/jobs';
+import { Favorites } from '@/common/entities/Favorites.entity';
 import { User } from '@/common/entities/User.entity';
 import { Contract } from '@/common/entities/Contract.entity';
 import { ContractStatus } from '@/common/constants/entities';
 import { checkAnotherRole, checkUserRole } from './constants';
 import GetHiresDto from './dto/get-hires.dto';
-import { Favorites } from '@/common/entities/Favorites.entity';
 import FindOneContractDto from './dto/find-one-contract.dto';
 
 @Injectable()
