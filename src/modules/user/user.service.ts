@@ -565,7 +565,10 @@ export class UserService {
     }
   }
 
-  async getFavorites(user: UserDto, params: any): Promise<GetFavoritesDto> {
+  async getFavorites(
+    user: UserDto,
+    params: GetFreelancerDto,
+  ): Promise<GetFavoritesDto> {
     try {
       const [favorites, totalCount] = await this.favoritesRepository
         .createQueryBuilder('favorites')
