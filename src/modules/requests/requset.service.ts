@@ -12,7 +12,12 @@ import { User } from '@entities/User.entity';
 import { Request } from '@entities/Request.entity';
 import { Contract } from '@entities/Contract.entity';
 import { Offer } from '@entities/Offer.entity';
-import { ContractStatus, OfferStatus, RequestType } from '@constants/entities';
+import {
+  ContractStatus,
+  JobStatus,
+  OfferStatus,
+  RequestType,
+} from '@constants/entities';
 import { isOfferPendingForUser } from '@validation/offers';
 import { isRequestForFreelancer } from '@validation/requests';
 import { UserService } from '@/modules/user/user.service';
@@ -63,6 +68,7 @@ export class RequsetService {
         .createQueryBuilder('offer')
         .where(payload)
         .leftJoinAndSelect('offer.freelancer', 'freelancer')
+        .leftJoinAndSelect('offer.job', 'job')
         .getOne();
     } catch (error) {
       throw new InternalServerErrorException();
@@ -236,6 +242,13 @@ export class RequsetService {
         .into(Contract)
         .values([{ offer, status: ContractStatus.ACTIVE }])
         .execute();
+
+      if (offer.job.status === JobStatus.PENDING) {
+        await this.jobsService.setJobStatus(
+          offer.job.id,
+          JobStatus.IN_PROGRESS,
+        );
+      }
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
