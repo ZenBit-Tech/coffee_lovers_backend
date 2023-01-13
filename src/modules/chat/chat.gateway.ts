@@ -7,7 +7,7 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { ChatEvents } from '@constants/websocket';
+import { authorizationHeader, ChatEvents } from '@constants/websocket';
 import { WsAuthGuard } from '@/modules/auth/guards/ws-auth.guard';
 import { UserHandshake } from './types';
 import { CreateMessageDto } from './dto/create-message.dto';
@@ -18,7 +18,10 @@ import { ChatService } from './chat.service';
 @UseGuards(WsAuthGuard)
 @WebSocketGateway(+process.env['WS_PORT'], {
   cors: {
-    origin: '*',
+    origin: process.env['CLIENT_URL'],
+    methods: ['GET', 'POST'],
+    allowedHeaders: [authorizationHeader],
+    credentials: true,
   },
 })
 export class ChatGateway {
