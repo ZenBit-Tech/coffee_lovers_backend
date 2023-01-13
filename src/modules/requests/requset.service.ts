@@ -20,11 +20,12 @@ import {
 } from '@constants/entities';
 import { isOfferPendingForUser } from '@validation/offers';
 import { isRequestForFreelancer } from '@validation/requests';
+import { checkAnotherRole, checkUserRole } from '@/modules/contracts/constants';
 import { UserService } from '@/modules/user/user.service';
+import { Job } from '@/common/entities/Job.entity';
+import UserDto from '@/modules/user/dto/user.dto';
 import OfferBody from './dto/offer-body-dto copy';
 import ReqBody from './dto/request-body-dto';
-import { Job } from '@/common/entities/Job.entity';
-import UserDto from '../user/dto/user.dto';
 import FindRequestDto from './dto/find-request.dto';
 import FindOfferDto from './dto/find-offer.dto';
 
@@ -211,14 +212,17 @@ export class RequsetService {
     }
   }
 
-  async getOffersByUser(user: UserDto): Promise<Offer[]> {
+  async getOffersByUser(user: User): Promise<Offer[]> {
     try {
       return await this.offerRepository
         .createQueryBuilder('offer')
         .leftJoinAndSelect('offer.job', 'job')
         .leftJoinAndSelect('job.category', 'category')
-        .leftJoinAndSelect('offer.job_owner', 'job_owner')
-        .where({ freelancer: user })
+        .leftJoinAndSelect(
+          `offer.${checkAnotherRole(user)}`,
+          `${checkAnotherRole(user)}`,
+        )
+        .where(`offer.${checkUserRole(user)}.id = :id`, { id: user.id })
         .getMany();
     } catch (error) {
       throw new InternalServerErrorException();
