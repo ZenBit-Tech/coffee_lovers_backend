@@ -7,14 +7,13 @@ export default class OfferBody {
   @IsNumber()
   hourly_rate: number;
 
-  @ApiProperty({ example: 20 })
+  @ApiProperty({ example: 'Pending' })
   @IsOptional()
   @IsString()
   status: OfferStatus;
 
-  @ApiProperty({ example: 'Hello world' })
+  @ApiProperty({ example: '20.01.2023' })
   @IsOptional()
-  @MaxLength(coverLetterMaxLength)
   @IsString()
-  cover_letter: string;
+  start: string;
 }
