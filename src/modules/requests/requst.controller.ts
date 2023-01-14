@@ -18,7 +18,7 @@ import { JwtAuthGuard } from '@/modules/auth/guards/jwt-auth.guard';
 import { ReqUser } from '@/modules/user/dto/get-user-dto.dto';
 import { RequsetService } from './requset.service';
 import ReqBody from './dto/request-body-dto';
-import OfferBody from './dto/offer-body-dto copy';
+import OfferBody from './dto/offer-body-dto';
 import getJobsWithoutOffer from './dto/get-jobs-withoutoffer.dto';
 import { Job } from '@/common/entities/Job.entity';
 import GetAvailableJobsAndCount from './dto/available-gobs-count.dto';
