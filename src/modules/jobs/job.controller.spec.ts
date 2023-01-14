@@ -19,6 +19,21 @@ describe('JobsController', () => {
         job: { id },
         proposals: [{ id: 1 }],
       })),
+    getAvailableJobs: jest
+      .fn()
+      .mockImplementation((req: object, fr: string) => [
+        {
+          id: fr,
+        },
+      ]),
+
+    filterJobsWithoutOffer: jest
+      .fn()
+      .mockImplementation((user: object, fr: string) => [
+        {
+          id: fr,
+        },
+      ]),
   };
 
   beforeEach(async () => {
