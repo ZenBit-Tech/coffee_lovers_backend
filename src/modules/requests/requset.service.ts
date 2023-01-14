@@ -11,17 +11,23 @@ import { User } from '@entities/User.entity';
 import { Request } from '@entities/Request.entity';
 import { Contract } from '@entities/Contract.entity';
 import { Offer } from '@entities/Offer.entity';
-import { ContractStatus, OfferStatus, RequestType } from '@constants/entities';
+import {
+  ContractStatus,
+  JobStatus,
+  OfferStatus,
+  RequestType,
+} from '@constants/entities';
 import { isOfferPendingForUser } from '@/common/validation/offers';
 import { isRequestForFreelancer } from '@/common/validation/requests';
 import { JobsService } from '@/modules/jobs/job.service';
+import { checkAnotherRole, checkUserRole } from '@/modules/contracts/constants';
 import { UserService } from '@/modules/user/user.service';
-import OfferBody from './dto/offer-body-dto copy';
-import ReqBody from './dto/request-body-dto';
 import { Job } from '@/common/entities/Job.entity';
-import UserDto from '../user/dto/user.dto';
+import UserDto from '@/modules/user/dto/user.dto';
+import ReqBody from './dto/request-body-dto';
 import FindRequestDto from './dto/find-request.dto';
 import FindOfferDto from './dto/find-offer.dto';
+import OfferBody from './dto/offer-body-dto';
 
 @Injectable()
 export class RequsetService {
@@ -63,6 +69,7 @@ export class RequsetService {
         .createQueryBuilder('offer')
         .where(payload)
         .leftJoinAndSelect('offer.freelancer', 'freelancer')
+        .leftJoinAndSelect('offer.job', 'job')
         .getOne();
     } catch (error) {
       throw new InternalServerErrorException();
@@ -205,14 +212,17 @@ export class RequsetService {
     }
   }
 
-  async getOffersByUser(user: UserDto): Promise<Offer[]> {
+  async getOffersByUser(user: User): Promise<Offer[]> {
     try {
       return await this.offerRepository
         .createQueryBuilder('offer')
         .leftJoinAndSelect('offer.job', 'job')
         .leftJoinAndSelect('job.category', 'category')
-        .leftJoinAndSelect('offer.job_owner', 'job_owner')
-        .where({ freelancer: user })
+        .leftJoinAndSelect(
+          `offer.${checkAnotherRole(user)}`,
+          `${checkAnotherRole(user)}`,
+        )
+        .where(`offer.${checkUserRole(user)}.id = :id`, { id: user.id })
         .getMany();
     } catch (error) {
       throw new InternalServerErrorException();
@@ -236,6 +246,13 @@ export class RequsetService {
         .into(Contract)
         .values([{ offer, status: ContractStatus.ACTIVE }])
         .execute();
+
+      if (offer.job.status === JobStatus.PENDING) {
+        await this.jobsService.setJobStatus(
+          offer.job.id,
+          JobStatus.IN_PROGRESS,
+        );
+      }
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;

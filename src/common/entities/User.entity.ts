@@ -10,7 +10,12 @@ import {
 } from 'typeorm';
 import { Category } from '@entities/Category.entity';
 
-import { AvailableTime, EnglishLevel, Role } from '@constants/entities';
+import {
+  AvailableTime,
+  EnglishLevel,
+  Role,
+  conversationMessageMaxLength,
+} from '@constants/entities';
 import { Conversation } from '@entities/Conversation.entity';
 import { Message } from '@entities/Message.entity';
 import { Request } from '@entities/Request.entity';
@@ -56,7 +61,12 @@ export class User {
   })
   available_time: AvailableTime;
 
-  @Column({ default: null, nullable: true })
+  @Column({
+    default: null,
+    nullable: true,
+    type: 'varchar',
+    length: conversationMessageMaxLength,
+  })
   description: string;
 
   @Column({ default: null, nullable: true })
@@ -65,7 +75,12 @@ export class User {
   @Column({ default: null, nullable: true })
   position: string;
 
-  @Column({ default: null, nullable: true })
+  @Column({
+    default: null,
+    nullable: true,
+    type: 'varchar',
+    length: conversationMessageMaxLength,
+  })
   other_experience: string;
 
   @Column({

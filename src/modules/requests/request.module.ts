@@ -18,5 +18,6 @@ import { RequstController } from './requst.controller';
   ],
   controllers: [RequstController],
   providers: [RequsetService],
+  exports: [RequsetService],
 })
 export class RequestModule {}

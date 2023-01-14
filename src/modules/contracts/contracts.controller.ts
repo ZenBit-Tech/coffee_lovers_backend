@@ -1,14 +1,17 @@
-import { Controller, UseGuards, Param, Get, Req } from '@nestjs/common';
+import { Controller, UseGuards, Param, Get, Req, Post } from '@nestjs/common';
 import { ApiHeader, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/modules/auth/guards/jwt-auth.guard';
-import { getAuthorizationApiHeader } from '@/common/utils/swagger';
-import { Contract } from '@/common/entities/Contract.entity';
+import { getAuthorizationApiHeader } from '@utils/swagger';
+import { Contract } from '@entities/Contract.entity';
+import { ReqUser } from '@/modules/user/dto/get-user-dto.dto';
 import { ContractsService } from './contracts.service';
 import ContractsResponseDto from './dto/contracts-response.dto';
 
 enum EndpointsRoutes {
   active = 'active',
   closed = 'closed',
+  closeContract = '/close/:contractId',
+  all = 'all',
 }
 
 @ApiTags('contracts')
@@ -36,5 +39,29 @@ export class ContractsController {
   @Get(`${EndpointsRoutes.closed}`)
   getClosedContractsFreelancer(@Req() req): Promise<Contract[]> {
     return this.contractsService.getClosedContracts(req.user);
+  }
+
+  @ApiOperation({
+    summary: 'Close contract',
+  })
+  @ApiHeader(getAuthorizationApiHeader())
+  @UseGuards(JwtAuthGuard)
+  @Post(EndpointsRoutes.closeContract)
+  closeContract(
+    @Req() req: ReqUser,
+    @Param('contractId') contractId: number,
+  ): Promise<void> {
+    return this.contractsService.closeContract(req.user, contractId);
+  }
+
+  @ApiOperation({
+    summary: 'Get all hired freelancers',
+  })
+  @ApiResponse({ type: ContractsResponseDto })
+  @ApiHeader(getAuthorizationApiHeader())
+  @UseGuards(JwtAuthGuard)
+  @Get(`${EndpointsRoutes.all}`)
+  getAllHiredFreelancers(@Req() req): Promise<Contract[]> {
+    return this.contractsService.getAllHiredFreelancers(req.user);
   }
 }

@@ -5,11 +5,11 @@ import { User } from '@entities/User.entity';
 export default class FindOfferDto {
   id?: number;
 
-  job?: Job;
+  job?: Job | { id: number };
 
-  job_owner?: User;
+  job_owner?: User | { id: number };
 
-  freelancer?: User;
+  freelancer?: User | { id: number };
 
   hourly_rate?: number;
 
