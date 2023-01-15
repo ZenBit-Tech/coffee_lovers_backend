@@ -1,6 +1,6 @@
 import { AvailableTime, EnglishLevel, Role } from '@constants/entities';
 import { User } from '@/common/entities/User.entity';
-import AuthGoogleResponseDto from '@/modules/auth/dto/auth-response.dto copy';
+import AuthGoogleResponseDto from '@/modules/auth/dto/auth-google-response.dto';
 
 export const mockJobOwner1 = {
   id: 1,
