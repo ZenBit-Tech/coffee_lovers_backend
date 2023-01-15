@@ -70,7 +70,9 @@ describe('AuthService', () => {
       });
     });
 
-    it('if user exists should throw bad request exception', async () => {
+    it('if user exist should throw bad request exception', async () => {
+      jest.spyOn(mockUserService, 'findByEmail').mockReturnValue(createUserDto);
+
       await expect(authService.signUp(createUserDto)).rejects.toEqual(
         new BadRequestException('User is already exist'),
       );
@@ -95,6 +97,7 @@ describe('AuthService', () => {
     });
 
     it('if password wrong should throw bad request exception', async () => {
+      jest.spyOn(mockUserService, 'findByEmail').mockReturnValue(signInDto);
       jest.spyOn(bcrypt, 'compare').mockResolvedValue(false);
 
       await expect(authService.signIn(signInDto)).rejects.toEqual(

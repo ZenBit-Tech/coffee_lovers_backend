@@ -19,4 +19,11 @@ describe('SignInDto', () => {
     );
     expect(errors.length).not.toBe(0);
   });
+
+  it('email does not exist: should be an error', async () => {
+    const errors = await validate(
+      plainToClass(SignInDto, { password: 'Qwerty123' }),
+    );
+    expect(errors.length).not.toBe(0);
+  });
 });
