@@ -32,8 +32,7 @@ export enum OfferStatus {
 }
 
 export enum NotificationType {
-  SUCCESS = 'Success',
-  FAIL = 'Fail',
+  NEW_MESSAGE = 'NewMessage',
 }
 
 export enum ContractStatus {

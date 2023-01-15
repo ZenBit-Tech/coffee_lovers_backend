@@ -14,7 +14,6 @@ import { RequestType, Role } from '@constants/entities';
 import { Message } from '@entities/Message.entity';
 import { UserColumns } from '@constants/chat';
 import { User } from '@entities/User.entity';
-import { Job } from '@entities/Job.entity';
 import UserDto from '@/modules/user/dto/user.dto';
 import { RequsetService } from '@/modules/requests/requset.service';
 import CreateConversationDto from './dto/create-conversation.dto';
@@ -125,6 +124,7 @@ export class ChatService {
             conversation: { id: payload.conversation },
             from: { id: user.id },
             message: payload.message,
+            is_read: payload.is_read,
           },
         ])
         .execute();
@@ -153,11 +153,15 @@ export class ChatService {
         throw new ForbiddenException();
       }
 
-      return await this.messageRepository
+      const messages = await this.messageRepository
         .createQueryBuilder('message')
         .leftJoinAndSelect('message.from', 'from')
         .where({ conversation: { id: conversation } })
         .getMany();
+
+      this.markMessagesAsRead(messages.map((message) => message.id));
+
+      return messages;
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
@@ -238,6 +242,19 @@ export class ChatService {
       if (error instanceof HttpException) {
         throw error;
       }
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async markMessagesAsRead(messages: number[]): Promise<void> {
+    try {
+      await this.messageRepository
+        .createQueryBuilder()
+        .update(Message)
+        .set({ is_read: true })
+        .where('id IN (:...messages)', { messages })
+        .execute();
+    } catch (error) {
       throw new InternalServerErrorException();
     }
   }
