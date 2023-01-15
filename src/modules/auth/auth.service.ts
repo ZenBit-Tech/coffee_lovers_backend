@@ -53,7 +53,7 @@ export class AuthService {
       const dataLogin = {
         email: userData.email,
         first_name: userData.given_name,
-        second_name: userData.family_name,
+        last_name: userData.family_name,
       };
 
       const user = await this.userService.findByEmail(dataLogin.email);
