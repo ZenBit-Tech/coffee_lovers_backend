@@ -3,3 +3,5 @@ export enum ChatEvents {
   JOIN_CONVERSATION = 'joinConversation',
   LEAVE_CONVERSATION = 'leaveConversation',
 }
+
+export const authorizationHeader = 'authorization';

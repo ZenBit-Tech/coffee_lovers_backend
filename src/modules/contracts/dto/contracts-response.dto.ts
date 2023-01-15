@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { ContractStatus } from '@/common/constants/entities';
-import OfferBody from '@/modules/requests/dto/offer-body-dto copy';
+import OfferBody from '@/modules/requests/dto/offer-body-dto';
 import UserDto from '@/modules/user/dto/user.dto';
 
 export default class ContractsResponseDto {
