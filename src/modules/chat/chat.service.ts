@@ -159,7 +159,11 @@ export class ChatService {
         .where({ conversation: { id: conversation } })
         .getMany();
 
-      this.markMessagesAsRead(messages.map((message) => message.id));
+      const newMessages = messages.filter((message) => !message.is_read);
+
+      if (newMessages.length) {
+        this.markMessagesAsRead(newMessages.map((message) => message.id));
+      }
 
       return messages;
     } catch (error) {
