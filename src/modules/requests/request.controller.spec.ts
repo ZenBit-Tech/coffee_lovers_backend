@@ -25,7 +25,7 @@ describe('RequestController', () => {
     requestController = module.get<RequstController>(RequstController);
   });
 
-  describe('post request', () => {
+  describe('post offer', () => {
     it('should post offer, be called one time and return payload after this operation', async (): Promise<void> => {
       expect(
         await requestController.createOffer(

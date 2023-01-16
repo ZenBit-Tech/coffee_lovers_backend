@@ -31,10 +31,12 @@ export default class CreateUserDto {
   @ApiProperty({ example: 'John' })
   @IsNotEmpty()
   @IsString()
-  readonly first_name: string;
+  @IsOptional()
+  readonly first_name?: string;
 
   @ApiProperty({ example: 'Doe' })
   @IsNotEmpty()
   @IsString()
-  readonly last_name: string;
+  @IsOptional()
+  readonly last_name?: string;
 }
