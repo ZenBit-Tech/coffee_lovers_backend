@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNumber, IsString } from 'class-validator';
+import { IsBoolean, IsNumber, IsString } from 'class-validator';
 
 export class CreateMessageDto {
   @ApiProperty({ example: 1 })
@@ -9,4 +9,7 @@ export class CreateMessageDto {
   @ApiProperty({ example: 'Hello, world!' })
   @IsString()
   message: string;
+
+  @IsBoolean()
+  is_read?: boolean;
 }
