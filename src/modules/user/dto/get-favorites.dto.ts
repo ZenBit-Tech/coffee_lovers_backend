@@ -1,11 +1,11 @@
 import { IsNumber } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { User } from '@/common/entities/User.entity';
+import { Favorites } from '@entities/Favorites.entity';
 
 export default class GetFavoritesDto {
   @ApiProperty({ example: 1 })
   @IsNumber()
-  id: number;
+  totalCount: number;
 
   @ApiProperty({
     example: {
@@ -27,5 +27,5 @@ export default class GetFavoritesDto {
       },
     },
   })
-  freelancer: User;
+  favorites: Favorites[];
 }

@@ -4,12 +4,6 @@ import OfferBody from '@/modules/requests/dto/offer-body-dto';
 import UserDto from '@/modules/user/dto/user.dto';
 
 export default class ContractsResponseDto {
-  @ApiProperty({
-    example:
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFp4NDl9.nw3Ksx0HViWeVaXigLeGpcexMjgOnpVy10aTh0KY-l8',
-  })
-  access_token: string;
-
   @ApiProperty({ example: 3 })
   id: number;
 
