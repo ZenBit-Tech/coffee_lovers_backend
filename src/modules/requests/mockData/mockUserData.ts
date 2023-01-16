@@ -3,6 +3,7 @@ import { OfferStatus, RequestType } from '@/common/constants/entities';
 export const SendOfferMock = {
   hourly_rate: 20,
   status: OfferStatus.ACCEPTED,
+  start: '07/07/2023',
 };
 
 export const PostRequestMock = {

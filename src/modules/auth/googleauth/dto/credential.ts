@@ -1,3 +1,3 @@
 export interface CredentialDto {
-  credential: string;
+  access_token: string;
 }

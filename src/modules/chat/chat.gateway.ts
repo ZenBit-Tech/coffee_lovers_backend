@@ -8,14 +8,15 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { authorizationHeader, ChatEvents } from '@constants/websocket';
+import { minRoomJoins } from '@constants/chat';
 import { WsAuthGuard } from '@/modules/auth/guards/ws-auth.guard';
+import { NotificationsService } from '@/modules/notifications/notifications.service';
+import { NotificationType } from '@/modules/notifications/types';
 import { UserHandshake } from './types';
 import { CreateMessageDto } from './dto/create-message.dto';
 import { ConversationDto } from './dto/conversation.dto';
 import { MessageDto } from './dto/message.dto';
 import { ChatService } from './chat.service';
-import { NotificationsService } from '../notifications/notifications.service';
-import { NotificationType } from '../notifications/types';
 
 @UseGuards(WsAuthGuard)
 @WebSocketGateway(+process.env['WS_PORT'], {
@@ -49,15 +50,29 @@ export class ChatGateway {
     };
     this.chatService.createMessage(payload, user);
 
-    this.notificationService.emit(payload.to, {
-      type: NotificationType.MESSAGE,
+    const isUserConnected =
+      this.server.sockets.adapter.rooms.get(String(payload.conversation)).size >
+      minRoomJoins;
+
+    this.chatService.createMessage(
+      {
+        ...payload,
+        is_read: isUserConnected,
+      },
       user,
-      message: message.message,
-    });
+    );
 
     this.server
       .to(String(payload.conversation))
       .emit(ChatEvents.MESSAGE, message);
+
+    if (!isUserConnected) {
+      this.notificationService.emit(payload.to, {
+        type: NotificationType.MESSAGE,
+        user,
+        message: message.message,
+      });
+    }
   }
 
   @SubscribeMessage(ChatEvents.JOIN_CONVERSATION)

@@ -17,7 +17,7 @@ import SignInDto from '@/modules/auth/dto/signIn.dto';
 import TokenDto from '@/modules/auth/dto/token.dto';
 import AuthResponseDto from '@/modules/auth/dto/auth-response.dto';
 import { CredentialDto } from '@/modules/auth/googleauth/dto/credential';
-import AuthGoogleResponseDto from './dto/auth-response.dto copy';
+import AuthGoogleResponseDto from './dto/auth-google-response.dto';
 
 @Injectable()
 export class AuthService {
@@ -36,13 +36,7 @@ export class AuthService {
         this.configService.get<string>('GOOGLE_CLIENT_ID'),
         this.configService.get<string>('GOOGLE_CLIENT_SECRET'),
       );
-
-      const ticket = await client.verifyIdToken({
-        idToken: body.credential,
-        audience: this.configService.get<string>('GOOGLE_CLIENT_ID'),
-      });
-
-      const userData = ticket.getPayload();
+      const userData = await client.getTokenInfo(body.access_token);
 
       if (!userData.email) {
         throw new HttpException(
@@ -52,8 +46,6 @@ export class AuthService {
       }
       const dataLogin = {
         email: userData.email,
-        first_name: userData.given_name,
-        second_name: userData.family_name,
       };
 
       const user = await this.userService.findByEmail(dataLogin.email);
