@@ -40,7 +40,9 @@ describe('AuthController (e2e)', () => {
         .post('/auth/signup')
         .send(createUserDto)
         .expect(HttpStatus.CREATED)
-        .expect(authService.signUp(createUserDto));
+        .expect({
+          access_token: createUserDto.email,
+        });
     });
 
     it('wrong email type: should return status code 400', () => {
@@ -78,7 +80,9 @@ describe('AuthController (e2e)', () => {
         .post('/auth/signin')
         .send(signInDto)
         .expect(HttpStatus.CREATED)
-        .expect(authService.signIn(signInDto));
+        .expect({
+          access_token: signInDto.email,
+        });
     });
 
     it('wrong email type: should return status code 400', () => {
