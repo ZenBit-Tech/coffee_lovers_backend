@@ -17,7 +17,7 @@ import SignInDto from '@/modules/auth/dto/signIn.dto';
 import TokenDto from '@/modules/auth/dto/token.dto';
 import AuthResponseDto from '@/modules/auth/dto/auth-response.dto';
 import { CredentialDto } from '@/modules/auth/googleauth/dto/credential';
-import AuthGoogleResponseDto from './dto/auth-response.dto copy';
+import AuthGoogleResponseDto from './dto/auth-google-response.dto';
 
 @Injectable()
 export class AuthService {
