@@ -1,4 +1,4 @@
-import { UseGuards } from '@nestjs/common';
+import { Inject, UseGuards } from '@nestjs/common';
 import {
   ConnectedSocket,
   MessageBody,
@@ -14,6 +14,8 @@ import { CreateMessageDto } from './dto/create-message.dto';
 import { ConversationDto } from './dto/conversation.dto';
 import { MessageDto } from './dto/message.dto';
 import { ChatService } from './chat.service';
+import { NotificationsService } from '../notifications/notifications.service';
+import { NotificationType } from '../notifications/types';
 
 @UseGuards(WsAuthGuard)
 @WebSocketGateway(+process.env['WS_PORT'], {
@@ -25,7 +27,11 @@ import { ChatService } from './chat.service';
   },
 })
 export class ChatGateway {
-  constructor(private readonly chatService: ChatService) {}
+  constructor(
+    private readonly chatService: ChatService,
+    @Inject(NotificationsService)
+    private notificationService: NotificationsService,
+  ) {}
 
   @WebSocketServer()
   server: Server;
@@ -42,6 +48,13 @@ export class ChatGateway {
       created_at: new Date(),
     };
     this.chatService.createMessage(payload, user);
+
+    this.notificationService.emit(payload.to, {
+      type: NotificationType.MESSAGE,
+      user,
+      message: message.message,
+    });
+
     this.server
       .to(String(payload.conversation))
       .emit(ChatEvents.MESSAGE, message);

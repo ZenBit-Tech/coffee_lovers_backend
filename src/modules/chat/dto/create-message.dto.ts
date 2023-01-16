@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNumber, IsString } from 'class-validator';
+import { IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class CreateMessageDto {
   @ApiProperty({ example: 1 })
@@ -9,4 +9,8 @@ export class CreateMessageDto {
   @ApiProperty({ example: 'Hello, world!' })
   @IsString()
   message: string;
+
+  @ApiProperty({ example: 1 })
+  @IsNumber()
+  to: number;
 }

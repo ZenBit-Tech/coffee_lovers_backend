@@ -28,6 +28,7 @@ import { ChatModule } from '@/modules/chat/chat.module';
 import { InviteModule } from './modules/conversations/conversations.module';
 import { ContractsModule } from './modules/contracts/contracts.module';
 import { RequestModule } from './modules/requests/request.module';
+import { NotificationsModule } from './modules/notifications/notifications.module';
 
 @Module({
   imports: [
@@ -72,6 +73,7 @@ import { RequestModule } from './modules/requests/request.module';
     InviteModule,
     ContractsModule,
     RequestModule,
+    NotificationsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
