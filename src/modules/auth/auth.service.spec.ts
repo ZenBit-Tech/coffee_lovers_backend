@@ -6,8 +6,8 @@ import * as bcrypt from 'bcrypt';
 import { UserService } from '@/modules/user/user.service';
 import CreateUserDto from '@/modules/user/dto/create-user.dto';
 import { AuthService } from './auth.service';
-import SignInDto from './dto/signIn.dto';
 import TokenDto from './dto/token.dto';
+import { createUserDto, signInDto } from '@/common/mocks/auth';
 
 describe('AuthService', () => {
   let authService: AuthService;
@@ -21,18 +21,6 @@ describe('AuthService', () => {
   };
   const mockConfigService = {
     get: () => '',
-  };
-
-  const createUserDto: CreateUserDto = {
-    email: 'test@test.com',
-    password: 'Qwerty123',
-    first_name: 'John',
-    last_name: 'Doe',
-  };
-
-  const signInDto: SignInDto = {
-    email: 'test@test.com',
-    password: 'Qwerty123',
   };
 
   beforeEach(async () => {

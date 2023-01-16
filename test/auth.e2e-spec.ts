@@ -7,6 +7,7 @@ import { AuthController } from '@/modules/auth/auth.controller';
 import { AuthService } from '@/modules/auth/auth.service';
 import CreateUserDto from '@/modules/user/dto/create-user.dto';
 import SignInDto from '@/modules/auth/dto/signIn.dto';
+import { createUserDto, signInDto } from '@/common/mocks/auth';
 
 describe('AuthController (e2e)', () => {
   let app: INestApplication;
@@ -14,18 +15,6 @@ describe('AuthController (e2e)', () => {
   const authService = {
     signUp: (dto: CreateUserDto) => ({ access_token: dto.email }),
     signIn: (dto: SignInDto) => ({ access_token: dto.email }),
-  };
-
-  const createUserDto: CreateUserDto = {
-    email: 'test@test.com',
-    password: 'Qwerty123',
-    first_name: 'John',
-    last_name: 'Doe',
-  };
-
-  const signInDto: SignInDto = {
-    email: 'test@test.com',
-    password: 'Qwerty123',
   };
 
   beforeEach(async () => {

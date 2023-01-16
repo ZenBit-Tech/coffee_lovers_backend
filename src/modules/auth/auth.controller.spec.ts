@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import CreateUserDto from '@/modules/user/dto/create-user.dto';
+import { createUserDto, signInDto } from '@/common/mocks/auth';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import SignInDto from './dto/signIn.dto';
@@ -14,18 +15,6 @@ describe('AuthController', () => {
     signIn: jest.fn().mockImplementation((dto: SignInDto) => ({
       access_token: 'tokentest',
     })),
-  };
-
-  const createUserDto: CreateUserDto = {
-    email: 'test@test.com',
-    password: 'Qwerty123',
-    first_name: 'John',
-    last_name: 'Doe',
-  };
-
-  const signInDto: SignInDto = {
-    email: 'test@test.com',
-    password: 'Qwerty123',
   };
 
   beforeEach(async () => {
