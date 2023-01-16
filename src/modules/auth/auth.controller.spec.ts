@@ -27,7 +27,7 @@ describe('AuthController', () => {
 
   describe('googleAuth', () => {
     it('should return access_token', async (): Promise<void> => {
-      const payload = { credential: 'Some credential' };
+      const payload = { access_token: 'Some credential' };
       expect(await authController.googleAuth(payload)).toEqual(
         mockAuthService.googleLogin(payload),
       );

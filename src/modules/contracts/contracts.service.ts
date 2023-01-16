@@ -10,8 +10,6 @@ import { User } from '@entities/User.entity';
 import { Contract } from '@entities/Contract.entity';
 import { ContractStatus } from '@constants/entities';
 import { isUserJobOwnerOfJob } from '@validation/jobs';
-import { Job } from '@entities/Job.entity';
-import UserDto from '@/modules/user/dto/user.dto';
 import { checkAnotherRole, checkUserRole } from './constants';
 import FindOneContractDto from './dto/find-one-contract.dto';
 
@@ -98,10 +96,7 @@ export class ContractsService {
 
       return closedContracts;
     } catch (error) {
-      throw new HttpException(
-        'Internal error',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
