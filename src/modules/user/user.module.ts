@@ -12,6 +12,7 @@ import { FileModule } from '@/modules/file/file.module';
 import { Job } from '@/common/entities/Job.entity';
 import { Category } from '@/common/entities/Category.entity';
 import { Favorites } from '@/common/entities/Favorites.entity';
+import { FreelancerRating } from '@/common/entities/FreelancerRating.entity';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { Favorites } from '@/common/entities/Favorites.entity';
       Job,
       Category,
       Request,
+      FreelancerRating,
       Favorites,
     ]),
     forwardRef(() => MailModule),

@@ -16,6 +16,7 @@ import { Request } from '@entities/Request.entity';
 import { Notification } from '@entities/Notification.entity';
 import { Offer } from '@entities/Offer.entity';
 import { Contract } from '@entities/Contract.entity';
+import { FreelancerRating } from '@entities/FreelancerRating.entity';
 import { AppController } from '@/app.controller';
 import { AppService } from '@/app.service';
 import { AuthModule } from '@/modules/auth/auth.module';
@@ -57,6 +58,7 @@ import { RequestModule } from './modules/requests/request.module';
         Offer,
         Contract,
         Favorites,
+        FreelancerRating,
       ],
       synchronize: true,
     }),

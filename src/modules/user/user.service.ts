@@ -20,6 +20,7 @@ import { FileType } from '@/modules/file/types';
 import { RequestType, Role } from '@/common/constants/entities';
 import { Category } from '@/common/entities/Category.entity';
 import { Favorites } from '@/common/entities/Favorites.entity';
+import { FreelancerRating } from '@/common/entities/FreelancerRating.entity';
 import CreateUserDto from './dto/create-user.dto';
 import UpdateUserDto from './dto/update-user.dto';
 import PasswordResetRequestDto from './dto/password-reset-request.dto';
@@ -34,6 +35,7 @@ import getUserProposalsResponseDto from './dto/get-proposals-by-user.dto';
 
 import SetFavoritesDto from './dto/set-favorites.dto';
 import GetFavoritesDto from './dto/get-favorites.dto';
+import SetFreelancerRatingDto from './dto/set-freelancer-rating.dto';
 
 @Injectable()
 export class UserService {
@@ -55,6 +57,9 @@ export class UserService {
 
     @InjectRepository(Favorites)
     private favoritesRepository: Repository<Favorites>,
+
+    @InjectRepository(FreelancerRating)
+    private freelancerRatingRepository: Repository<FreelancerRating>,
 
     private readonly configService: ConfigService,
     @Inject(forwardRef(() => MailService))
@@ -190,6 +195,19 @@ export class UserService {
         .update(User)
         .set(payload)
         .where({ email })
+        .execute();
+    } catch (error) {
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async updateUserById(id: number, payload: UpdateUserDto): Promise<void> {
+    try {
+      await this.userRepository
+        .createQueryBuilder()
+        .update(User)
+        .set(payload)
+        .where('id = :id', { id })
         .execute();
     } catch (error) {
       throw new InternalServerErrorException();
@@ -567,6 +585,51 @@ export class UserService {
         .getMany();
 
       return favorites;
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async setFreelancerRating(
+    user: UserDto,
+    payload: SetFreelancerRatingDto,
+  ): Promise<void> {
+    try {
+      const freelancerHasRate = await this.freelancerRatingRepository
+        .createQueryBuilder()
+        .where({
+          job_id: payload.job_id,
+          freelancer: { id: payload.freelancer_id },
+          job_owner: user,
+        })
+        .getOne();
+
+      if (!freelancerHasRate) {
+        await this.freelancerRatingRepository
+          .createQueryBuilder()
+          .insert()
+          .into(FreelancerRating)
+          .values([
+            {
+              ...payload,
+              freelancer: { id: payload.freelancer_id },
+              job_owner: user,
+            },
+          ])
+          .execute();
+      }
+      const { avg } = await this.freelancerRatingRepository
+        .createQueryBuilder('freelancerRating')
+        .where({ freelancer: { id: payload.freelancer_id } })
+        .select('AVG(freelancerRating.freelancer_rating)', 'avg')
+        .getRawOne();
+      const ratePayload = {
+        average_rating: avg,
+      };
+      await this.updateUserById(payload.freelancer_id, ratePayload);
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;

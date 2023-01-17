@@ -37,6 +37,7 @@ export const mockJobOwnerOfTypeUser: User = {
   category: null,
   password: '',
   is_google: false,
+  average_rating: 5,
   reset_password_key: '',
   workHistory: [],
   educations: [],
@@ -47,6 +48,7 @@ export const mockJobOwnerOfTypeUser: User = {
   notifications: [],
   offers: [],
   favorites: [],
+  freelancerRating: [],
 };
 
 export const mockFreelancerOfTypeUser: User = {
@@ -60,6 +62,7 @@ export const mockFreelancerOfTypeUser: User = {
   description: 'User description',
   position: 'Full stack developer',
   hourly_rate: 50,
+  average_rating: 5,
   other_experience: '',
   english_level: EnglishLevel.NO_ENGLISH,
   skills: [],
@@ -76,4 +79,5 @@ export const mockFreelancerOfTypeUser: User = {
   notifications: [],
   offers: [],
   favorites: [],
+  freelancerRating: [],
 };
