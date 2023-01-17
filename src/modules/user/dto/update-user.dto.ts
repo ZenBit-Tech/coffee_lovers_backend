@@ -78,4 +78,9 @@ export default class UpdateUserDto {
   @IsOptional()
   @IsString()
   role?: Role;
+
+  @ApiProperty({ example: 4.3 })
+  @IsOptional()
+  @IsString()
+  average_rating?: number;
 }
