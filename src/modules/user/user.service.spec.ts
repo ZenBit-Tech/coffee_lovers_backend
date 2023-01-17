@@ -16,7 +16,6 @@ import { MailService } from '@/modules/mail/mail.service';
 import { FileService } from '@/modules/file/file.service';
 import { UserService } from './user.service';
 import UserDto from './dto/user.dto';
-import { UserModule } from './user.module';
 
 describe('UserService', () => {
   let userService: UserService;
