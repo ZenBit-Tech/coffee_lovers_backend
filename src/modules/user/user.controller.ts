@@ -192,9 +192,10 @@ export class UserController {
   @UseGuards(JwtAuthGuard)
   @Get('/freelancer')
   getFreelancerInformation(
+    @Request() req: ReqUser,
     @Query() params: GetFreelancerDto,
   ): Promise<[User[], number]> {
-    return this.userService.getFheelancerInformation(params);
+    return this.userService.getFheelancerInformation(req.user, params);
   }
 
   @ApiOperation({ summary: 'Add new category for user or set category' })
@@ -230,14 +231,17 @@ export class UserController {
     return this.userService.setFavorite(req.user, payload);
   }
 
-  @ApiOperation({ summary: 'get all favorites' })
+  @ApiOperation({ summary: 'get all favorites page' })
   @ApiResponse({ type: GetFavoritesDto })
   @ApiHeader(getAuthorizationApiHeader())
   @Get('favorites')
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
-  getFavorites(@Request() req: ReqUser): Promise<GetFavoritesDto[]> {
-    return this.userService.getFavorites(req.user);
+  getFavoritesPages(
+    @Request() req: ReqUser,
+    @Query() params: GetFreelancerDto,
+  ): Promise<GetFavoritesDto> {
+    return this.userService.getFavorites(req.user, params);
   }
 
   @ApiOperation({

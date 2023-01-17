@@ -1,65 +1,96 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { Request } from '@entities/Request.entity';
-import { Conversation } from '@entities/Conversation.entity';
-import * as f from 'google-auth-library';
-import { getRepositoryProvider } from '@/common/utils/tests';
-import { AuthService } from './auth.service';
-import { User } from '@/common/entities/User.entity';
+import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
+import { BadRequestException } from '@nestjs/common';
+import * as bcrypt from 'bcrypt';
 import { UserService } from '@/modules/user/user.service';
-import { UserModule } from '../user/user.module';
+import CreateUserDto from '@/modules/user/dto/create-user.dto';
+import { AuthService } from './auth.service';
+import TokenDto from './dto/token.dto';
+import { createUserDto, signInDto } from '@/common/mocks/auth';
 
-// jest.mock('google-auth-library', () => {
-//   const googleApisMock = {
-//     OAuth2Client: jest.fn().mockImplementation(() => {
-//       return {
-//         getTokenInfo: jest.fn().mockResolvedValue({
-//           email: 'testEmail',
-//         }),
-//       };
-//     }),
-//   };
-
-//   return googleApisMock;
-// });
-
-jest.spyOn(new f.OAuth2Client(), 'getTokenInfo').mockResolvedValue({
-  email: 'testEmail',
-  aud: '',
-  scopes: [],
-  expiry_date: 123445,
-});
-
-describe('JobsService', () => {
+describe('AuthService', () => {
   let authService: AuthService;
-  let userService: UserService;
+
+  const mockUserService = {
+    findByEmail: (email: string) => ({ email }),
+    create: (dto: CreateUserDto) => dto,
+  };
+  const mockJwtService = {
+    sign: (payload: TokenDto) => payload.email,
+  };
+  const mockConfigService = {
+    get: () => '',
+  };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [UserModule],
       providers: [
         AuthService,
-        getRepositoryProvider(User),
-        getRepositoryProvider(Request),
-        getRepositoryProvider(Conversation),
+        {
+          provide: UserService,
+          useValue: mockUserService,
+        },
+        {
+          provide: JwtService,
+          useValue: mockJwtService,
+        },
+        {
+          provide: ConfigService,
+          useValue: mockConfigService,
+        },
       ],
     }).compile();
 
     authService = module.get<AuthService>(AuthService);
-    userService = module.get<UserService>(UserService);
   });
 
-  describe('login with google', () => {
-    it('should return job by id', async (): Promise<void> => {
-      const response = { role: true, access_token: '' };
-      const request = { access_token: '' };
+  afterEach(async () => {
+    jest.clearAllMocks();
+  });
 
-      jest.spyOn(userService, 'findByEmail').mockResolvedValue(undefined);
-      jest.spyOn(authService, 'googleLogin').mockResolvedValue(response);
-      jest.spyOn(authService, 'signUp').mockResolvedValue(response);
-      jest.spyOn(userService, 'setIfGoogle').mockResolvedValue();
-      jest.spyOn(authService, 'signIn').mockResolvedValue(response);
+  describe('Sign up', () => {
+    it('should return access token', async () => {
+      jest.spyOn(mockUserService, 'findByEmail').mockReturnValue(null);
 
-      expect(await authService.googleLogin(request)).toBe(response);
+      expect(await authService.signUp(createUserDto)).toStrictEqual({
+        access_token: createUserDto.email,
+      });
+    });
+
+    it('if user exist should throw bad request exception', async () => {
+      jest.spyOn(mockUserService, 'findByEmail').mockReturnValue(createUserDto);
+
+      await expect(authService.signUp(createUserDto)).rejects.toEqual(
+        new BadRequestException('User is already exist'),
+      );
+    });
+  });
+
+  describe('Sign in', () => {
+    it('should return access token', async () => {
+      jest.spyOn(bcrypt, 'compare').mockResolvedValue(true);
+
+      expect(await authService.signIn(signInDto)).toStrictEqual({
+        access_token: createUserDto.email,
+      });
+    });
+
+    it('if email wrong should throw bad request exception', async () => {
+      jest.spyOn(mockUserService, 'findByEmail').mockReturnValue(null);
+
+      await expect(authService.signIn(signInDto)).rejects.toEqual(
+        new BadRequestException('invalid email'),
+      );
+    });
+
+    it('if password wrong should throw bad request exception', async () => {
+      jest.spyOn(mockUserService, 'findByEmail').mockReturnValue(signInDto);
+      jest.spyOn(bcrypt, 'compare').mockResolvedValue(false);
+
+      await expect(authService.signIn(signInDto)).rejects.toEqual(
+        new BadRequestException('invalid password'),
+      );
     });
   });
 });

@@ -1,16 +1,20 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { mockCredential } from '@/common/mocks/users';
-import { AuthService } from './auth.service';
+import CreateUserDto from '@/modules/user/dto/create-user.dto';
+import { createUserDto, signInDto } from '@/common/mocks/auth';
 import { AuthController } from './auth.controller';
-import { CredentialDto } from './googleauth/dto/credential';
+import { AuthService } from './auth.service';
+import SignInDto from './dto/signIn.dto';
 
 describe('AuthController', () => {
   let authController: AuthController;
 
   const mockAuthService = {
-    googleLogin: jest
-      .fn()
-      .mockImplementation((body: CredentialDto) => mockCredential),
+    signUp: jest.fn().mockImplementation((dto: CreateUserDto) => ({
+      access_token: 'tokentest',
+    })),
+    signIn: jest.fn().mockImplementation((dto: SignInDto) => ({
+      access_token: 'tokentest',
+    })),
   };
 
   beforeEach(async () => {
@@ -25,14 +29,45 @@ describe('AuthController', () => {
     authController = module.get<AuthController>(AuthController);
   });
 
-  describe('googleAuth', () => {
-    it('should return access_token', async (): Promise<void> => {
-      const payload = { access_token: 'Some credential' };
-      expect(await authController.googleAuth(payload)).toEqual(
-        mockAuthService.googleLogin(payload),
-      );
-      expect(await authController.googleAuth(payload)).toEqual(mockCredential);
-      expect(mockAuthService.googleLogin).toHaveBeenCalledWith(payload);
+  describe('Sign up', () => {
+    it('should call signUp method in authService with create user dto', async () => {
+      await authController.signUp(createUserDto);
+
+      expect(mockAuthService.signUp).toBeCalledWith(createUserDto);
+    });
+
+    it('should return token dto', async () => {
+      const token = await authController.signUp(createUserDto);
+
+      expect(token).not.toEqual({});
+      expect(token).toHaveProperty('access_token');
+    });
+
+    it('access token should have correct type', async () => {
+      expect(await authController.signUp(createUserDto)).not.toEqual({
+        access_token: expect.any(Number),
+      });
+    });
+  });
+
+  describe('Sign in', () => {
+    it('should call signIn method in authService with sign in dto', async () => {
+      await authController.signIn(signInDto);
+
+      expect(mockAuthService.signIn).toBeCalledWith(signInDto);
+    });
+
+    it('should return token dto', async () => {
+      const token = await authController.signIn(signInDto);
+
+      expect(token).not.toEqual({});
+      expect(token).toHaveProperty('access_token');
+    });
+
+    it('access token should have correct type', async () => {
+      expect(await authController.signIn(signInDto)).not.toEqual({
+        access_token: expect.any(Number),
+      });
     });
   });
 });
