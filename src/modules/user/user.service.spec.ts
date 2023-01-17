@@ -16,7 +16,6 @@ import { MailService } from '@/modules/mail/mail.service';
 import { FileService } from '@/modules/file/file.service';
 import { UserService } from './user.service';
 import UserDto from './dto/user.dto';
-import { mockFreelancerOfTypeUser } from '@/common/mocks/users';
 import { UserModule } from './user.module';
 
 describe('UserService', () => {
@@ -32,7 +31,6 @@ describe('UserService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [UserModule],
       providers: [
         UserService,
         getRepositoryProvider(User),
@@ -224,13 +222,4 @@ describe('UserService', () => {
       expect(mockMailService.sendResetPassword).toBeCalledWith(user);
     });
   });
-
-  // describe('setIfGoogle', () => {
-  //   it('should set value 1 if user from google', async (): Promise<void> => {
-  //     jest.spyOn(mockRepository, 'createQueryBuilder');
-  //     await userService.setIfGoogle(true, mockFreelancerOfTypeUser.id);
-
-  //     expect(mockRepository.createQueryBuilder).toHaveBeenCalledTimes(2);
-  //   });
-  // });
 });

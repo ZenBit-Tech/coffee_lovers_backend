@@ -80,9 +80,10 @@ describe('AuthController', () => {
 
   describe('Login with google', () => {
     it('should call method in authService with google login token', async () => {
+      const oneTime = 1;
       await authController.googleAuth(requestCredentialMock);
 
-      expect(mockAuthService.googleLogin).toBeCalledTimes(1);
+      expect(mockAuthService.googleLogin).toBeCalledTimes(oneTime);
       expect(mockAuthService.googleLogin).toBeCalledWith(requestCredentialMock);
     });
 

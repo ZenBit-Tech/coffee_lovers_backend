@@ -99,7 +99,10 @@ export class ContractsService {
 
       return closedContracts;
     } catch (error) {
-      throw new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException(
+        'Internal error',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
