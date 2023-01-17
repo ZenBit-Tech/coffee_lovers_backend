@@ -7,8 +7,6 @@ export default class AuthGoogleResponseDto {
   })
   access_token: string;
 
-  @ApiProperty({
-    example: false,
-  })
+  @ApiProperty({ example: true })
   role: boolean;
 }
