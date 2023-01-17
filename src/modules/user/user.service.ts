@@ -620,16 +620,17 @@ export class UserService {
             },
           ])
           .execute();
+
+        const { avg } = await this.freelancerRatingRepository
+          .createQueryBuilder('freelancerRating')
+          .where({ freelancer: { id: payload.freelancer_id } })
+          .select('AVG(freelancerRating.freelancer_rating)', 'avg')
+          .getRawOne();
+        const ratePayload = {
+          average_rating: avg,
+        };
+        await this.updateUserById(payload.freelancer_id, ratePayload);
       }
-      const { avg } = await this.freelancerRatingRepository
-        .createQueryBuilder('freelancerRating')
-        .where({ freelancer: { id: payload.freelancer_id } })
-        .select('AVG(freelancerRating.freelancer_rating)', 'avg')
-        .getRawOne();
-      const ratePayload = {
-        average_rating: avg,
-      };
-      await this.updateUserById(payload.freelancer_id, ratePayload);
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
