@@ -24,7 +24,7 @@ import getJobProposalsResponseDto from './dto/get-job-proposals-response.dto';
 import getJobByIdResponseDto from './dto/get-job-response.dto';
 import GetPostedJobsDetailsResponse from './dto/get-posted-jobs-details-response.dto';
 import { NotificationsService } from '@/modules/notifications/notifications.service';
-import { NotificationType } from '../notifications/types';
+import { NotificationType } from '@/modules/notifications/types';
 
 @Injectable()
 export class JobsService {
