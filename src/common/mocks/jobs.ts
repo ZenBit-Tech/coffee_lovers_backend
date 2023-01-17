@@ -61,6 +61,7 @@ export const mockJobOfTypeJob: Job = {
   conversations: [],
   requests: [],
   offers: [],
+  notifications: [],
 };
 
 export const mockJobById: getJobByIdResponseDto = {

@@ -31,11 +31,6 @@ export enum OfferStatus {
   PENDING = 'Pending',
 }
 
-export enum NotificationType {
-  SUCCESS = 'Success',
-  FAIL = 'Fail',
-}
-
 export enum ContractStatus {
   ACTIVE = 'Active',
   CLOSED = 'Closed',

@@ -19,15 +19,23 @@ export class NotificationsService {
     return fromEvent(this.eventEmitter, String(user.id));
   }
 
-  emit(userId: number, data: NotificationEvent): void {
-    this.eventEmitter.emit(String(userId), { data });
+  emit(userId: number, notification: NotificationEvent): void {
+    this.eventEmitter.emit(String(userId), { notification });
+
+    this.notificationsRepository
+      .createQueryBuilder()
+      .insert()
+      .into(Notification)
+      .values([{ ...notification, to: { id: userId } }])
+      .execute();
   }
 
   async getNotifications(user: User): Promise<Notification[]> {
     try {
       return await this.notificationsRepository
         .createQueryBuilder('notification')
-        .where({ user })
+        .where({ to: user, is_read: false })
+        .orderBy('notification.created_at', 'DESC')
         .getMany();
     } catch (error) {
       throw new InternalServerErrorException();
