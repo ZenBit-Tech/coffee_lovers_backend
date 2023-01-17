@@ -1,11 +1,21 @@
-import { Controller, UseGuards, Param, Get, Req, Post } from '@nestjs/common';
+import {
+  Controller,
+  UseGuards,
+  Param,
+  Get,
+  Req,
+  Query,
+  Post,
+} from '@nestjs/common';
 import { ApiHeader, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/modules/auth/guards/jwt-auth.guard';
-import { getAuthorizationApiHeader } from '@utils/swagger';
-import { Contract } from '@entities/Contract.entity';
-import { ReqUser } from '@/modules/user/dto/get-user-dto.dto';
+import GetFreelancerDto from 'src/modules/user/dto/get-freelancer-params.dto';
+import { ReqUser } from 'src/modules/user/dto/get-user-dto.dto';
+import { getAuthorizationApiHeader } from '@/common/utils/swagger';
+import { Contract } from '@/common/entities/Contract.entity';
 import { ContractsService } from './contracts.service';
 import ContractsResponseDto from './dto/contracts-response.dto';
+import GetHiresDto from './dto/get-hires.dto';
 
 enum EndpointsRoutes {
   active = 'active',
@@ -57,11 +67,14 @@ export class ContractsController {
   @ApiOperation({
     summary: 'Get all hired freelancers',
   })
-  @ApiResponse({ type: ContractsResponseDto })
+  @ApiResponse({ type: GetHiresDto })
   @ApiHeader(getAuthorizationApiHeader())
   @UseGuards(JwtAuthGuard)
   @Get(`${EndpointsRoutes.all}`)
-  getAllHiredFreelancers(@Req() req): Promise<Contract[]> {
-    return this.contractsService.getAllHiredFreelancers(req.user);
+  getAllHiredFreelancers(
+    @Req() req: ReqUser,
+    @Query() params: GetFreelancerDto,
+  ): Promise<GetHiresDto> {
+    return this.contractsService.getAllHiredFreelancers(req.user, params);
   }
 }
