@@ -5,6 +5,7 @@ import { Job } from '@entities/Job.entity';
 import { Request } from '@entities/Request.entity';
 import { PropertiesModule } from '@/modules/properties/properties.module';
 import { UserModule } from '@/modules/user/user.module';
+import { NotificationsModule } from '@/modules/notifications/notifications.module';
 import { User } from '@/common/entities/User.entity';
 import { Conversation } from '@/common/entities/Conversation.entity';
 import { Offer } from '@/common/entities/Offer.entity';
@@ -19,6 +20,7 @@ import { JobsService } from './job.service';
     TypeOrmModule.forFeature([Job, Offer, Request, User, Conversation]),
     UserModule,
     PropertiesModule,
+    NotificationsModule,
   ],
   controllers: [JobsController],
   providers: [JobsService],

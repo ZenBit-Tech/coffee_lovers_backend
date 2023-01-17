@@ -1,10 +1,10 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { fromEvent, Observable } from 'rxjs';
-import { User } from '@entities/User.entity';
-import { Notification } from '@entities/Notification.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { User } from '@entities/User.entity';
+import { Notification } from '@entities/Notification.entity';
 import { NotificationEvent } from './types';
 
 @Injectable()
@@ -19,7 +19,7 @@ export class NotificationsService {
     return fromEvent(this.eventEmitter, String(user.id));
   }
 
-  emit(userId: number, data: NotificationEvent) {
+  emit(userId: number, data: NotificationEvent): void {
     this.eventEmitter.emit(String(userId), { data });
   }
 

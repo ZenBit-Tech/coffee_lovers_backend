@@ -48,7 +48,6 @@ export class ChatGateway {
       ...payload,
       created_at: new Date(),
     };
-    this.chatService.createMessage(payload, user);
 
     const isUserConnected =
       this.server.sockets.adapter.rooms.get(String(payload.conversation)).size >
