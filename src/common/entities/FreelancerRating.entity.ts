@@ -1,5 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, ManyToOne, Column } from 'typeorm';
 import { User } from '@entities/User.entity';
+import { conversationMessageMaxLength } from '@constants/entities';
 
 @Entity()
 export class FreelancerRating {
@@ -9,7 +10,12 @@ export class FreelancerRating {
   @Column({ default: null, nullable: true })
   freelancer_rating: number;
 
-  @Column({ default: null, nullable: true })
+  @Column({
+    default: null,
+    nullable: true,
+    type: 'varchar',
+    length: conversationMessageMaxLength,
+  })
   rating_comment: string;
 
   @Column({ default: null, nullable: true })
