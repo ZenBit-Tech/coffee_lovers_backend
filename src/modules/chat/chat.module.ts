@@ -5,6 +5,7 @@ import { Conversation } from '@entities/Conversation.entity';
 import { Message } from '@entities/Message.entity';
 import { UserModule } from '@/modules/user/user.module';
 import { RequestModule } from '@/modules/requests/request.module';
+import { NotificationsModule } from '@/modules/notifications/notifications.module';
 import { ChatController } from './chat.controller';
 import { ChatGateway } from './chat.gateway';
 import { ChatService } from './chat.service';
@@ -16,6 +17,7 @@ import { ChatService } from './chat.service';
     TypeOrmModule.forFeature([Request, Conversation, Message]),
     UserModule,
     RequestModule,
+    NotificationsModule,
   ],
 })
 export class ChatModule {}
