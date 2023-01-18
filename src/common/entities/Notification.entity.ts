@@ -26,9 +26,6 @@ export class Notification {
   @Column({ default: null, nullable: true })
   message: string;
 
-  @Column({ default: null, nullable: true })
-  link: string;
-
   @Column({
     type: 'enum',
     enum: NotificationType,

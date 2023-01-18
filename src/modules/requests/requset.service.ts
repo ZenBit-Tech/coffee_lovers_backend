@@ -168,6 +168,7 @@ export class RequsetService {
         job,
       });
     } catch (error) {
+      console.log(error);
       throw new InternalServerErrorException();
     }
   }

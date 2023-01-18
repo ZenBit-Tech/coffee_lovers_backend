@@ -6,6 +6,7 @@ export interface NotificationEvent {
   user?: User;
   job?: Job;
   message?: string;
+  created_at?: string;
 }
 
 export enum NotificationType {
