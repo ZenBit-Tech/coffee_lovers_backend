@@ -1,13 +1,32 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import { BadRequestException } from '@nestjs/common';
+import {
+  BadRequestException,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { UserService } from '@/modules/user/user.service';
 import CreateUserDto from '@/modules/user/dto/create-user.dto';
+import { createUserDto, signInDto } from '@/common/mocks/auth';
+import { mockFreelancerOfTypeUser } from '@/common/mocks/users';
 import { AuthService } from './auth.service';
 import TokenDto from './dto/token.dto';
-import { createUserDto, signInDto } from '@/common/mocks/auth';
+import { requestCredentialMock } from './googleauth/dto/credential';
+
+jest.mock('google-auth-library', () => {
+  const googleApisMock = {
+    OAuth2Client: jest.fn().mockImplementation(() => {
+      return {
+        getTokenInfo: jest.fn().mockResolvedValue({
+          email: createUserDto.email,
+        }),
+      };
+    }),
+  };
+
+  return googleApisMock;
+});
 
 describe('AuthService', () => {
   let authService: AuthService;
@@ -15,6 +34,7 @@ describe('AuthService', () => {
   const mockUserService = {
     findByEmail: (email: string) => ({ email }),
     create: (dto: CreateUserDto) => dto,
+    setIfGoogle: (bool: boolean, id: number) => null,
   };
   const mockJwtService = {
     sign: (payload: TokenDto) => payload.email,
@@ -91,6 +111,35 @@ describe('AuthService', () => {
       await expect(authService.signIn(signInDto)).rejects.toEqual(
         new BadRequestException('invalid password'),
       );
+    });
+  });
+
+  describe('Goole login/signup', () => {
+    it('should return token:string and role: false in case no user found', async () => {
+      jest.spyOn(mockUserService, 'findByEmail').mockReturnValue(null);
+      jest.spyOn(bcrypt, 'compare').mockResolvedValue(false);
+
+      expect(
+        await authService.googleLogin(requestCredentialMock),
+      ).toStrictEqual({
+        access_token: createUserDto.email,
+        role: false,
+      });
+    });
+
+    it('should return token and role: true in case user found ', async () => {
+      jest.spyOn(mockUserService, 'setIfGoogle').mockReturnValue(null);
+      jest
+        .spyOn(mockUserService, 'findByEmail')
+        .mockReturnValue(mockFreelancerOfTypeUser);
+      jest.spyOn(bcrypt, 'compare').mockResolvedValue(true);
+
+      expect(
+        await authService.googleLogin(requestCredentialMock),
+      ).toStrictEqual({
+        access_token: createUserDto.email,
+        role: true,
+      });
     });
   });
 });

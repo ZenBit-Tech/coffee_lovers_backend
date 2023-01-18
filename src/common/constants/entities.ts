@@ -31,11 +31,6 @@ export enum OfferStatus {
   PENDING = 'Pending',
 }
 
-export enum NotificationType {
-  SUCCESS = 'Success',
-  FAIL = 'Fail',
-}
-
 export enum ContractStatus {
   ACTIVE = 'Active',
   CLOSED = 'Closed',
@@ -49,3 +44,4 @@ export enum JobStatus {
 
 export const coverLetterMaxLength = 1000;
 export const conversationMessageMaxLength = 1000;
+export const ratingMessageMaxLength = 1000;

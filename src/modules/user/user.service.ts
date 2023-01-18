@@ -20,6 +20,7 @@ import { FileType } from '@/modules/file/types';
 import { RequestType, Role } from '@/common/constants/entities';
 import { Category } from '@/common/entities/Category.entity';
 import { Favorites } from '@/common/entities/Favorites.entity';
+import { Job } from '@/common/entities/Job.entity';
 import { FreelancerRating } from '@/common/entities/FreelancerRating.entity';
 import CreateUserDto from './dto/create-user.dto';
 import UpdateUserDto from './dto/update-user.dto';
@@ -36,6 +37,7 @@ import getUserProposalsResponseDto from './dto/get-proposals-by-user.dto';
 import SetFavoritesDto from './dto/set-favorites.dto';
 import GetFavoritesDto from './dto/get-favorites.dto';
 import SetFreelancerRatingDto from './dto/set-freelancer-rating.dto';
+import GetFreelancerRating from './dto/get-freelancer-rating.dto';
 
 @Injectable()
 export class UserService {
@@ -60,6 +62,9 @@ export class UserService {
 
     @InjectRepository(FreelancerRating)
     private freelancerRatingRepository: Repository<FreelancerRating>,
+
+    @InjectRepository(Job)
+    private jobRepository: Repository<Job>,
 
     private readonly configService: ConfigService,
     @Inject(forwardRef(() => MailService))
@@ -634,16 +639,43 @@ export class UserService {
           ])
           .execute();
 
-        const { avg } = await this.freelancerRatingRepository
+        const { avg, count } = await this.freelancerRatingRepository
           .createQueryBuilder('freelancerRating')
           .where({ freelancer: { id: payload.freelancer_id } })
           .select('AVG(freelancerRating.freelancer_rating)', 'avg')
+          .addSelect('COUNT(freelancerRating.freelancer_rating)', 'count')
           .getRawOne();
+
         const ratePayload = {
           average_rating: avg,
+          reviews_amount: count,
         };
+
         await this.updateUserById(payload.freelancer_id, ratePayload);
       }
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async getFreelancerRating(id: number): Promise<GetFreelancerRating[]> {
+    try {
+      const ratingInfo = await this.freelancerRatingRepository
+        .createQueryBuilder('freelancer_rating')
+        .where({ freelancer: { id } })
+        .leftJoinAndSelect('freelancer_rating.job_owner', 'job_owner')
+        .leftJoinAndMapOne(
+          'freelancer_rating.job',
+          Job,
+          'job',
+          'freelancer_rating.job_id = job.id',
+        )
+        .getMany();
+
+      return ratingInfo;
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
