@@ -1,5 +1,15 @@
-import { Controller, Get, Request, Sse, UseGuards } from '@nestjs/common';
 import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Request,
+  Sse,
+  UseGuards,
+  HttpCode,
+} from '@nestjs/common';
+import {
+  ApiBody,
   ApiHeader,
   ApiOperation,
   ApiParam,
@@ -9,6 +19,7 @@ import {
 import { Observable } from 'rxjs';
 import { Notification } from '@entities/Notification.entity';
 import { getAuthorizationApiHeader } from '@utils/swagger';
+import { HttpStatus } from '@nestjs/common/enums';
 import { JwtAuthGuard } from '@/modules/auth/guards/jwt-auth.guard';
 import { ReqUser } from '@/modules/user/dto/get-user-dto.dto';
 import { SseAuthGuard } from '@/modules/auth/guards/sse-auth.guard';
@@ -36,5 +47,14 @@ export class NotificationsController {
   @UseGuards(JwtAuthGuard)
   getNotification(@Request() req: ReqUser): Promise<Notification[]> {
     return this.notificationsService.getNotifications(req.user);
+  }
+
+  @ApiOperation({ summary: 'Mark notifications as read' })
+  @ApiHeader(getAuthorizationApiHeader())
+  @Post('/markall')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(JwtAuthGuard)
+  markAllNotificationsAsRead(@Request() req: ReqUser): Promise<void> {
+    return this.notificationsService.markAllNotificationsAsRead(req.user);
   }
 }
