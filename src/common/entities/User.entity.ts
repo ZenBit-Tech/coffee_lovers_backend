@@ -74,6 +74,15 @@ export class User {
   hourly_rate: number;
 
   @Column({ default: null, nullable: true })
+  reviews_amount: number;
+
+  @Column({
+    type: 'decimal',
+    precision: 5,
+    scale: 1,
+    default: null,
+    nullable: true,
+  })
   average_rating: number;
 
   @Column({ default: null, nullable: true })
