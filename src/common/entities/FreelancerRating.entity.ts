@@ -1,4 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, ManyToOne, Column } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  Column,
+  CreateDateColumn,
+} from 'typeorm';
 import { User } from '@entities/User.entity';
 import { conversationMessageMaxLength } from '@constants/entities';
 
@@ -6,6 +12,9 @@ import { conversationMessageMaxLength } from '@constants/entities';
 export class FreelancerRating {
   @PrimaryGeneratedColumn()
   id: number;
+
+  @CreateDateColumn()
+  created_at: Date;
 
   @Column({ default: null, nullable: true })
   freelancer_rating: number;

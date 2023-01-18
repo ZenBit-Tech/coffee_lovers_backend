@@ -47,6 +47,7 @@ import getUserProposalsResponseDto from './dto/get-proposals-by-user.dto';
 import SetFavoritesDto from './dto/set-favorites.dto';
 import GetFavoritesDto from './dto/get-favorites.dto';
 import SetFreelancerRatingDto from './dto/set-freelancer-rating.dto';
+import GetFreelancerRating from './dto/get-freelancer-rating.dto';
 
 @ApiTags('user')
 @Controller('user')
@@ -268,5 +269,15 @@ export class UserController {
     @Body() payload: SetFreelancerRatingDto,
   ): Promise<void> {
     return this.userService.setFreelancerRating(req.user, payload);
+  }
+
+  @ApiOperation({ summary: 'get all freelancer ratings' })
+  @ApiResponse({ type: GetFavoritesDto })
+  @ApiHeader(getAuthorizationApiHeader())
+  @Get('/freelancerrating/:id')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  getFreelancerRating(@Param('id') id: string): Promise<GetFreelancerRating[]> {
+    return this.userService.getFreelancerRating(+id);
   }
 }
