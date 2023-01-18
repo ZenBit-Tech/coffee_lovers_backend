@@ -3,6 +3,7 @@ import {
   HttpException,
   InternalServerErrorException,
   ForbiddenException,
+  Inject,
 } from '@nestjs/common';
 import { Brackets, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -22,6 +23,8 @@ import CreateProposalDto from './dto/create-proposal.dto';
 import getJobProposalsResponseDto from './dto/get-job-proposals-response.dto';
 import getJobByIdResponseDto from './dto/get-job-response.dto';
 import GetPostedJobsDetailsResponse from './dto/get-posted-jobs-details-response.dto';
+import { NotificationsService } from '@/modules/notifications/notifications.service';
+import { NotificationType } from '@/modules/notifications/types';
 
 @Injectable()
 export class JobsService {
@@ -30,6 +33,8 @@ export class JobsService {
     private jobRepository: Repository<Job>,
     @InjectRepository(Request)
     private requestRepository: Repository<Request>,
+    @Inject(NotificationsService)
+    private notificationsService: NotificationsService,
   ) {}
 
   async findOne(payload: object, leftJoins?: string[]): Promise<Job | null> {
@@ -223,10 +228,7 @@ export class JobsService {
     }
   }
 
-  async createProposal(
-    payload: CreateProposalDto,
-    user: UserDto,
-  ): Promise<void> {
+  async createProposal(payload: CreateProposalDto, user: User): Promise<void> {
     try {
       const { job, ...proposalPayload } = payload;
 
@@ -252,6 +254,13 @@ export class JobsService {
           },
         ])
         .execute();
+
+      const jobData = await this.findOne({ id: payload.job }, ['owner']);
+      this.notificationsService.emit(jobData.owner.id, {
+        type: NotificationType.NEW_PROPOSAL,
+        job: jobData,
+        user,
+      });
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;

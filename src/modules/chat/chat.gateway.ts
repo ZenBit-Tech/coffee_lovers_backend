@@ -1,4 +1,4 @@
-import { UseGuards } from '@nestjs/common';
+import { Inject, UseGuards } from '@nestjs/common';
 import {
   ConnectedSocket,
   MessageBody,
@@ -10,6 +10,8 @@ import { Server, Socket } from 'socket.io';
 import { authorizationHeader, ChatEvents } from '@constants/websocket';
 import { minRoomJoins } from '@constants/chat';
 import { WsAuthGuard } from '@/modules/auth/guards/ws-auth.guard';
+import { NotificationsService } from '@/modules/notifications/notifications.service';
+import { NotificationType } from '@/modules/notifications/types';
 import { UserHandshake } from './types';
 import { CreateMessageDto } from './dto/create-message.dto';
 import { ConversationDto } from './dto/conversation.dto';
@@ -26,7 +28,11 @@ import { ChatService } from './chat.service';
   },
 })
 export class ChatGateway {
-  constructor(private readonly chatService: ChatService) {}
+  constructor(
+    private readonly chatService: ChatService,
+    @Inject(NotificationsService)
+    private notificationService: NotificationsService,
+  ) {}
 
   @WebSocketServer()
   server: Server;
@@ -43,12 +49,14 @@ export class ChatGateway {
       created_at: new Date(),
     };
 
+    const isUserConnected =
+      this.server.sockets.adapter.rooms.get(String(payload.conversation)).size >
+      minRoomJoins;
+
     this.chatService.createMessage(
       {
         ...payload,
-        is_read:
-          this.server.sockets.adapter.rooms.get(String(payload.conversation))
-            .size > minRoomJoins,
+        is_read: isUserConnected,
       },
       user,
     );
@@ -56,6 +64,14 @@ export class ChatGateway {
     this.server
       .to(String(payload.conversation))
       .emit(ChatEvents.MESSAGE, message);
+
+    if (!isUserConnected) {
+      this.notificationService.emit(payload.to, {
+        type: NotificationType.MESSAGE,
+        user,
+        message: message.message,
+      });
+    }
   }
 
   @SubscribeMessage(ChatEvents.JOIN_CONVERSATION)
