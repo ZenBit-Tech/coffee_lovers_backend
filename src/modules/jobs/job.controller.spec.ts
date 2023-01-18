@@ -4,6 +4,7 @@ import UserDto from '@/modules/user/dto/user.dto';
 import { ReqUser } from '@/modules/user/dto/get-user-dto.dto';
 import { JobsController } from './job.controller';
 import { JobsService } from './job.service';
+import GetJobsDto from './dto/get-jobs.dto';
 
 describe('JobsController', () => {
   let jobsController: JobsController;
@@ -34,6 +35,12 @@ describe('JobsController', () => {
           id: fr,
         },
       ]),
+    findJobs: jest.fn().mockImplementation((params: GetJobsDto) => ({
+      jobs: [],
+      meta: {
+        totalCount: 0,
+      },
+    })),
   };
 
   beforeEach(async () => {
@@ -76,6 +83,24 @@ describe('JobsController', () => {
         +params.id,
         reqUser.user,
       );
+    });
+  });
+
+  describe('Find jobs', () => {
+    it('should call findJobs in user service with params', async () => {
+      const params = { offset: 0, limit: 10 };
+      await jobsController.findJobs(params);
+      expect(mockJobService.findJobs).toHaveBeenCalledWith(params);
+    });
+
+    it('should return object with array of jobs and total count', async () => {
+      const params = { offset: 0, limit: 10 };
+      const data = await jobsController.findJobs(params);
+
+      expect(data).not.toEqual([]);
+      expect(data).toHaveProperty('jobs');
+      expect(data).toHaveProperty('meta');
+      expect(data.meta).toHaveProperty('totalCount');
     });
   });
 });

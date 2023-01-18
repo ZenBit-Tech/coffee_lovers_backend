@@ -13,13 +13,20 @@ export const createQueryBuilder = {
   addSelect: () => createQueryBuilder,
   groupBy: () => createQueryBuilder,
   where: () => createQueryBuilder,
+  andWhere: () => createQueryBuilder,
   leftJoinAndSelect: () => createQueryBuilder,
+  innerJoin: () => createQueryBuilder,
   relation: () => createQueryBuilder,
   of: () => createQueryBuilder,
+  limit: () => createQueryBuilder,
+  offset: () => createQueryBuilder,
+  orderBy: () => createQueryBuilder,
   addAndRemove: () => ({}),
   execute: () => ({}),
   getOne: () => ({}),
+  getCount: () => 0,
   getMany: () => [],
+  getManyAndCount: () => [[], 0],
 };
 
 export const mockRepository = {

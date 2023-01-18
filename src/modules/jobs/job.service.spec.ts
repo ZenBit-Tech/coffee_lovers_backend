@@ -1,14 +1,21 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ForbiddenException } from '@nestjs/common/exceptions';
+import { Repository } from 'typeorm';
+import { getRepositoryToken } from '@nestjs/typeorm';
 import { Job } from '@entities/Job.entity';
 import { Request } from '@entities/Request.entity';
-import { Conversation } from '@entities/Conversation.entity';
-import { getRepositoryProvider } from '@/common/utils/tests';
+import { getRepositoryProvider, mockRepository } from '@/common/utils/tests';
 import UserDto from '@/modules/user/dto/user.dto';
+import { NotificationsService } from '@/modules/notifications/notifications.service';
+import { NotificationEvent } from '@/modules/notifications/types';
 import { JobsService } from './job.service';
 
 describe('JobsService', () => {
   let jobsService: JobsService;
+
+  const mockNotificationService = {
+    emit: (id: number, data: NotificationEvent) => ({}),
+  };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -16,11 +23,18 @@ describe('JobsService', () => {
         JobsService,
         getRepositoryProvider(Job),
         getRepositoryProvider(Request),
-        getRepositoryProvider(Conversation),
+        {
+          provide: NotificationsService,
+          useValue: mockNotificationService,
+        },
       ],
     }).compile();
 
     jobsService = module.get<JobsService>(JobsService);
+  });
+
+  afterEach(async () => {
+    jest.clearAllMocks();
   });
 
   describe('getJobById', () => {
@@ -73,6 +87,61 @@ describe('JobsService', () => {
 
       expect(jobsService.getJobProposals(jobId, user)).rejects.toEqual(
         new ForbiddenException(),
+      );
+    });
+  });
+
+  describe('Find jobs', () => {
+    it('should return object with jobs and total count', async () => {
+      const params = { offset: 0, limit: 10 };
+      expect(await jobsService.findJobs(params)).toEqual({
+        jobs: [],
+        meta: {
+          totalCount: 0,
+        },
+      });
+    });
+
+    it('query should be called one time', async () => {
+      const params = { offset: 0, limit: 10 };
+
+      jest.spyOn(mockRepository.createQueryBuilder(), 'getManyAndCount');
+      jest.spyOn(mockRepository.createQueryBuilder(), 'getMany');
+      jest.spyOn(mockRepository.createQueryBuilder(), 'getCount');
+
+      await jobsService.findJobs(params);
+
+      expect(
+        mockRepository.createQueryBuilder().getMany,
+      ).not.toHaveBeenCalled();
+
+      expect(
+        mockRepository.createQueryBuilder().getCount,
+      ).not.toHaveBeenCalled();
+
+      expect(
+        mockRepository.createQueryBuilder().getManyAndCount,
+      ).toHaveBeenCalledTimes(1);
+    });
+
+    it('limit & offset should be set even without params', async () => {
+      jest.spyOn(mockRepository.createQueryBuilder(), 'limit');
+      jest.spyOn(mockRepository.createQueryBuilder(), 'offset');
+
+      await jobsService.findJobs({});
+
+      expect(mockRepository.createQueryBuilder().limit).toHaveBeenCalled();
+      expect(mockRepository.createQueryBuilder().offset).toHaveBeenCalled();
+    });
+
+    it('jobs should be in descending order', async () => {
+      jest.spyOn(mockRepository.createQueryBuilder(), 'orderBy');
+
+      await jobsService.findJobs({});
+
+      expect(mockRepository.createQueryBuilder().orderBy).toHaveBeenCalledWith(
+        'job.created_at',
+        'DESC',
       );
     });
   });

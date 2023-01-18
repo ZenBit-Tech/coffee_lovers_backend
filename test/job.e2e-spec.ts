@@ -7,6 +7,7 @@ import { ValidationPipe } from '@nestjs/common/pipes';
 import { JobsService } from '@/modules/jobs/job.service';
 import { JobsController } from '@/modules/jobs/job.controller';
 import { JwtAuthGuard } from '@/modules/auth/guards/jwt-auth.guard';
+import GetJobsDto from '@/modules/jobs/dto/get-jobs.dto';
 
 describe('JobController (e2e)', () => {
   let app: INestApplication;
@@ -14,6 +15,7 @@ describe('JobController (e2e)', () => {
   const jobService = {
     getJobById: (jobId: number) => ({ id: jobId }),
     getJobProposals: (jobId: number) => ({ job: { id: jobId }, proposals: [] }),
+    findJobs: (param: GetJobsDto) => ({ jobs: [], meta: { totalCount: 0 } }),
   };
 
   beforeEach(async () => {
@@ -70,6 +72,20 @@ describe('JobController (e2e)', () => {
       return request(app.getHttpServer())
         .get('/jobs/k/proposals')
         .expect(HttpStatus.BAD_REQUEST);
+    });
+  });
+
+  describe('/jobs (GET) find jobs', () => {
+    it('should return object with jobs array and total count', () => {
+      return request(app.getHttpServer())
+        .get('/jobs')
+        .expect(HttpStatus.OK)
+        .expect({
+          jobs: [],
+          meta: {
+            totalCount: 0,
+          },
+        });
     });
   });
 });
