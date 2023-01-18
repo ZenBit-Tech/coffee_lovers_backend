@@ -6,7 +6,7 @@ import {
   CreateDateColumn,
 } from 'typeorm';
 import { User } from '@entities/User.entity';
-import { conversationMessageMaxLength } from '@constants/entities';
+import { ratingMessageMaxLength } from '@constants/entities';
 
 @Entity()
 export class FreelancerRating {
@@ -23,7 +23,7 @@ export class FreelancerRating {
     default: null,
     nullable: true,
     type: 'varchar',
-    length: conversationMessageMaxLength,
+    length: ratingMessageMaxLength,
   })
   rating_comment: string;
 

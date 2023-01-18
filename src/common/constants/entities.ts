@@ -49,3 +49,4 @@ export enum JobStatus {
 
 export const coverLetterMaxLength = 1000;
 export const conversationMessageMaxLength = 1000;
+export const ratingMessageMaxLength = 1000;
