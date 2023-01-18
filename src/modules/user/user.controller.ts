@@ -147,6 +147,18 @@ export class UserController {
     return this.userService.addUserInfo(payload, req.user);
   }
 
+  @ApiOperation({ summary: 'sent user information' })
+  @ApiHeader(getAuthorizationApiHeader())
+  @Put('/update')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  updateUserName(
+    @Request() req: ReqUser,
+    @Body() payload: AddUserInfoDto,
+  ): Promise<void> {
+    return this.userService.updateUserByEmail(req.user.email, payload);
+  }
+
   @ApiOperation({ summary: 'sent education information' })
   @ApiHeader(getAuthorizationApiHeader())
   @ApiBody({ isArray: true, type: AddUserEducationDto })
