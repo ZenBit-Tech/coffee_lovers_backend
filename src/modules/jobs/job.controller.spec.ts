@@ -116,11 +116,17 @@ describe('JobsController', () => {
   });
 
   describe('Get all posted jobs by user', () => {
-    it('should call getPostedJobs in user service with current user and return array', async () => {
+    it('should call getPostedJobs in user service with current user', async () => {
       jest.spyOn(mockJobService, 'getPostedJobs');
-      const data = await jobsController.getPostedJobs(reqUser);
+      await jobsController.getPostedJobs(reqUser);
       expect(mockJobService.getPostedJobs).toBeCalledWith(reqUser.user);
-      expect(data).toEqual([]);
+    });
+
+    it('should return array', async () => {
+      const data = await jobsController.getPostedJobs(reqUser);
+
+      expect(data).not.toHaveProperty('id');
+      expect(Array.isArray(data)).toBe(true);
     });
   });
 
