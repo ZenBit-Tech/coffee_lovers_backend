@@ -7,6 +7,7 @@ import { Offer } from '@entities/Offer.entity';
 import { Contract } from '@entities/Contract.entity';
 import { UserModule } from '@/modules/user/user.module';
 import { JobsModule } from '@/modules/jobs/job.module';
+import { NotificationsModule } from '@/modules/notifications/notifications.module';
 import { RequsetService } from './requset.service';
 import { RequstController } from './requst.controller';
 
@@ -15,6 +16,7 @@ import { RequstController } from './requst.controller';
     TypeOrmModule.forFeature([Request, Job, User, Offer, Contract]),
     UserModule,
     JobsModule,
+    NotificationsModule,
   ],
   controllers: [RequstController],
   providers: [RequsetService],

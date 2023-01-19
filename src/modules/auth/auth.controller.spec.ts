@@ -4,6 +4,10 @@ import { createUserDto, signInDto } from '@/common/mocks/auth';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import SignInDto from './dto/signIn.dto';
+import {
+  CredentialDto,
+  requestCredentialMock,
+} from './googleauth/dto/credential';
 
 describe('AuthController', () => {
   let authController: AuthController;
@@ -13,6 +17,9 @@ describe('AuthController', () => {
       access_token: 'tokentest',
     })),
     signIn: jest.fn().mockImplementation((dto: SignInDto) => ({
+      access_token: 'tokentest',
+    })),
+    googleLogin: jest.fn().mockImplementation((dto: CredentialDto) => ({
       access_token: 'tokentest',
     })),
   };
@@ -66,6 +73,31 @@ describe('AuthController', () => {
 
     it('access token should have correct type', async () => {
       expect(await authController.signIn(signInDto)).not.toEqual({
+        access_token: expect.any(Number),
+      });
+    });
+  });
+
+  describe('Login with google', () => {
+    it('should call method in authService with google login token', async () => {
+      const oneTime = 1;
+      await authController.googleAuth(requestCredentialMock);
+
+      expect(mockAuthService.googleLogin).toBeCalledTimes(oneTime);
+      expect(mockAuthService.googleLogin).toBeCalledWith(requestCredentialMock);
+    });
+
+    it('should return token dto', async () => {
+      const token = await authController.googleAuth(requestCredentialMock);
+
+      expect(token).not.toEqual({});
+      expect(token).toHaveProperty('access_token');
+    });
+
+    it('access token should have correct type', async () => {
+      expect(
+        await authController.googleAuth(requestCredentialMock),
+      ).not.toEqual({
         access_token: expect.any(Number),
       });
     });

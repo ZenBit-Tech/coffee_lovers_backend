@@ -20,6 +20,8 @@ import { FileType } from '@/modules/file/types';
 import { RequestType, Role } from '@/common/constants/entities';
 import { Category } from '@/common/entities/Category.entity';
 import { Favorites } from '@/common/entities/Favorites.entity';
+import { Job } from '@/common/entities/Job.entity';
+import { FreelancerRating } from '@/common/entities/FreelancerRating.entity';
 import CreateUserDto from './dto/create-user.dto';
 import UpdateUserDto from './dto/update-user.dto';
 import PasswordResetRequestDto from './dto/password-reset-request.dto';
@@ -34,6 +36,8 @@ import getUserProposalsResponseDto from './dto/get-proposals-by-user.dto';
 
 import SetFavoritesDto from './dto/set-favorites.dto';
 import GetFavoritesDto from './dto/get-favorites.dto';
+import SetFreelancerRatingDto from './dto/set-freelancer-rating.dto';
+import GetFreelancerRating from './dto/get-freelancer-rating.dto';
 
 @Injectable()
 export class UserService {
@@ -55,6 +59,12 @@ export class UserService {
 
     @InjectRepository(Favorites)
     private favoritesRepository: Repository<Favorites>,
+
+    @InjectRepository(FreelancerRating)
+    private freelancerRatingRepository: Repository<FreelancerRating>,
+
+    @InjectRepository(Job)
+    private jobRepository: Repository<Job>,
 
     private readonly configService: ConfigService,
     @Inject(forwardRef(() => MailService))
@@ -190,6 +200,19 @@ export class UserService {
         .update(User)
         .set(payload)
         .where({ email })
+        .execute();
+    } catch (error) {
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async updateUserById(id: number, payload: UpdateUserDto): Promise<void> {
+    try {
+      await this.userRepository
+        .createQueryBuilder()
+        .update(User)
+        .set(payload)
+        .where('id = :id', { id })
         .execute();
     } catch (error) {
       throw new InternalServerErrorException();
@@ -580,6 +603,79 @@ export class UserService {
         .getManyAndCount();
 
       return { favorites, totalCount };
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async setFreelancerRating(
+    user: UserDto,
+    payload: SetFreelancerRatingDto,
+  ): Promise<void> {
+    try {
+      const freelancerHasRate = await this.freelancerRatingRepository
+        .createQueryBuilder()
+        .where({
+          job_id: payload.job_id,
+          freelancer: { id: payload.freelancer_id },
+          job_owner: user,
+        })
+        .getOne();
+
+      if (!freelancerHasRate) {
+        await this.freelancerRatingRepository
+          .createQueryBuilder()
+          .insert()
+          .into(FreelancerRating)
+          .values([
+            {
+              ...payload,
+              freelancer: { id: payload.freelancer_id },
+              job_owner: user,
+            },
+          ])
+          .execute();
+
+        const { avg, count } = await this.freelancerRatingRepository
+          .createQueryBuilder('freelancerRating')
+          .where({ freelancer: { id: payload.freelancer_id } })
+          .select('AVG(freelancerRating.freelancer_rating)', 'avg')
+          .addSelect('COUNT(freelancerRating.freelancer_rating)', 'count')
+          .getRawOne();
+
+        const ratePayload = {
+          average_rating: avg,
+          reviews_amount: count,
+        };
+
+        await this.updateUserById(payload.freelancer_id, ratePayload);
+      }
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async getFreelancerRating(id: number): Promise<GetFreelancerRating[]> {
+    try {
+      const ratingInfo = await this.freelancerRatingRepository
+        .createQueryBuilder('freelancer_rating')
+        .where({ freelancer: { id } })
+        .leftJoinAndSelect('freelancer_rating.job_owner', 'job_owner')
+        .leftJoinAndMapOne(
+          'freelancer_rating.job',
+          Job,
+          'job',
+          'freelancer_rating.job_id = job.id',
+        )
+        .getMany();
+
+      return ratingInfo;
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;

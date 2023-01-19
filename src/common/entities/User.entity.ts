@@ -25,6 +25,7 @@ import { Skill } from '@entities/Skill.entity';
 import { WorkHistory } from '@entities/WorkHistory.entity';
 import { Notification } from '@entities/Notification.entity';
 import { Offer } from '@entities/Offer.entity';
+import { FreelancerRating } from '@entities/FreelancerRating.entity';
 import { Favorites } from './Favorites.entity';
 
 @Entity()
@@ -71,6 +72,18 @@ export class User {
 
   @Column({ default: null, nullable: true })
   hourly_rate: number;
+
+  @Column({ default: null, nullable: true })
+  reviews_amount: number;
+
+  @Column({
+    type: 'decimal',
+    precision: 5,
+    scale: 1,
+    default: null,
+    nullable: true,
+  })
+  average_rating: number;
 
   @Column({ default: null, nullable: true })
   position: string;
@@ -136,4 +149,8 @@ export class User {
   @OneToMany(() => Favorites, (favorite) => favorite.job_owner)
   @OneToMany(() => Favorites, (favorite) => favorite.freelancer)
   favorites: Favorites[];
+
+  @OneToMany(() => FreelancerRating, (frRating) => frRating.job_owner)
+  @OneToMany(() => FreelancerRating, (frRating) => frRating.freelancer)
+  freelancerRating: FreelancerRating[];
 }
