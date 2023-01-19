@@ -6,6 +6,7 @@ import {
   educationPayload,
   workhistoryPayload,
 } from '@/common/constants/mockdata';
+import { getFavoritesParams, mockSetFavoritesDto } from '@/common/mocks/users';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
 import { ReqUser } from './dto/get-user-dto.dto';
@@ -14,7 +15,6 @@ import PasswordResetRequestDto from './dto/password-reset-request.dto';
 import PasswordResetDto from './dto/password-reset.dto';
 import AddUserEducationDto from './dto/add-user-education.dto';
 import AddUserWorkhistoryDto from './dto/add-user-workhistory.dto';
-import { getFavoritesParams, mockSetFavoritesDto } from '@/common/mocks/users';
 import SetFavoritesDto from './dto/set-favorites.dto';
 import GetFreelancerDto from './dto/get-freelancer-params.dto';
 

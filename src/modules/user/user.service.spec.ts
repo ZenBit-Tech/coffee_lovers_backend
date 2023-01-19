@@ -14,17 +14,16 @@ import {
 } from '@/common/constants/mockdata';
 import { MailService } from '@/modules/mail/mail.service';
 import { FileService } from '@/modules/file/file.service';
-import { UserService } from './user.service';
-import UserDto from './dto/user.dto';
 import {
   getFavoritesParams,
   mockFreelancer1,
-  mockGetFavoritesDto,
   mockSetFavoritesDto,
 } from '@/common/mocks/users';
 import { Favorites } from '@/common/entities/Favorites.entity';
 import { FreelancerRating } from '@/common/entities/FreelancerRating.entity';
 import { Job } from '@/common/entities/Job.entity';
+import { UserService } from './user.service';
+import UserDto from './dto/user.dto';
 
 describe('UserService', () => {
   let userService: UserService;
