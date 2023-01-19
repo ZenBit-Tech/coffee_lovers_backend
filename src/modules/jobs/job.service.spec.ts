@@ -1,7 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ForbiddenException } from '@nestjs/common/exceptions';
-import { Repository } from 'typeorm';
-import { getRepositoryToken } from '@nestjs/typeorm';
 import { Job } from '@entities/Job.entity';
 import { Request } from '@entities/Request.entity';
 import { getRepositoryProvider, mockRepository } from '@/common/utils/tests';
@@ -9,6 +7,7 @@ import UserDto from '@/modules/user/dto/user.dto';
 import { NotificationsService } from '@/modules/notifications/notifications.service';
 import { NotificationEvent } from '@/modules/notifications/types';
 import { JobsService } from './job.service';
+import { mockJobOwnerOfTypeUser } from '@/common/mocks/users';
 
 describe('JobsService', () => {
   let jobsService: JobsService;
@@ -143,6 +142,77 @@ describe('JobsService', () => {
         'job.created_at',
         'DESC',
       );
+    });
+  });
+
+  describe('Get all posted jobs by user', () => {
+    it('should return array of jobs', async () => {
+      const data = await jobsService.getPostedJobs(mockJobOwnerOfTypeUser);
+      expect(Array.isArray(data)).toBe(true);
+    });
+
+    it('query should be called one time', async () => {
+      jest.spyOn(mockRepository.createQueryBuilder(), 'getMany');
+      jest.spyOn(mockRepository.createQueryBuilder(), 'getOne');
+      jest.spyOn(mockRepository, 'createQueryBuilder');
+
+      await jobsService.getPostedJobs(mockJobOwnerOfTypeUser);
+
+      expect(mockRepository.createQueryBuilder).toHaveBeenCalledTimes(1);
+      expect(mockRepository.createQueryBuilder().getMany).toHaveBeenCalledTimes(
+        1,
+      );
+      expect(mockRepository.createQueryBuilder().getOne).not.toHaveBeenCalled();
+    });
+
+    it('should be selection (condition) by owner of job', async () => {
+      jest.spyOn(mockRepository.createQueryBuilder(), 'where');
+      await jobsService.getPostedJobs(mockJobOwnerOfTypeUser);
+
+      expect(mockRepository.createQueryBuilder().where).toHaveBeenCalledWith({
+        owner: mockJobOwnerOfTypeUser,
+      });
+    });
+  });
+
+  describe('Get details of posted job', () => {
+    it('should return object with job and array of hires', async () => {
+      const jobId = 1;
+      jest
+        .spyOn(mockRepository.createQueryBuilder(), 'getOne')
+        .mockReturnValue({
+          id: jobId,
+          owner: { id: mockJobOwnerOfTypeUser.id },
+          offers: [],
+        });
+
+      const data = await jobsService.getPostedJobDetails(
+        mockJobOwnerOfTypeUser,
+        jobId,
+      );
+
+      expect(data).toEqual({
+        job: {
+          id: jobId,
+          owner: { id: mockJobOwnerOfTypeUser.id },
+        },
+        hires: [],
+      });
+    });
+
+    it('user is not job owner of requested job: should throw forbidden exception', async () => {
+      const jobId = 1;
+      jest
+        .spyOn(mockRepository.createQueryBuilder(), 'getOne')
+        .mockReturnValue({
+          id: jobId,
+          owner: { id: 2 },
+          offers: [],
+        });
+
+      expect(
+        jobsService.getPostedJobDetails(mockJobOwnerOfTypeUser, jobId),
+      ).rejects.toEqual(new ForbiddenException());
     });
   });
 });
