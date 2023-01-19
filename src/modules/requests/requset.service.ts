@@ -22,6 +22,8 @@ import { isRequestForFreelancer } from '@/common/validation/requests';
 import { JobsService } from '@/modules/jobs/job.service';
 import { checkAnotherRole, checkUserRole } from '@/modules/contracts/constants';
 import { UserService } from '@/modules/user/user.service';
+import { NotificationsService } from '@/modules/notifications/notifications.service';
+import { NotificationType } from '@/modules/notifications/types';
 import { Job } from '@/common/entities/Job.entity';
 import UserDto from '@/modules/user/dto/user.dto';
 import ReqBody from './dto/request-body-dto';
@@ -37,6 +39,9 @@ export class RequsetService {
 
     @Inject(UserService)
     private userService: UserService,
+
+    @Inject(NotificationsService)
+    private notificationsService: NotificationsService,
 
     @InjectRepository(Request)
     private requestRepository: Repository<Request>,
@@ -70,6 +75,7 @@ export class RequsetService {
         .where(payload)
         .leftJoinAndSelect('offer.freelancer', 'freelancer')
         .leftJoinAndSelect('offer.job', 'job')
+        .leftJoinAndSelect('offer.job_owner', 'job_owner')
         .getOne();
     } catch (error) {
       throw new InternalServerErrorException();
@@ -102,13 +108,21 @@ export class RequsetService {
 
       const { job } = await this.jobsService.getJobById(job_id);
       const freelancer = await this.userService.getUserById(fr);
-      this.requestRepository
+      await this.requestRepository
         .createQueryBuilder('request')
         .leftJoin('request.job', 'job')
         .insert()
         .into(Request)
         .values({ ...body, freelancer, job, job_owner: user })
         .execute();
+
+      if (body.type === RequestType.INTERVIEW) {
+        this.notificationsService.emit(fr, {
+          type: NotificationType.NEW_INTERVIEW,
+          user,
+          job,
+        });
+      }
     } catch (error) {
       throw new InternalServerErrorException();
     }
@@ -140,13 +154,19 @@ export class RequsetService {
 
       const { job } = await this.jobsService.getJobById(jobId);
       const freelancer = await this.userService.getUserById(fr);
-      this.offerRepository
+      await this.offerRepository
         .createQueryBuilder('offer')
         .leftJoin('offer.job', 'job')
         .insert()
         .into(Offer)
         .values({ ...body, freelancer, job, job_owner: user })
         .execute();
+
+      this.notificationsService.emit(fr, {
+        type: NotificationType.NEW_OFFER,
+        user,
+        job,
+      });
     } catch (error) {
       throw new InternalServerErrorException();
     }
@@ -229,7 +249,7 @@ export class RequsetService {
     }
   }
 
-  async acceptOffer(user: UserDto, id: number): Promise<void> {
+  async acceptOffer(user: User, id: number): Promise<void> {
     try {
       const offer = await this.findOffer({ id });
       isOfferPendingForUser(user, offer);
@@ -247,6 +267,12 @@ export class RequsetService {
         .values([{ offer, status: ContractStatus.ACTIVE }])
         .execute();
 
+      this.notificationsService.emit(offer.job_owner.id, {
+        type: NotificationType.ACCEPTED_OFFER,
+        user,
+        job: offer.job,
+      });
+
       if (offer.job.status === JobStatus.PENDING) {
         await this.jobsService.setJobStatus(
           offer.job.id,
@@ -261,7 +287,7 @@ export class RequsetService {
     }
   }
 
-  async declineOffer(user: UserDto, id: number): Promise<void> {
+  async declineOffer(user: User, id: number): Promise<void> {
     try {
       const offer = await this.findOffer({ id });
       isOfferPendingForUser(user, offer);
@@ -271,6 +297,12 @@ export class RequsetService {
         .set({ status: OfferStatus.DECLINED })
         .where({ id })
         .execute();
+
+      this.notificationsService.emit(offer.job_owner.id, {
+        type: NotificationType.DECLINED_OFFER,
+        user,
+        job: offer.job,
+      });
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;

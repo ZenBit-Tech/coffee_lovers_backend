@@ -20,6 +20,7 @@ import { Skill } from '@entities/Skill.entity';
 import { Conversation } from '@entities/Conversation.entity';
 import { Request } from '@entities/Request.entity';
 import { Offer } from '@entities/Offer.entity';
+import { Notification } from './Notification.entity';
 
 @Entity()
 export class Job {
@@ -91,4 +92,7 @@ export class Job {
 
   @OneToMany(() => Offer, (offer) => offer.job)
   offers: Offer[];
+
+  @OneToMany(() => Notification, (notification) => notification.job)
+  notifications: Notification[];
 }
