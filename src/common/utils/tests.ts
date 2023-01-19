@@ -15,11 +15,14 @@ export const createQueryBuilder = {
   where: () => createQueryBuilder,
   leftJoinAndSelect: () => createQueryBuilder,
   relation: () => createQueryBuilder,
+  skip: () => createQueryBuilder,
+  take: () => createQueryBuilder,
   of: () => createQueryBuilder,
   addAndRemove: () => ({}),
   execute: () => ({}),
   getOne: () => ({}),
   getMany: () => [],
+  getManyAndCount: () => [],
 };
 
 export const mockRepository = {

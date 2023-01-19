@@ -1,6 +1,11 @@
 import { AvailableTime, EnglishLevel, Role } from '@constants/entities';
 import { User } from '@/common/entities/User.entity';
 import AuthGoogleResponseDto from '@/modules/auth/dto/auth-google-response.dto';
+import AddUserEducationDto from '@/modules/user/dto/add-user-education.dto';
+import AddUserWorkhistoryDto from '@/modules/user/dto/add-user-workhistory.dto';
+import SetFavoritesDto from '@/modules/user/dto/set-favorites.dto';
+import SetFreelancerRatingDto from '@/modules/user/dto/set-freelancer-rating.dto';
+import UpdateUserDto from '@/modules/user/dto/update-user.dto';
 
 export const mockJobOwner1 = {
   id: 1,
@@ -43,7 +48,7 @@ export const mockJobOwnerOfTypeUser: User = {
   category: null,
   password: '',
   is_google: false,
-  average_rating: 5,
+  average_rating: 4.3,
   reviews_amount: 10,
   reset_password_key: '',
   workHistory: [],
@@ -88,4 +93,50 @@ export const mockFreelancerOfTypeUser: User = {
   offers: [],
   favorites: [],
   freelancerRating: [],
+};
+
+export const mockAddUserEducationDto: AddUserEducationDto = {
+  education_descr: 'description',
+  education_from: '2012',
+  education_to: '2014',
+};
+
+export const mockAddUserWorkhistoryDto: AddUserWorkhistoryDto = {
+  work_history_descr: 'description',
+  work_history_from: '2012',
+  work_history_to: '2014',
+};
+
+export const mockSetFavoritesDto: SetFavoritesDto = {
+  id: 1,
+  is_favorite: false,
+};
+
+export const mockSetFreelancerRatingDto: SetFreelancerRatingDto = {
+  freelancer_id: 1,
+  freelancer_rating: 5,
+  rating_comment: 'very good freelancer',
+  job_id: 10,
+};
+
+export const mockUpdateUserDto: UpdateUserDto = {
+  ...mockJobOwnerOfTypeUser,
+  password: 'Qwerty123',
+};
+
+export const mockGetFavoritesDto = {
+  totalCount: 12,
+  favorites: [{ ...mockUpdateUserDto }],
+};
+
+export const getFavoritesParams = { page: 1, take: 10, skip: 0 };
+
+export const mockGetFreelancerRatingDto = {
+  freelancer: { ...mockJobOwnerOfTypeUser },
+  created_at: '2023-01-18 18:32:36.133287',
+  job_owner: { ...mockJobOwnerOfTypeUser },
+};
+
+export const mockResp = {
+  freelancerById: 'user 5',
 };
