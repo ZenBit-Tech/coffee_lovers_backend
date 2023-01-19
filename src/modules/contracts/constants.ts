@@ -24,5 +24,5 @@ export const checkUserRole = (user: User): string | null => {
 };
 
 export const dateFormat = () => {
-  return `${new Date().getDate()}/${new Date().getMonth()}/${new Date().getFullYear()}`;
+  return `${new Date().getDate()}.${new Date().getMonth()}.${new Date().getFullYear()}`;
 };
