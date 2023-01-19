@@ -1,7 +1,7 @@
 import { validate } from 'class-validator';
 import { plainToClass } from 'class-transformer';
-import SetFavoritesDto from './set-favorites.dto';
 import { mockSetFavoritesDto } from '@/common/mocks/users';
+import SetFavoritesDto from './set-favorites.dto';
 
 describe('SetFavoritesDto', () => {
   it('all fields from set favorites dto should be validated successfully', async (): Promise<void> => {
