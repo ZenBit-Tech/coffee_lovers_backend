@@ -118,7 +118,7 @@ describe('UserController', () => {
       } as User);
 
       expect(mockUserService.getFreelancerInfoById).toHaveBeenCalledWith(
-        params.key,
+        +params.key,
       );
     });
 
