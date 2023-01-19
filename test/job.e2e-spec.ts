@@ -17,7 +17,7 @@ describe('JobController (e2e)', () => {
     getJobById: (jobId: number) => ({ id: jobId }),
     getJobProposals: (jobId: number) => ({ job: { id: jobId }, proposals: [] }),
     findJobs: (param: GetJobsDto) => ({ jobs: [], meta: { totalCount: 0 } }),
-    getPostedJobs: (user: User) => [],
+    getPostedJobs: (user: User) => [{ id: 1, owner: user }],
     getPostedJobDetails: (user: User, id: number) => ({
       job: { id: +id },
       hires: [],
@@ -145,11 +145,22 @@ describe('JobController (e2e)', () => {
   });
 
   describe('/jobs/posted (GET) Get all posted jobs by user', () => {
-    it('should return array of jobs', () => {
-      return request(app.getHttpServer())
+    it('should return array', async () => {
+      const response = await request(app.getHttpServer())
         .get('/jobs/posted')
-        .expect(HttpStatus.OK)
-        .expect([]);
+        .expect(HttpStatus.OK);
+
+      expect(Array.isArray(response.body));
+    });
+
+    it('should return job in array', async () => {
+      const response = await request(app.getHttpServer())
+        .get('/jobs/posted')
+        .expect(HttpStatus.OK);
+
+      expect(response.body[0]).toHaveProperty('id');
+      expect(response.body[0]).toHaveProperty('owner');
+      expect(response.body[0]).not.toHaveProperty('freelancer');
     });
   });
 
