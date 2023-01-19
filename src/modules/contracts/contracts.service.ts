@@ -119,7 +119,6 @@ export class ContractsService {
 
       await this.setContractStatus(contractId, ContractStatus.CLOSED);
     } catch (error) {
-      console.log(error);
       throw new InternalServerErrorException();
     }
   }
