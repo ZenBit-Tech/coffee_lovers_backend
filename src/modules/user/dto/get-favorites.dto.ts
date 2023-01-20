@@ -1,4 +1,4 @@
-import { IsNumber } from 'class-validator';
+import { IsNumber, IsArray } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Favorites } from '@entities/Favorites.entity';
 
@@ -27,5 +27,6 @@ export default class GetFavoritesDto {
       },
     },
   })
+  @IsArray()
   favorites: Favorites[];
 }
