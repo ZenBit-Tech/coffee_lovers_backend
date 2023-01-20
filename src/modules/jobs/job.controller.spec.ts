@@ -50,6 +50,8 @@ describe('JobsController', () => {
       })),
   };
 
+  const paginationParams = { offset: 0, limit: 10 };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [JobsController],
@@ -99,14 +101,12 @@ describe('JobsController', () => {
 
   describe('Find jobs', () => {
     it('should call findJobs in user service with params', async () => {
-      const params = { offset: 0, limit: 10 };
-      await jobsController.findJobs(params);
-      expect(mockJobService.findJobs).toHaveBeenCalledWith(params);
+      await jobsController.findJobs(paginationParams);
+      expect(mockJobService.findJobs).toHaveBeenCalledWith(paginationParams);
     });
 
     it('should return object with array of jobs and total count', async () => {
-      const params = { offset: 0, limit: 10 };
-      const data = await jobsController.findJobs(params);
+      const data = await jobsController.findJobs(paginationParams);
 
       expect(data).not.toEqual([]);
       expect(data).toHaveProperty('jobs');
