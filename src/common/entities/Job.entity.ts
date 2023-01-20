@@ -13,6 +13,7 @@ import {
   EnglishLevel,
   DurationAmount,
   JobStatus,
+  jobDescriptionMaxLength,
 } from '@constants/entities';
 import { User } from '@entities/User.entity';
 import { Category } from '@entities/Category.entity';
@@ -20,7 +21,7 @@ import { Skill } from '@entities/Skill.entity';
 import { Conversation } from '@entities/Conversation.entity';
 import { Request } from '@entities/Request.entity';
 import { Offer } from '@entities/Offer.entity';
-import { Notification } from './Notification.entity';
+import { Notification } from '@entities/Notification.entity';
 
 @Entity()
 export class Job {
@@ -30,7 +31,12 @@ export class Job {
   @Column({ default: null, nullable: true })
   title: string;
 
-  @Column({ default: null, nullable: true })
+  @Column({
+    type: 'varchar',
+    length: jobDescriptionMaxLength,
+    default: null,
+    nullable: true,
+  })
   description: string;
 
   @Column({ default: null, nullable: true })
