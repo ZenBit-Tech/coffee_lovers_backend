@@ -165,7 +165,7 @@ export class JobsService {
     }
   }
 
-  async getPostedJobs(user: UserDto): Promise<Job[]> {
+  async getPostedJobs(user: User): Promise<Job[]> {
     try {
       return await this.jobRepository
         .createQueryBuilder('job')
@@ -187,7 +187,7 @@ export class JobsService {
   }
 
   async getPostedJobDetails(
-    user: UserDto,
+    user: User,
     id: number,
   ): Promise<GetPostedJobsDetailsResponse> {
     try {
@@ -212,7 +212,7 @@ export class JobsService {
         .where({ id })
         .getOne();
 
-      isUserJobOwnerOfJob(data, user as User);
+      isUserJobOwnerOfJob(data, user);
 
       const { offers, ...job } = data;
 

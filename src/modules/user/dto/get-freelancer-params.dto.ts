@@ -21,11 +21,13 @@ export default class GetFreelancerDto {
   @ApiProperty({ example: [1, 2, 3] })
   @IsOptional()
   @IsArray()
+  @IsNumberString({}, { each: true })
   skills?: number[];
 
   @ApiProperty({ example: [1, 2, 3] })
   @IsOptional()
   @IsArray()
+  @IsNumberString({}, { each: true })
   categories?: number[];
 
   @ApiProperty({ example: 20 })
