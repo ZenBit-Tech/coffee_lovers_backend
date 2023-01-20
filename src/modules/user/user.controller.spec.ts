@@ -6,6 +6,7 @@ import {
   educationPayload,
   workhistoryPayload,
 } from '@/common/constants/mockdata';
+import { getFavoritesParams, mockSetFavoritesDto } from '@/common/mocks/users';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
 import { ReqUser } from './dto/get-user-dto.dto';
@@ -14,6 +15,8 @@ import PasswordResetRequestDto from './dto/password-reset-request.dto';
 import PasswordResetDto from './dto/password-reset.dto';
 import AddUserEducationDto from './dto/add-user-education.dto';
 import AddUserWorkhistoryDto from './dto/add-user-workhistory.dto';
+import SetFavoritesDto from './dto/set-favorites.dto';
+import GetFreelancerDto from './dto/get-freelancer-params.dto';
 
 describe('UserController', () => {
   let userController: UserController;
@@ -42,6 +45,14 @@ describe('UserController', () => {
       .fn()
       .mockImplementation((dto: PasswordResetRequestDto) => {}),
     resetPassword: jest.fn().mockImplementation((dto: PasswordResetDto) => {}),
+    setFavorite: jest
+      .fn()
+      .mockImplementation((dto: SetFavoritesDto, user: User) => {}),
+    getFavorites: jest
+      .fn()
+      .mockImplementation((user: User, params: GetFreelancerDto) => ({
+        totalCount: 11,
+      })),
   };
 
   beforeEach(async () => {
@@ -100,19 +111,19 @@ describe('UserController', () => {
 
   describe('getFreelancerPageInfoById', () => {
     it('checks that user exist and returns user object', async (): Promise<void> => {
-      const params = { key: 1 };
+      const params = { key: '1' };
 
       expect(await userController.getFreelancerPageInfoById(params)).toEqual({
-        id: params.key,
+        id: +params.key,
       } as User);
 
       expect(mockUserService.getFreelancerInfoById).toHaveBeenCalledWith(
-        params.key,
+        +params.key,
       );
     });
 
     it('checks that wrong freelancer would not be returned', async (): Promise<void> => {
-      const params = { key: 1 };
+      const params = { key: '1' };
       const wrongParams = { key: 2 };
 
       expect(
@@ -205,6 +216,53 @@ describe('UserController', () => {
       await userController.passwordReset(dto);
 
       expect(mockUserService.resetPassword).toHaveBeenCalledWith(dto);
+    });
+  });
+
+  describe('setFavorite', () => {
+    it('should POST data if data type is correct (pass data to user.service)', async (): Promise<void> => {
+      await userController.setFavorite(reqUser, mockSetFavoritesDto);
+
+      expect(mockUserService.setFavorite).toHaveBeenCalledWith(
+        reqUser.user,
+        mockSetFavoritesDto,
+      );
+    });
+    it('should not POST data to user service (wrong type in id field)', async (): Promise<void> => {
+      await userController.setFavorite(reqUser, mockSetFavoritesDto);
+
+      expect(mockUserService.setFavorite).not.toHaveBeenCalledWith(
+        reqUser.user,
+        [
+          {
+            id: '12',
+            is_favorite: true,
+          },
+        ],
+      );
+    });
+  });
+
+  describe('getFavoritesPages', () => {
+    it('should GET data if data type is correct', async (): Promise<void> => {
+      expect(
+        await userController.getFavoritesPages(reqUser, getFavoritesParams),
+      ).toEqual({
+        totalCount: expect.any(Number),
+      });
+
+      expect(mockUserService.getFavorites).toHaveBeenCalledWith(
+        reqUser.user,
+        getFavoritesParams,
+      );
+    });
+
+    it('should reject if data type is NOT correct', async (): Promise<void> => {
+      expect(
+        await userController.getFavoritesPages(reqUser, getFavoritesParams),
+      ).not.toEqual({
+        totalCount: expect.any(String),
+      });
     });
   });
 });

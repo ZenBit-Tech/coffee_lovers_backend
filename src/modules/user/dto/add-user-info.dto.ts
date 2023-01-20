@@ -12,4 +12,12 @@ export default class AddUserInfoDto extends UpdateUserDto {
   @ApiProperty({ example: 2 })
   @IsOptional()
   category_id?: number;
+
+  @ApiProperty({ example: 'First name' })
+  @IsOptional()
+  first_name?: string;
+
+  @ApiProperty({ example: 'Last name' })
+  @IsOptional()
+  last_name?: string;
 }

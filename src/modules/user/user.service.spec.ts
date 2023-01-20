@@ -14,6 +14,14 @@ import {
 } from '@/common/constants/mockdata';
 import { MailService } from '@/modules/mail/mail.service';
 import { FileService } from '@/modules/file/file.service';
+import {
+  getFavoritesParams,
+  mockFreelancer1,
+  mockSetFavoritesDto,
+} from '@/common/mocks/users';
+import { Favorites } from '@/common/entities/Favorites.entity';
+import { FreelancerRating } from '@/common/entities/FreelancerRating.entity';
+import { Job } from '@/common/entities/Job.entity';
 import { UserService } from './user.service';
 import UserDto from './dto/user.dto';
 
@@ -36,6 +44,9 @@ describe('UserService', () => {
         getRepositoryProvider(Category),
         getRepositoryProvider(Education),
         getRepositoryProvider(WorkHistory),
+        getRepositoryProvider(Favorites),
+        getRepositoryProvider(FreelancerRating),
+        getRepositoryProvider(Job),
         getRepositoryProvider(Request),
         {
           provide: ConfigService,
@@ -166,6 +177,87 @@ describe('UserService', () => {
         currentUser,
         workhistoryPayload,
       );
+    });
+  });
+
+  describe('setFavorite', () => {
+    it('should add or delete new favorite', async (): Promise<void> => {
+      jest.spyOn(userService, 'setFavorite');
+      jest.spyOn(mockRepository, 'createQueryBuilder');
+      await userService.setFavorite(
+        mockFreelancer1 as UserDto,
+        mockSetFavoritesDto,
+      );
+
+      expect(mockRepository.createQueryBuilder).toHaveBeenCalledTimes(1);
+      expect(userService.setFavorite).toBeCalledWith(
+        mockFreelancer1 as UserDto,
+        mockSetFavoritesDto,
+      );
+    });
+
+    it('should reject: query builder called incorrect amount of times', async (): Promise<void> => {
+      jest.spyOn(mockRepository, 'createQueryBuilder');
+      await userService.setFavorite(
+        mockFreelancer1 as UserDto,
+        mockSetFavoritesDto,
+      );
+
+      expect(mockRepository.createQueryBuilder).not.toHaveBeenCalledTimes(2);
+    });
+
+    it('should reject: service called with wrong data', async (): Promise<void> => {
+      jest.spyOn(userService, 'setFavorite');
+      await userService.setFavorite(
+        mockFreelancer1 as UserDto,
+        mockSetFavoritesDto,
+      );
+
+      expect(userService.setFavorite).not.toBeCalledWith(
+        mockFreelancer1 as UserDto,
+        { id: '5' },
+      );
+    });
+  });
+
+  describe('getFavorites', () => {
+    it('should return favorites', async (): Promise<void> => {
+      jest.spyOn(mockRepository, 'createQueryBuilder');
+
+      expect(
+        await userService.getFavorites(
+          mockFreelancer1 as UserDto,
+          getFavoritesParams,
+        ),
+      ).toEqual({});
+
+      expect(mockRepository.createQueryBuilder).toHaveBeenCalledTimes(1);
+    });
+
+    it('should NOT return favorites, incorrect return type', async (): Promise<void> => {
+      expect(
+        await userService.getFavorites(
+          mockFreelancer1 as UserDto,
+          getFavoritesParams,
+        ),
+      ).not.toEqual([]);
+    });
+
+    it('should call correct methods inside queryBuilder', async (): Promise<void> => {
+      jest.spyOn(mockRepository.createQueryBuilder(), 'getManyAndCount');
+      jest.spyOn(mockRepository.createQueryBuilder(), 'getMany');
+
+      await userService.getFavorites(
+        mockFreelancer1 as UserDto,
+        getFavoritesParams,
+      );
+
+      expect(
+        mockRepository.createQueryBuilder().getManyAndCount,
+      ).toHaveBeenCalledTimes(1);
+      expect(
+        mockRepository.createQueryBuilder().getMany,
+      ).not.toHaveBeenCalled();
     });
   });
 

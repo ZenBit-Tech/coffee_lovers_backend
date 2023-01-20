@@ -4,6 +4,7 @@ import UserDto from '@/modules/user/dto/user.dto';
 import { ReqUser } from '@/modules/user/dto/get-user-dto.dto';
 import { JobsController } from './job.controller';
 import { JobsService } from './job.service';
+import GetJobsDto from './dto/get-jobs.dto';
 
 describe('JobsController', () => {
   let jobsController: JobsController;
@@ -34,7 +35,22 @@ describe('JobsController', () => {
           id: fr,
         },
       ]),
+    findJobs: jest.fn().mockImplementation((params: GetJobsDto) => ({
+      jobs: [],
+      meta: {
+        totalCount: 0,
+      },
+    })),
+    getPostedJobs: jest.fn().mockImplementation((user: User) => []),
+    getPostedJobDetails: jest
+      .fn()
+      .mockImplementation((user: User, id: number) => ({
+        job: { id },
+        hires: [],
+      })),
   };
+
+  const paginationParams = { offset: 0, limit: 10 };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -52,6 +68,10 @@ describe('JobsController', () => {
         id: 1,
       } as User,
     };
+  });
+
+  afterEach(async () => {
+    jest.clearAllMocks();
   });
 
   describe('getJobById', () => {
@@ -76,6 +96,63 @@ describe('JobsController', () => {
         +params.id,
         reqUser.user,
       );
+    });
+  });
+
+  describe('Find jobs', () => {
+    it('should call findJobs in user service with params', async () => {
+      await jobsController.findJobs(paginationParams);
+      expect(mockJobService.findJobs).toHaveBeenCalledWith(paginationParams);
+    });
+
+    it('should return object with array of jobs and total count', async () => {
+      const data = await jobsController.findJobs(paginationParams);
+
+      expect(data).not.toEqual([]);
+      expect(data).toHaveProperty('jobs');
+      expect(data).toHaveProperty('meta');
+      expect(data.meta).toHaveProperty('totalCount');
+    });
+  });
+
+  describe('Get all posted jobs by user', () => {
+    it('should call getPostedJobs in user service with current user', async () => {
+      jest.spyOn(mockJobService, 'getPostedJobs');
+      await jobsController.getPostedJobs(reqUser);
+      expect(mockJobService.getPostedJobs).toBeCalledWith(reqUser.user);
+    });
+
+    it('should return array', async () => {
+      const data = await jobsController.getPostedJobs(reqUser);
+
+      expect(data).not.toHaveProperty('id');
+      expect(Array.isArray(data)).toBe(true);
+    });
+  });
+
+  describe('Get details of posted job', () => {
+    it('should call getPostedJobDetails with user and job id', async () => {
+      const id = 1;
+      jest.spyOn(mockJobService, 'getPostedJobDetails');
+
+      await jobsController.getPostedJobDetails(reqUser, { id });
+      expect(mockJobService.getPostedJobDetails).toBeCalledWith(
+        reqUser.user,
+        id,
+      );
+    });
+
+    it('should return object with job details and array of hires', async () => {
+      const id = 1;
+      const data = await jobsController.getPostedJobDetails(reqUser, { id });
+
+      expect(data).not.toHaveProperty('id');
+      expect(data).toHaveProperty('job');
+      expect(data).toHaveProperty('hires');
+      expect(data).toEqual({
+        job: { id },
+        hires: [],
+      });
     });
   });
 });
