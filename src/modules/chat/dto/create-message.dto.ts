@@ -14,6 +14,10 @@ export class CreateMessageDto {
   @IsNumber()
   to: number;
 
+  @ApiProperty({ example: 1 })
+  @IsNumber()
+  job: number;
+
   @IsOptional()
   @IsBoolean()
   is_read?: boolean;
