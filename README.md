@@ -33,10 +33,12 @@ $ ssh -i "ec2coffeelovers.pem" ec2-user@3.32.2.89
 
 to update server data:
 from main default branch
+```bash
 $ git pull
 $ sudo systemctl stop CoffeeLovers.service
 $ npm run build
 $ sudo systemctl start CoffeeLovers.service
+```
 
 ## Test
 
