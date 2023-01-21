@@ -7,28 +7,6 @@ Backend with [Nest](https://github.com/nestjs/nest) framework TypeScript starter
 ```bash
 $ npm install
 ```
-
-## Environment Variables
-
-To run app you must create env files in root directory
-
-```bash
-# npm run start && npm run start:prod
-.production.env
-
-# npm run start:dev
-.development.env
-```
-
-- **PORT** - port to run app
-- **DB_NAME** - database name
-- **DB_HOST** - database host
-- **DB_PORT** - database port
-- **DB_USERNAME** - database username
-- **DB_PASSWORD** - database password
-- **GOOGLE_CLIENT_ID** - client id
-- **GOOGLE_CLIENT_SECRET** - client secret
-
 ## Running the app
 
 ```bash
@@ -41,6 +19,24 @@ $ npm run start:dev
 # production mode
 $ npm run start:prod
 ```
+
+## deploy instruction (update backend)
+connect to server:
+1. Open an SSH client.
+2. Locate your private key file. The key used to launch this instance is exampleFileName.pem
+3. Run this command, if necessary, to ensure your key is not publicly viewable.
+  $ chmod 400 ec2coffeelovers.pem
+4. Connect to your instance using its Public IP:
+Example:
+
+$ ssh -i "ec2coffeelovers.pem" ec2-user@3.32.2.89 
+
+to update server data:
+from main default branch
+$ git pull
+$ sudo systemctl stop CoffeeLovers.service
+$ npm run build
+$ sudo systemctl start CoffeeLovers.service
 
 ## Test
 
