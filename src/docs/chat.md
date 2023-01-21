@@ -57,13 +57,17 @@ event payload example:
 {
     conversation: 1,
     message: “Hello, world”,
-    to: 1
+    to: 1,
+    job: 1
 }
 ```
 
 - **conversation** – id of conversation
 - **message** – text message sent by user
-- **to** – id of user who should receive the message. Used for notifications only. We can find this information in the database with a conversation id, but we get this to save server resources and not send an extra request to the database.
+- **to** – id of user who should receive the message
+- **job** – id of job
+
+**to** & **job** used for notifications only. We can find this information in the database with a conversation id, but we get this to save server resources and not send an extra request to the database.
 
 You can find information about current user (who sent message) in client.handshake.user
 We find out how many users are connected to the room in order to understand whether we need to mark the message as new for the user to whom we send it.
