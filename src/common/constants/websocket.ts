@@ -4,6 +4,7 @@ export enum ChatEvents {
   LEAVE_CONVERSATION = 'leaveConversation',
   USER_TYPING = 'usertyping',
   TYPING = 'typing',
+  ENDTYPING = 'endtype',
 }
 
 export const authorizationHeader = 'authorization';

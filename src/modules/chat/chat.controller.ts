@@ -7,13 +7,24 @@ import {
   UseGuards,
   Param,
   Query,
+  Sse,
 } from '@nestjs/common';
-import { ApiHeader, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiHeader,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { Message } from '@entities/Message.entity';
 import { Conversation } from '@entities/Conversation.entity';
+import { Observable } from 'rxjs';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { getAuthorizationApiHeader } from '@/common/utils/swagger';
 import { JwtAuthGuard } from '@/modules/auth/guards/jwt-auth.guard';
 import { ReqUser } from '@/modules/user/dto/get-user-dto.dto';
+import { SseAuthGuard } from '@/modules/auth/guards/sse-auth.guard';
+import NotificationResponseDto from '@/modules/notifications/dto/notification-response.dto';
 import CreateConversationDto from './dto/create-conversation.dto';
 import { ChatService } from './chat.service';
 import { GetConversationsDto } from './dto/get-conversations.dto';
@@ -36,6 +47,15 @@ export class ChatController {
     @Param() params: GetMessagesDto,
   ): Promise<Message[]> {
     return this.chatService.getMessages(req.user, +params.id);
+  }
+
+  @ApiOperation({ summary: 'Subscribe to typing event' })
+  @ApiResponse({ type: NotificationResponseDto })
+  @ApiParam({ name: 'token', description: 'access token' })
+  @Sse('/type')
+  @UseGuards(SseAuthGuard)
+  sendTyping(@Request() req: ReqUser): Observable<unknown> {
+    return this.chatService.subscribe(req.user);
   }
 
   @ApiOperation({ summary: 'Create new conversation' })

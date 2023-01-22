@@ -77,19 +77,10 @@ export class ChatGateway {
   }
 
   @SubscribeMessage(ChatEvents.TYPING)
-  typingMessage(
-    @MessageBody() payload: TypeMessageDto,
-    @ConnectedSocket() client: Socket,
-  ): void {
-    const user = (client?.handshake as unknown as UserHandshake)?.user;
-    const message: TypingMessageDto = {
-      from: user,
-      ...payload,
-    };
+  typingMessage(@MessageBody() payload: TypeMessageDto): TypeMessageDto {
+    this.chatService.emit(payload.to, payload.type);
 
-    this.server
-      .to(String(payload.conversation))
-      .emit(ChatEvents.TYPING, message);
+    return payload;
   }
 
   @SubscribeMessage(ChatEvents.JOIN_CONVERSATION)
