@@ -3,7 +3,7 @@
 To store chat data we have 2 entities: **Conversation** and **Message**.
 ![chat database schema](https://i.imgur.com/eAJKR32.png)
 
-Conversation could be only between freelancer and job owner and for each job should be created separate conversation.
+Conversation could only be started between freelancer and job owner and for each job should be created separate conversation.
 [WebSocketGateway by Nest.js](https://docs.nestjs.com/websockets/gateways) was used to implement real time messaging.
 
 You can see it in
@@ -12,7 +12,7 @@ src/modules/chat/chat.gateway.ts
 ```
 
 ## Authentication
-[AuthGuard](https://docs.nestjs.com/guards) is used to authorize the user when he try to connect with websocket.
+[AuthGuard](https://docs.nestjs.com/guards) is used to authorize the user when he tries to connect with websocket.
 Websocket auth guard:
 ```bash
 src/modules/auth/guards/ws-auth.guard.ts
@@ -44,7 +44,7 @@ event payload example:
     conversation: 1
 }
 ```
-Where “conversation” is id of conversation which we want to connect.
+Where “conversation” is id of conversation which we want connect to.
 This is necessary in order to be able to send messages only to the room we need, and not to all clients (users) connected to the websocket.
 
 **MESSAGE**
@@ -79,7 +79,7 @@ const isUserConnected =
 ```
 Value of the variable **isUserConnected** tells us if the second user is connected to the room.
 if **isUserConnected**  equals “true”. We set “is_read” property as “true” in payload of createMessage method of Chat Service. Otherwise we set it as “false”. The logic is that we don’t need to mark the message as new if the user to whom the message is addressed has opened a chat.
-Also if **isUserConnected** is false we need to send a notification. To do this we need call emit method in Notification Service.
+Also if **isUserConnected** is false we need to send a notification. To do this we need to call emit method in Notification Service.
 
 **LEAVE CONVERSATION**
 ```bash
