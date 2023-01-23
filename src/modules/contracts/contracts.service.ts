@@ -1,4 +1,5 @@
 import {
+  ForbiddenException,
   HttpException,
   HttpStatus,
   Injectable,
@@ -7,11 +8,11 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import GetFreelancerDto from 'src/modules/user/dto/get-freelancer-params.dto';
-import { isUserJobOwnerOfJob } from '@validation/jobs';
+import { isUserFreelancer, isUserJobOwnerOfJob } from '@validation/jobs';
 import { Favorites } from '@/common/entities/Favorites.entity';
 import { User } from '@/common/entities/User.entity';
 import { Contract } from '@/common/entities/Contract.entity';
-import { ContractStatus } from '@/common/constants/entities';
+import { ContractStatus, Role } from '@/common/constants/entities';
 import { checkAnotherRole, checkUserRole, dateFormat } from './constants';
 import GetHiresDto from './dto/get-hires.dto';
 import FindOneContractDto from './dto/find-one-contract.dto';
@@ -112,10 +113,21 @@ export class ContractsService {
   async closeContract(user: User, contractId: number): Promise<void> {
     try {
       const contract = await this.findOne({ id: contractId });
-      isUserJobOwnerOfJob(
-        { ...contract.offer.job, owner: contract.offer.job_owner },
-        user,
-      );
+      const { role } = user;
+      switch (role) {
+        case Role.FREELANCER:
+          isUserFreelancer(contract.offer, user);
+          break;
+        case Role.JOBOWNER:
+          isUserJobOwnerOfJob(
+            { ...contract.offer.job, owner: contract.offer.job_owner },
+            user,
+          );
+          break;
+
+        default:
+          break;
+      }
 
       await this.setContractStatus(contractId, ContractStatus.CLOSED);
     } catch (error) {

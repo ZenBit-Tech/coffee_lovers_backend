@@ -23,6 +23,5 @@ export const checkUserRole = (user: User): string | null => {
   return null;
 };
 
-export const dateFormat = () => {
-  return `${new Date().getDate()}.${new Date().getMonth()}.${new Date().getFullYear()}`;
-};
+export const dateFormat = () =>
+  new Date(Date.now()).toLocaleString().split(',')[0];
