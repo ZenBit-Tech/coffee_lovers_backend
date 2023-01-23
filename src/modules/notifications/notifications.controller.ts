@@ -61,7 +61,11 @@ export class NotificationsController {
 
   @ApiOperation({ summary: 'Mark notifications as read' })
   @ApiHeader(getAuthorizationApiHeader())
-  @ApiBody({ isArray: true, type: Number })
+  @ApiBody({
+    isArray: true,
+    type: Number,
+    description: "Array of notification's id",
+  })
   @Post('/mark')
   @HttpCode(HttpStatus.OK)
   @UseGuards(JwtAuthGuard)
