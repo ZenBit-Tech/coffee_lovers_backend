@@ -48,6 +48,7 @@ import SetFavoritesDto from './dto/set-favorites.dto';
 import GetFavoritesDto from './dto/get-favorites.dto';
 import SetFreelancerRatingDto from './dto/set-freelancer-rating.dto';
 import GetFreelancerRating from './dto/get-freelancer-rating.dto';
+import GetFreelancerByIdParams from './dto/get-freelancer-byid-params.dto';
 
 @ApiTags('user')
 @Controller('user')
@@ -184,8 +185,10 @@ export class UserController {
   @Get('/freelancer/:key')
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
-  getFreelancerPageInfoById(@Param() params: { key: number }): Promise<User> {
-    return this.userService.getFreelancerInfoById(params.key);
+  getFreelancerPageInfoById(
+    @Param() params: GetFreelancerByIdParams,
+  ): Promise<User> {
+    return this.userService.getFreelancerInfoById(+params.key);
   }
 
   @ApiOperation({ summary: 'Get user information' })

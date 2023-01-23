@@ -35,6 +35,7 @@ export default class CreateJobDto {
   @ApiProperty({ example: [1, 2, 3] })
   @IsOptional()
   @IsArray()
+  @IsNumber({}, { each: true })
   skills?: number[];
 
   @ApiProperty({ example: 'Full-Time' })

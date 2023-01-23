@@ -26,6 +26,7 @@ import UpdateJobDto from './dto/update-job.dto';
 import getJobByIdResponseDto from './dto/get-job-response.dto';
 import GetPostedJobsResponseDto from './dto/get-posted-jobs-response.dto';
 import GetPostedJobsDetailsResponse from './dto/get-posted-jobs-details-response.dto';
+import FindOneDto from './dto/find-one.dto';
 
 @ApiTags('jobs')
 @Controller('jobs')
@@ -57,9 +58,9 @@ export class JobsController {
   @Get('/posted/:id')
   getPostedJobDetails(
     @Request() req: ReqUser,
-    @Param('id') id: number,
+    @Param() params: FindOneDto,
   ): Promise<GetPostedJobsDetailsResponse> {
-    return this.jobsService.getPostedJobDetails(req.user, id);
+    return this.jobsService.getPostedJobDetails(req.user, params.id);
   }
 
   @ApiOperation({ summary: 'Add job' })
