@@ -18,7 +18,6 @@ import { ConversationDto } from './dto/conversation.dto';
 import { MessageDto } from './dto/message.dto';
 import { ChatService } from './chat.service';
 import { TypeMessageDto } from './dto/type-message.dto';
-import { TypingMessageDto } from './dto/type-tyoingMessage.dto copy';
 
 @UseGuards(WsAuthGuard)
 @WebSocketGateway(+process.env['WS_PORT'], {
