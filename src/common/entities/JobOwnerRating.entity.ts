@@ -9,7 +9,7 @@ import { User } from '@entities/User.entity';
 import { ratingMessageMaxLength } from '@constants/entities';
 
 @Entity()
-export class FreelancerRating {
+export class JobOwnerRating {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -30,9 +30,9 @@ export class FreelancerRating {
   @Column({ default: null, nullable: true })
   job_id: number;
 
-  @ManyToOne(() => User, (user) => user.freelancerRating)
+  @ManyToOne(() => User, (user) => user.jobOwnerRating)
   freelancer: User;
 
-  @ManyToOne(() => User, (user) => user.freelancerRating)
+  @ManyToOne(() => User, (user) => user.jobOwnerRating)
   job_owner: User;
 }

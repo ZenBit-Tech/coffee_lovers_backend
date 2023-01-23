@@ -61,6 +61,7 @@ export const mockJobOwnerOfTypeUser: User = {
   offers: [],
   favorites: [],
   freelancerRating: [],
+  jobOwnerRating: [],
 };
 
 export const mockFreelancerOfTypeUser: User = {
@@ -93,6 +94,7 @@ export const mockFreelancerOfTypeUser: User = {
   offers: [],
   favorites: [],
   freelancerRating: [],
+  jobOwnerRating: [],
 };
 
 export const mockAddUserEducationDto: AddUserEducationDto = {
@@ -114,7 +116,7 @@ export const mockSetFavoritesDto: SetFavoritesDto = {
 
 export const mockSetFreelancerRatingDto: SetFreelancerRatingDto = {
   freelancer_id: 1,
-  freelancer_rating: 5,
+  rating: 5,
   rating_comment: 'very good freelancer',
   job_id: 10,
 };

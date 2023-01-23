@@ -246,7 +246,7 @@ describe('UserController (e2e)', () => {
         .post('/user/freelancerrating')
         .send({
           freelancer_id: 1,
-          freelancer_rating: 5,
+          rating: 5,
           rating_comment: 'good',
           job_id: 1,
         })
@@ -261,10 +261,10 @@ describe('UserController (e2e)', () => {
         .expect(HttpStatus.BAD_REQUEST);
     });
 
-    it('wrong freelancer_rating type: should return status code 400', () => {
+    it('wrong rating type: should return status code 400', () => {
       return request(app.getHttpServer())
         .post('/user/freelancerrating')
-        .send({ freelancer_rating: 'hello' })
+        .send({ rating: 'hello' })
         .expect(HttpStatus.BAD_REQUEST);
     });
 

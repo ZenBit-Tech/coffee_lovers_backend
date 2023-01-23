@@ -17,6 +17,7 @@ import { Notification } from '@entities/Notification.entity';
 import { Offer } from '@entities/Offer.entity';
 import { Contract } from '@entities/Contract.entity';
 import { FreelancerRating } from '@entities/FreelancerRating.entity';
+import { JobOwnerRating } from '@entities/JobOwnerRating.entity';
 import { AppController } from '@/app.controller';
 import { AppService } from '@/app.service';
 import { AuthModule } from '@/modules/auth/auth.module';
@@ -60,6 +61,7 @@ import { NotificationsModule } from './modules/notifications/notifications.modul
         Contract,
         Favorites,
         FreelancerRating,
+        JobOwnerRating,
       ],
       synchronize: true,
     }),

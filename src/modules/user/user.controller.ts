@@ -49,6 +49,8 @@ import GetFavoritesDto from './dto/get-favorites.dto';
 import SetFreelancerRatingDto from './dto/set-freelancer-rating.dto';
 import GetFreelancerRating from './dto/get-freelancer-rating.dto';
 import GetFreelancerByIdParams from './dto/get-freelancer-byid-params.dto';
+import SetJobOwnerRatingDto from './dto/set-jobowner-rating.dto';
+import GetJobOwnerRating from './dto/get-job-owner-rating.dto';
 
 @ApiTags('user')
 @Controller('user')
@@ -282,5 +284,27 @@ export class UserController {
   @HttpCode(HttpStatus.OK)
   getFreelancerRating(@Param('id') id: string): Promise<GetFreelancerRating[]> {
     return this.userService.getFreelancerRating(+id);
+  }
+
+  @ApiOperation({ summary: 'set job owner rating' })
+  @ApiHeader(getAuthorizationApiHeader())
+  @Post('/jobownerrating')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  setJobOwnerRating(
+    @Request() req: ReqUser,
+    @Body() payload: SetJobOwnerRatingDto,
+  ): Promise<void> {
+    return this.userService.setJobOnwerRating(req.user, payload);
+  }
+
+  @ApiOperation({ summary: 'get all job owner ratings' })
+  @ApiResponse({ type: GetJobOwnerRating })
+  @ApiHeader(getAuthorizationApiHeader())
+  @Get('/jobownerrating/:id')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  getJobOwnerRating(@Param('id') id: string): Promise<GetJobOwnerRating[]> {
+    return this.userService.getJobOwnerRating(+id);
   }
 }
