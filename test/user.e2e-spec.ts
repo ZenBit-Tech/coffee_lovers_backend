@@ -13,6 +13,7 @@ import {
   educationPayload,
   workhistoryPayload,
 } from '@/common/constants/mockdata';
+import { getFavoritesParams, mockResp } from '@/common/mocks/users';
 
 describe('UserController (e2e)', () => {
   let app: INestApplication;
@@ -25,6 +26,13 @@ describe('UserController (e2e)', () => {
     addUserInfo: () => {},
     sendPasswordResetMail: () => {},
     resetPassword: () => {},
+    getFreelancerInfoById: (key: number) => {
+      return mockResp.freelancerById;
+    },
+    setFavorite: () => {},
+    getFavorites: () => ({}),
+    setFreelancerRating: () => ({}),
+    getFreelancerRating: (id: string) => [],
   };
 
   const mockUser = {
@@ -158,6 +166,138 @@ describe('UserController (e2e)', () => {
       return request(app.getHttpServer())
         .post('/user/passwordresetrequest')
         .send({})
+        .expect(HttpStatus.BAD_REQUEST);
+    });
+  });
+
+  describe('/user/freelancer/:key GET freelancer by id', () => {
+    const params = { key: '2' };
+    const wrongParam = { key: 'q' };
+
+    it('should return status code 200', () => {
+      return request(app.getHttpServer())
+        .get(`/user/freelancer/${params.key}`)
+        .expect(HttpStatus.OK)
+        .expect(mockResp.freelancerById);
+    });
+
+    it('should return status code 400: wrong param', () => {
+      return request(app.getHttpServer())
+        .get(`/user/freelancer/${wrongParam.key}`)
+        .expect(HttpStatus.BAD_REQUEST);
+    });
+
+    it('should return status code 404: wrong endpoint', () => {
+      return request(app.getHttpServer())
+        .get(`/user/freelancerr/${params.key}`)
+        .expect(HttpStatus.NOT_FOUND);
+    });
+  });
+
+  describe('/user/favorites (POST) add or delete new favorite', () => {
+    it('should return status code 200', () => {
+      return request(app.getHttpServer())
+        .post('/user/favorites')
+        .send({ id: 1, is_favorite: true })
+        .expect(HttpStatus.OK);
+    });
+
+    it('wrong id type: should return status code 400', () => {
+      return request(app.getHttpServer())
+        .post('/user/favorites')
+        .send({ id: '1' })
+        .expect(HttpStatus.BAD_REQUEST);
+    });
+
+    it('wrong is_favorite type: should return status code 400', () => {
+      return request(app.getHttpServer())
+        .post('/user/favorites')
+        .send({ is_favorite: 'true' })
+        .expect(HttpStatus.BAD_REQUEST);
+    });
+  });
+
+  describe('/user/favorites (GET) all favorites', () => {
+    it('should return status code 200', () => {
+      return request(app.getHttpServer())
+        .get('/user/favorites')
+        .query(getFavoritesParams)
+        .expect(HttpStatus.OK)
+        .expect(userService.getFavorites());
+    });
+    it('should return status code 400: wrong page field type', () => {
+      return request(app.getHttpServer())
+        .get('/user/favorites')
+        .query({ page: 'q' })
+        .expect(HttpStatus.BAD_REQUEST);
+    });
+
+    it('should return status code 400: wrong take field type', () => {
+      return request(app.getHttpServer())
+        .get('/user/favorites')
+        .query({ take: false })
+        .expect(HttpStatus.BAD_REQUEST);
+    });
+  });
+
+  describe('/user/freelancerrating (POST) set freelancer rating', () => {
+    it('should return status code 200', () => {
+      return request(app.getHttpServer())
+        .post('/user/freelancerrating')
+        .send({
+          freelancer_id: 1,
+          freelancer_rating: 5,
+          rating_comment: 'good',
+          job_id: 1,
+        })
+        .expect(HttpStatus.OK)
+        .expect(userService.setFreelancerRating());
+    });
+
+    it('wrong freelancer_id type: should return status code 400', () => {
+      return request(app.getHttpServer())
+        .post('/user/freelancerrating')
+        .send({ freelancer_id: '1' })
+        .expect(HttpStatus.BAD_REQUEST);
+    });
+
+    it('wrong freelancer_rating type: should return status code 400', () => {
+      return request(app.getHttpServer())
+        .post('/user/freelancerrating')
+        .send({ freelancer_rating: 'hello' })
+        .expect(HttpStatus.BAD_REQUEST);
+    });
+
+    it('wrong rating_comment type: should return status code 400', () => {
+      return request(app.getHttpServer())
+        .post('/user/freelancerrating')
+        .send({ rating_comment: true })
+        .expect(HttpStatus.BAD_REQUEST);
+    });
+
+    it('wrong job_id type: should return status code 400', () => {
+      return request(app.getHttpServer())
+        .post('/user/freelancerrating')
+        .send({ job_id: '2' })
+        .expect(HttpStatus.BAD_REQUEST);
+    });
+  });
+
+  describe('/user/freelancerrating/:id (GET) all freelancer ratings', () => {
+    const params = { id: '2' };
+    const wrongParam = { id: 'q' };
+
+    it('should return status code 200 and array as response', async () => {
+      const response = await request(app.getHttpServer())
+        .get(`/user/freelancerrating/${params.id}`)
+        .expect(HttpStatus.OK);
+
+      expect(Array.isArray(response.body));
+    });
+
+    it('should return status code 400: wrong param', () => {
+      return request(app.getHttpServer())
+        .get(`/user/freelancer/${wrongParam.id}`)
         .expect(HttpStatus.BAD_REQUEST);
     });
   });

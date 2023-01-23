@@ -5,6 +5,7 @@ import {
   MinLength,
   IsNumber,
   IsEnum,
+  IsObject,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { AvailableTime, EnglishLevel, Role } from '@constants/entities';
@@ -71,7 +72,7 @@ export default class UpdateUserDto {
 
   @ApiProperty({ example: { id: 1, name: 'Android' } })
   @IsOptional()
-  @IsNumber()
+  @IsObject()
   category?: Category;
 
   @ApiProperty({ example: 'Freelancer' })
@@ -81,6 +82,6 @@ export default class UpdateUserDto {
 
   @ApiProperty({ example: 4.3 })
   @IsOptional()
-  @IsString()
+  @IsNumber()
   average_rating?: number;
 }

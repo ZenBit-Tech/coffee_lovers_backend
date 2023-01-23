@@ -29,6 +29,7 @@ export default class UpdateJobDto {
   @ApiProperty({ example: [1, 2, 3] })
   @IsOptional()
   @IsArray()
+  @IsNumber({}, { each: true })
   skills?: number[];
 
   @ApiProperty({ example: 'Upper-Intermediate' })

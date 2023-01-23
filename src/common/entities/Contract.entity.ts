@@ -29,6 +29,6 @@ export class Contract {
   })
   status: ContractStatus;
 
-  @CreateDateColumn()
-  end: Date;
+  @Column({ nullable: true, default: null })
+  end: string;
 }

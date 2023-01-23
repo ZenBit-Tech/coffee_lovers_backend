@@ -12,7 +12,7 @@ import { Favorites } from '@/common/entities/Favorites.entity';
 import { User } from '@/common/entities/User.entity';
 import { Contract } from '@/common/entities/Contract.entity';
 import { ContractStatus } from '@/common/constants/entities';
-import { checkAnotherRole, checkUserRole } from './constants';
+import { checkAnotherRole, checkUserRole, dateFormat } from './constants';
 import GetHiresDto from './dto/get-hires.dto';
 import FindOneContractDto from './dto/find-one-contract.dto';
 
@@ -46,7 +46,10 @@ export class ContractsService {
       await this.contractRepository
         .createQueryBuilder()
         .update(Contract)
-        .set({ status })
+        .set({
+          status,
+          end: status === ContractStatus.CLOSED ? dateFormat() : null,
+        })
         .where('id = :id', { id: contractId })
         .execute();
     } catch (error) {
