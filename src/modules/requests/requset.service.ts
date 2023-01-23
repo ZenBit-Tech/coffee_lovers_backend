@@ -221,10 +221,20 @@ export class RequsetService {
             },
           ),
         )
+        .loadRelationCountAndMap(
+          'job.conversationCount',
+          'job.conversations',
+          'conversation',
+          (qb) =>
+            qb.where('conversation.freelancer.id = :user_id', {
+              user_id: fr,
+            }),
+        )
         .getMany();
 
       return jobsResponse;
     } catch (error) {
+      console.log(error);
       if (error instanceof HttpException) {
         throw error;
       }
