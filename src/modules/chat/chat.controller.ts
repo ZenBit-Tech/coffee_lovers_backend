@@ -19,19 +19,17 @@ import {
 import { Message } from '@entities/Message.entity';
 import { Conversation } from '@entities/Conversation.entity';
 import { Observable } from 'rxjs';
-import { EventEmitter2 } from '@nestjs/event-emitter';
 import { getAuthorizationApiHeader } from '@/common/utils/swagger';
 import { JwtAuthGuard } from '@/modules/auth/guards/jwt-auth.guard';
 import { ReqUser } from '@/modules/user/dto/get-user-dto.dto';
 import { SseAuthGuard } from '@/modules/auth/guards/sse-auth.guard';
-import NotificationResponseDto from '@/modules/notifications/dto/notification-response.dto';
+import { NotificationsService } from '@/modules/notifications/notifications.service';
 import CreateConversationDto from './dto/create-conversation.dto';
 import { ChatService } from './chat.service';
 import { GetConversationsDto } from './dto/get-conversations.dto';
 import { GetMessagesDto } from './dto/get-messages.dto';
 import { GetMessagesResponse } from './dto/get-messages-response.dto';
 import { GetConversationsResponseDto } from './dto/get-conversations-response.dto';
-import { NotificationsService } from '../notifications/notifications.service';
 
 @ApiTags('chat')
 @Controller('chat')
