@@ -38,10 +38,6 @@ export class ChatService {
     private requestService: RequsetService,
   ) {}
 
-  subscribe(user: User): Observable<unknown> {
-    return fromEvent(this.eventEmitter, String(user.id));
-  }
-
   emit(userId: number, type: ChatEvents): void {
     this.eventEmitter.emit(String(userId), {
       data: {

@@ -31,11 +31,15 @@ import { GetConversationsDto } from './dto/get-conversations.dto';
 import { GetMessagesDto } from './dto/get-messages.dto';
 import { GetMessagesResponse } from './dto/get-messages-response.dto';
 import { GetConversationsResponseDto } from './dto/get-conversations-response.dto';
+import { NotificationsService } from '../notifications/notifications.service';
 
 @ApiTags('chat')
 @Controller('chat')
 export class ChatController {
-  constructor(private readonly chatService: ChatService) {}
+  constructor(
+    private readonly chatService: ChatService,
+    private readonly notificationService: NotificationsService,
+  ) {}
 
   @ApiOperation({ summary: 'Get messages of conversation' })
   @ApiHeader(getAuthorizationApiHeader())
@@ -50,12 +54,11 @@ export class ChatController {
   }
 
   @ApiOperation({ summary: 'Subscribe to typing event' })
-  @ApiResponse({ type: NotificationResponseDto })
   @ApiParam({ name: 'token', description: 'access token' })
   @Sse('/type')
   @UseGuards(SseAuthGuard)
   sendTyping(@Request() req: ReqUser): Observable<unknown> {
-    return this.chatService.subscribe(req.user);
+    return this.notificationService.subscribe(req.user);
   }
 
   @ApiOperation({ summary: 'Create new conversation' })

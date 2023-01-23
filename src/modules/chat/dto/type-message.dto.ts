@@ -7,11 +7,11 @@ export class TypeMessageDto {
   @IsNumber()
   conversation: number;
 
-  @ApiProperty({ example: 1 })
+  @ApiProperty({ example: 'endtype' })
   @IsNumber()
   type: ChatEvents;
 
-  @ApiProperty({ example: 1 })
+  @ApiProperty({ example: 3 })
   @IsNumber()
   to: number;
 }
