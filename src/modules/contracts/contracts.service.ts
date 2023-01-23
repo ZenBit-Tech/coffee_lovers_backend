@@ -1,5 +1,4 @@
 import {
-  ForbiddenException,
   HttpException,
   HttpStatus,
   Injectable,
@@ -113,22 +112,15 @@ export class ContractsService {
   async closeContract(user: User, contractId: number): Promise<void> {
     try {
       const contract = await this.findOne({ id: contractId });
-      const { role } = user;
-      switch (role) {
-        case Role.FREELANCER:
-          isUserFreelancer(contract.offer, user);
-          break;
-        case Role.JOBOWNER:
-          isUserJobOwnerOfJob(
-            { ...contract.offer.job, owner: contract.offer.job_owner },
-            user,
-          );
-          break;
 
-        default:
-          break;
+      if (user.role === Role.FREELANCER) {
+        isUserFreelancer(contract.offer, user);
+      } else {
+        isUserJobOwnerOfJob(
+          { ...contract.offer.job, owner: contract.offer.job_owner },
+          user,
+        );
       }
-
       await this.setContractStatus(contractId, ContractStatus.CLOSED);
     } catch (error) {
       throw new InternalServerErrorException();
