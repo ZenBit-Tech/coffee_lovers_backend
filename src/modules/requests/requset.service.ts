@@ -234,7 +234,6 @@ export class RequsetService {
 
       return jobsResponse;
     } catch (error) {
-      console.log(error);
       if (error instanceof HttpException) {
         throw error;
       }
