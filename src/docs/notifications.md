@@ -9,7 +9,8 @@ src/modules/notifications/notifications.controller.ts > NotificationsController 
 ## Authentication
 
 Server-side events uses [AuthGuard](https://docs.nestjs.com/guards).
-[JWT token](https://jwt.io/) extracts from Url query parameter "token"
+[JWT token](https://jwt.io/) extracts from Url query parameter "token".
+
 Server-side event auth guard:
 ```bash
 src/modules/auth/guards/sse-auth.guard.ts
@@ -22,24 +23,26 @@ src/modules/auth/strategies/sse-jwt.strategy.ts
 
 To store notifications we have Notification entity in database:
 ![notifications database schema](https://i.imgur.com/YDRvuUG.png)
-- **to** – key of user entity, to whom notification is intended
-- **user** - key of user entity, user information in notification (for example, if it’s new message this field indicates from whom it came)
+- **to** – key of user entity, to whom notification is intended.
+- **user** - key of user entity, user information in notification (for example, if it’s new message this field indicates from whom it came).
 - **job** – key of job entity, all notification are related to some job. This field refers to it.
 - **message** – string, currently only used for new chat messages. May be used for other types of notifications in the future.
-- **type** – enum. Type of notification
+- **type** – enum. Type of notification.
+ 
  Types:
-	- message – new chat message
-	- newOffer – new offer for freelancer
-	- acceptedOffer – accepted offer from freelancer
-	- declinedOffer - declined offer from freelancer
-	- newProposal – new proposal by freelancer for job
-	- newInterview – new interview invitation by job owner to freelancer
-- **is_read** – boolean, indicates whether this notification has been read by the user it was intended for
-- **created_at** – date, date and time of notification
+	- message – new chat message.
+	- newOffer – new offer for freelancer.
+	- acceptedOffer – accepted offer from freelancer.
+	- declinedOffer - declined offer from freelancer.
+	- newProposal – new proposal by freelancer for job.
+	- newInterview – new interview invitation by job owner to freelancer.
+- **is_read** – boolean, indicates whether this notification has been read by the user it was intended for.
+- **created_at** – date, date and time of notification.
 
 ## Event Emitter
 
 Notification module uses EventEmitter package provided by Nest.js. More information about it [here](https://docs.nestjs.com/techniques/events).
+
 You can find emit method in Notification Service:
 ```bash
 src/modules/notifications/notifications.service.ts > NotificationsService > emit
@@ -70,8 +73,11 @@ If you want to mark some notification as read. You should use ‘Mark notificati
 http://baseurl/notifications/mark (POST)
 ```
 Body: array of notification's id
-example of body: [4, 5, 6]
+
+Example of body: [4, 5, 6]
+
 Result: notification with IDs 4, 5, 6 will be marked as read.
+
 Also you can mark all not read notifications as read with endpoint ‘Mark all notifications as read’:
 ```bash
 http://baseurl/notifications/markall (POST)
