@@ -429,9 +429,16 @@ export class UserService {
       }
 
       if (search) {
-        query.andWhere(
-          'user.position LIKE :position OR user.category LIKE :position',
-          { position: `%${search}%` },
+        query.andWhere((qb) =>
+          qb
+            .where(
+              'user.position LIKE :search OR user.category LIKE :search OR user.first_name LIKE :search OR user.last_name LIKE :search',
+              { search: `%${search}%` },
+            )
+            .orWhere(
+              'user.available_time LIKE :search OR user.hourly_rate LIKE :search OR user.english_level LIKE :search',
+              { search: `%${search}%` },
+            ),
         );
       }
 
