@@ -25,7 +25,7 @@ To store notifications we have Notification entity in database:
 ![notifications database schema](https://i.imgur.com/YDRvuUG.png)
 - **to** – key of user entity, to whom notification is intended.
 - **user** - key of user entity, user information in notification (for example, if it’s new message this field indicates from whom it came).
-- **job** – key of job entity, all notification are related to some job. This field refers to it.
+- **job** – key of job entity, all notifications are related to some job. This field refers to it.
 - **message** – string, currently only used for new chat messages. May be used for other types of notifications in the future.
 - **type** – enum. Type of notification.
 	- message – new chat message.
@@ -57,7 +57,7 @@ this.notificationService.emit(userId, {
       });
 ```
 
-Inside emit method firstly we insert this notification to database and get from insert result id and creation date of new row in table. Then we emit new event in EventEmitter with this data. In turn, EventEmitter triggers an event in Server-side events subscription. If user to whom this notification is intended for, connected to Server-side events by EventSource he will receive new event.
+Inside emit method firstly, we insert this notification to database and get from insert result id and creation date of new row in table. Then we emit new event in EventEmitter with this data. In turn, EventEmitter triggers an event in Server-side events subscription. If user to whom this notification is intended for is connected to Server-side events by EventSource, then he will receive new event.
 
 ##  Get new notifications
 
@@ -76,8 +76,8 @@ http://baseurl/notifications/mark (POST)
 
 **Result**: notification with IDs 4, 5, 6 will be marked as read.
 
-Also you can mark all not read notifications as read with endpoint ‘Mark all notifications as read’:
+Also you can mark all not read notifications as read with this endpoint:
 ```bash
 http://baseurl/notifications/markall (POST)
 ```
-All this endpoints requires Bearer token in header ‘authorization’.
+All these endpoints requires Bearer token in header ‘authorization’.
