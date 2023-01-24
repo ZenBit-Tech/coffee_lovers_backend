@@ -179,6 +179,15 @@ export class JobsService {
               type: RequestType.PROPOSAL,
             }),
         )
+        .loadRelationCountAndMap(
+          'job.hiresCount',
+          'job.offers',
+          'hiresCount',
+          (qb) =>
+            qb.andWhere('hiresCount.status = :status', {
+              status: OfferStatus.ACCEPTED,
+            }),
+        )
         .where({ owner: user })
         .getMany();
     } catch (error) {
