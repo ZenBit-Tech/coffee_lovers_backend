@@ -28,8 +28,6 @@ To store notifications we have Notification entity in database:
 - **job** – key of job entity, all notification are related to some job. This field refers to it.
 - **message** – string, currently only used for new chat messages. May be used for other types of notifications in the future.
 - **type** – enum. Type of notification.
- 
- Types:
 	- message – new chat message.
 	- newOffer – new offer for freelancer.
 	- acceptedOffer – accepted offer from freelancer.
@@ -72,11 +70,11 @@ If you want to mark some notification as read. You should use ‘Mark notificati
 ```bash
 http://baseurl/notifications/mark (POST)
 ```
-Body: array of notification's id
+**Body**: array of notification's id
 
-Example of body: [4, 5, 6]
+**Example of body**: [4, 5, 6]
 
-Result: notification with IDs 4, 5, 6 will be marked as read.
+**Result**: notification with IDs 4, 5, 6 will be marked as read.
 
 Also you can mark all not read notifications as read with endpoint ‘Mark all notifications as read’:
 ```bash
