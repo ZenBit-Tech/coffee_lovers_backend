@@ -16,4 +16,6 @@ export enum NotificationType {
   DECLINED_OFFER = 'declinedOffer',
   NEW_PROPOSAL = 'newProposal',
   NEW_INTERVIEW = 'newInterview',
+  TYPE = 'userIsTyping',
+  END_TYPE = 'endtype',
 }

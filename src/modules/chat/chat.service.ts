@@ -14,8 +14,11 @@ import { RequestType, Role } from '@constants/entities';
 import { Message } from '@entities/Message.entity';
 import { UserColumns } from '@constants/chat';
 import { User } from '@entities/User.entity';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { fromEvent, Observable } from 'rxjs';
 import UserDto from '@/modules/user/dto/user.dto';
 import { RequsetService } from '@/modules/requests/requset.service';
+import { ChatEvents } from '@/common/constants/websocket';
 import CreateConversationDto from './dto/create-conversation.dto';
 import { CreateMessageDto } from './dto/create-message.dto';
 import { GetConversationsDto } from './dto/get-conversations.dto';
@@ -29,10 +32,19 @@ export class ChatService {
     private requestRepository: Repository<Request>,
     @InjectRepository(Message)
     private messageRepository: Repository<Message>,
+    private eventEmitter: EventEmitter2,
 
     @Inject(RequsetService)
     private requestService: RequsetService,
   ) {}
+
+  emit(userId: number, type: ChatEvents): void {
+    this.eventEmitter.emit(String(userId), {
+      data: {
+        type,
+      },
+    });
+  }
 
   async createConversation(
     user: User,

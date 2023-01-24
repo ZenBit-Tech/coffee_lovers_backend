@@ -17,6 +17,7 @@ import { CreateMessageDto } from './dto/create-message.dto';
 import { ConversationDto } from './dto/conversation.dto';
 import { MessageDto } from './dto/message.dto';
 import { ChatService } from './chat.service';
+import { TypeMessageDto } from './dto/type-message.dto';
 
 @UseGuards(WsAuthGuard)
 @WebSocketGateway(+process.env['WS_PORT'], {
@@ -73,6 +74,13 @@ export class ChatGateway {
         job: { id: payload.job },
       });
     }
+  }
+
+  @SubscribeMessage(ChatEvents.TYPING)
+  typingMessage(@MessageBody() payload: TypeMessageDto): TypeMessageDto {
+    this.chatService.emit(payload.to, payload.type);
+
+    return payload;
   }
 
   @SubscribeMessage(ChatEvents.JOIN_CONVERSATION)
