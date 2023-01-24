@@ -19,17 +19,27 @@ export class NotificationsService {
     return fromEvent(this.eventEmitter, String(user.id));
   }
 
-  emit(userId: number, notification: NotificationEvent): void {
-    this.eventEmitter.emit(String(userId), {
-      data: { ...notification, created_at: new Date(Date.now()).toISOString() },
-    });
+  async emit(userId: number, notification: NotificationEvent): Promise<void> {
+    try {
+      const insertResult = await this.notificationsRepository
+        .createQueryBuilder()
+        .insert()
+        .into(Notification)
+        .values([{ ...notification, to: { id: userId } }])
+        .execute();
 
-    this.notificationsRepository
-      .createQueryBuilder()
-      .insert()
-      .into(Notification)
-      .values([{ ...notification, to: { id: userId } }])
-      .execute();
+      const { id, created_at } = insertResult.generatedMaps.pop();
+
+      this.eventEmitter.emit(String(userId), {
+        data: {
+          ...notification,
+          id,
+          created_at,
+        },
+      });
+    } catch (error) {
+      throw new InternalServerErrorException();
+    }
   }
 
   async getNotifications(user: User): Promise<Notification[]> {
@@ -55,6 +65,28 @@ export class NotificationsService {
         .where('toId = :userId AND is_read = false', {
           userId: user.id,
         })
+        .execute();
+    } catch (error) {
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async markNotificationsAsRead(
+    user: User,
+    notifications: number[],
+  ): Promise<void> {
+    try {
+      await this.notificationsRepository
+        .createQueryBuilder()
+        .update(Notification)
+        .set({ is_read: true })
+        .where(
+          'toId = :userId AND is_read = false AND id IN (:...notifications)',
+          {
+            userId: user.id,
+            notifications,
+          },
+        )
         .execute();
     } catch (error) {
       throw new InternalServerErrorException();

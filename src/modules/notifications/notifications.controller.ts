@@ -7,6 +7,7 @@ import {
   Sse,
   UseGuards,
   HttpCode,
+  Param,
 } from '@nestjs/common';
 import {
   ApiBody,
@@ -49,12 +50,26 @@ export class NotificationsController {
     return this.notificationsService.getNotifications(req.user);
   }
 
-  @ApiOperation({ summary: 'Mark notifications as read' })
+  @ApiOperation({ summary: 'Mark all notifications as read' })
   @ApiHeader(getAuthorizationApiHeader())
   @Post('/markall')
   @HttpCode(HttpStatus.OK)
   @UseGuards(JwtAuthGuard)
   markAllNotificationsAsRead(@Request() req: ReqUser): Promise<void> {
     return this.notificationsService.markAllNotificationsAsRead(req.user);
+  }
+
+  @ApiOperation({ summary: 'Mark notifications as read' })
+  @ApiHeader(getAuthorizationApiHeader())
+  @ApiBody({
+    isArray: true,
+    type: Number,
+    description: "Array of notification's id",
+  })
+  @Post('/mark')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(JwtAuthGuard)
+  markNotificationsAsRead(@Request() req: ReqUser, @Body() body: number[]) {
+    return this.notificationsService.markNotificationsAsRead(req.user, body);
   }
 }

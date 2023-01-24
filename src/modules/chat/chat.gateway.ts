@@ -70,6 +70,7 @@ export class ChatGateway {
         type: NotificationType.MESSAGE,
         user,
         message: message.message,
+        job: { id: payload.job },
       });
     }
   }

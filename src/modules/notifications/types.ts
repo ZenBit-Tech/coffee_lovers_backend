@@ -4,7 +4,7 @@ import { User } from '@entities/User.entity';
 export interface NotificationEvent {
   type: NotificationType;
   user?: User;
-  job?: Job;
+  job?: Job | { id: number };
   message?: string;
   created_at?: string;
 }
