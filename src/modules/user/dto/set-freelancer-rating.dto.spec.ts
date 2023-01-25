@@ -21,11 +21,11 @@ describe('SetFreelancerRatingDto', () => {
     expect(errors.length).not.toBe(0);
   });
 
-  it('wrong freelancer_rating field type: should be an error', async (): Promise<void> => {
+  it('wrong rating field type: should be an error', async (): Promise<void> => {
     const errors = await validate(
       plainToClass(SetFreelancerRatingDto, {
         ...mockSetFreelancerRatingDto,
-        freelancer_rating: [5],
+        rating: [5],
       }),
     );
     expect(errors.length).not.toBe(0);
