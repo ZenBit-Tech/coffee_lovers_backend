@@ -6,6 +6,7 @@ import { JobsService } from '@/modules/jobs/job.service';
 import { Job } from '@/common/entities/Job.entity';
 import { User } from '@/common/entities/User.entity';
 import { FileService } from '@/modules/file/file.service';
+import { NotificationsService } from '@/modules/notifications/notifications.service';
 import { Request } from '@/common/entities/Request.entity';
 import { Offer } from '@/common/entities/Offer.entity';
 import { Contract } from '@/common/entities/Contract.entity';
@@ -39,6 +40,7 @@ describe('UserService', () => {
     }),
   };
   const mockFileService = {};
+  const mockNotificationService = {};
 
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
@@ -65,6 +67,10 @@ describe('UserService', () => {
         {
           provide: JobsService,
           useValue: mockJobService,
+        },
+        {
+          provide: NotificationsService,
+          useValue: mockNotificationService,
         },
       ],
     }).compile();
