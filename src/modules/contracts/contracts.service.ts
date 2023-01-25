@@ -67,6 +67,10 @@ export class ContractsService {
           `offer.${checkAnotherRole(user)}`,
           `${checkAnotherRole(user)}`,
         )
+        .leftJoinAndSelect(
+          `offer.${checkUserRole(user)}`,
+          `${checkUserRole(user)}`,
+        )
         .where(`offer.${checkUserRole(user)}.id = :id`, { id: user.id })
         .andWhere('contracts.status = :status', {
           status: ContractStatus.ACTIVE,
@@ -93,12 +97,18 @@ export class ContractsService {
           `offer.${checkAnotherRole(user)}`,
           `${checkAnotherRole(user)}`,
         )
+        .leftJoinAndSelect(
+          `offer.${checkUserRole(user)}`,
+          `${checkUserRole(user)}`,
+        )
         .where(`offer.${checkUserRole(user)}.id = :id`, { id: user.id })
         .andWhere('contracts.status = :status', {
           status: ContractStatus.CLOSED,
         })
         .orderBy('contracts.end', 'DESC')
         .getMany();
+
+      console.log(closedContracts);
 
       return closedContracts;
     } catch (error) {
