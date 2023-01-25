@@ -67,6 +67,10 @@ export class ContractsService {
           `offer.${checkAnotherRole(user)}`,
           `${checkAnotherRole(user)}`,
         )
+        .leftJoinAndSelect(
+          `offer.${checkUserRole(user)}`,
+          `${checkUserRole(user)}`,
+        )
         .where(`offer.${checkUserRole(user)}.id = :id`, { id: user.id })
         .andWhere('contracts.status = :status', {
           status: ContractStatus.ACTIVE,
@@ -92,6 +96,10 @@ export class ContractsService {
         .leftJoinAndSelect(
           `offer.${checkAnotherRole(user)}`,
           `${checkAnotherRole(user)}`,
+        )
+        .leftJoinAndSelect(
+          `offer.${checkUserRole(user)}`,
+          `${checkUserRole(user)}`,
         )
         .where(`offer.${checkUserRole(user)}.id = :id`, { id: user.id })
         .andWhere('contracts.status = :status', {
