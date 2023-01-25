@@ -1,10 +1,10 @@
 import { IsNumber, IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
-export default class SetFreelancerRatingDto {
+export default class SetJobOwnerRatingDto {
   @ApiProperty({ example: 1 })
   @IsNumber()
-  freelancer_id: number;
+  job_owner_id: number;
 
   @ApiProperty({ example: 5 })
   @IsNumber()

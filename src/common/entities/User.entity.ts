@@ -26,6 +26,7 @@ import { WorkHistory } from '@entities/WorkHistory.entity';
 import { Notification } from '@entities/Notification.entity';
 import { Offer } from '@entities/Offer.entity';
 import { FreelancerRating } from '@entities/FreelancerRating.entity';
+import { JobOwnerRating } from '@entities/JobOwnerRating.entity';
 import { Favorites } from './Favorites.entity';
 
 @Entity()
@@ -153,4 +154,8 @@ export class User {
   @OneToMany(() => FreelancerRating, (frRating) => frRating.job_owner)
   @OneToMany(() => FreelancerRating, (frRating) => frRating.freelancer)
   freelancerRating: FreelancerRating[];
+
+  @OneToMany(() => JobOwnerRating, (joRating) => joRating.job_owner)
+  @OneToMany(() => JobOwnerRating, (joRating) => joRating.freelancer)
+  jobOwnerRating: JobOwnerRating[];
 }
