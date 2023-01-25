@@ -108,8 +108,6 @@ export class ContractsService {
         .orderBy('contracts.end', 'DESC')
         .getMany();
 
-      console.log(closedContracts);
-
       return closedContracts;
     } catch (error) {
       throw new HttpException(
