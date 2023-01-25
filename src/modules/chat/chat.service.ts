@@ -38,9 +38,10 @@ export class ChatService {
     private requestService: RequsetService,
   ) {}
 
-  emit(userId: number, type: ChatEvents): void {
+  emit(userId: number, type: ChatEvents, to: number): void {
     this.eventEmitter.emit(String(userId), {
       data: {
+        to,
         type,
       },
     });
