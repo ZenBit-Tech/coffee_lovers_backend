@@ -6,7 +6,7 @@ import {
 } from '@/modules/requests/mockData/mockUserData';
 import { hRate, hRateErr } from '@/modules/requests/constants/mock-test-const';
 import ReqBody from './request-body-dto';
-import OfferBody from './offer-body-dto copy';
+import OfferBody from './offer-body-dto';
 
 describe('PostRequestParams', () => {
   it('should be validated successfully', async (): Promise<void> => {

@@ -7,6 +7,7 @@ import { WorkHistory } from '@entities/WorkHistory.entity';
 import { Request } from '@entities/Request.entity';
 import { Category } from '@entities/Category.entity';
 import { getRepositoryProvider, mockRepository } from '@utils/tests';
+import { JobOwnerRating } from '@entities/JobOwnerRating.entity';
 import {
   educationPayload,
   workhistoryPayload,
@@ -46,6 +47,7 @@ describe('UserService', () => {
         getRepositoryProvider(WorkHistory),
         getRepositoryProvider(Favorites),
         getRepositoryProvider(FreelancerRating),
+        getRepositoryProvider(JobOwnerRating),
         getRepositoryProvider(Job),
         getRepositoryProvider(Request),
         {
@@ -229,7 +231,10 @@ describe('UserService', () => {
           mockFreelancer1 as UserDto,
           getFavoritesParams,
         ),
-      ).toEqual({});
+      ).toEqual({
+        favorites: [],
+        totalCount: 0,
+      });
 
       expect(mockRepository.createQueryBuilder).toHaveBeenCalledTimes(1);
     });
