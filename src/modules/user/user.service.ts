@@ -457,7 +457,7 @@ export class UserService {
       }
 
       if (categories) {
-        query.andWhere('user.category.id IN (:...categories)', {
+        query.where('user.category.id IN (:...categories)', {
           categories,
         });
       }
