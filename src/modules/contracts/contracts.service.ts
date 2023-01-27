@@ -12,11 +12,11 @@ import { Favorites } from '@/common/entities/Favorites.entity';
 import { User } from '@/common/entities/User.entity';
 import { Contract } from '@/common/entities/Contract.entity';
 import { ContractStatus, Role } from '@/common/constants/entities';
+import { JobOwnerRating } from '@/common/entities/JobOwnerRating.entity';
+import { FreelancerRating } from '@/common/entities/FreelancerRating.entity';
 import { checkAnotherRole, checkUserRole, dateFormat } from './constants';
 import GetHiresDto from './dto/get-hires.dto';
 import FindOneContractDto from './dto/find-one-contract.dto';
-import { JobOwnerRating } from '@/common/entities/JobOwnerRating.entity';
-import { FreelancerRating } from '@/common/entities/FreelancerRating.entity';
 
 @Injectable()
 export class ContractsService {
