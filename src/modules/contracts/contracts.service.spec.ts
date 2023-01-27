@@ -1,8 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { InternalServerErrorException } from '@nestjs/common';
 import { getRepositoryProvider, mockRepository } from '@/common/utils/tests';
 import { Contract } from '@/common/entities/Contract.entity';
 import { User } from '@/common/entities/User.entity';
-import { Role } from '@/common/constants/entities';
+import { ContractStatus, Role } from '@/common/constants/entities';
 import { ContractsService } from './contracts.service';
 
 describe('ContractsService', () => {
@@ -139,6 +140,127 @@ describe('ContractsService', () => {
         freelancer,
       );
       expect(reseivedResponse).toEqual(emptyArray);
+    });
+  });
+
+  describe('CloseContract', () => {
+    jest.spyOn(mockRepository, 'createQueryBuilder');
+
+    it('should set status to closed for contract in case freelancer is owner and want to close contract', async () => {
+      const activeContract = {
+        id: 3,
+        status: ContractStatus.ACTIVE,
+        offer: {
+          id: 34,
+          job_owner: { id: 36 },
+          freelancer,
+        },
+      } as Contract;
+
+      jest.spyOn(contractsService, 'findOne').mockResolvedValue(activeContract);
+      jest
+        .spyOn(contractsService, 'setContractStatus')
+        .mockImplementation(() => null);
+
+      await contractsService.closeContract(freelancer, activeContract.id);
+      expect(contractsService.findOne).toBeCalledTimes(1);
+      expect(contractsService.setContractStatus).toBeCalledTimes(1);
+      expect((activeContract.status = ContractStatus.CLOSED));
+    });
+
+    it('should set status to closed for contract in case jobOwner is owner and want to close contract', async () => {
+      const activeContract = {
+        id: 3,
+        status: ContractStatus.ACTIVE,
+        offer: {
+          id: 34,
+          job_owner: jobOwner,
+          freelancer: { id: 9 },
+        },
+      } as Contract;
+
+      jest.spyOn(contractsService, 'findOne').mockResolvedValue(activeContract);
+      jest
+        .spyOn(contractsService, 'setContractStatus')
+        .mockImplementation(() => null);
+
+      await contractsService.closeContract(jobOwner, activeContract.id);
+      expect(contractsService.findOne).toBeCalledTimes(1);
+      expect(contractsService.setContractStatus).toBeCalledTimes(1);
+      expect((activeContract.status = ContractStatus.CLOSED));
+    });
+
+    it('should throw internal server error in case something went wrong', async () => {
+      const activeContract = {
+        id: 3,
+        status: ContractStatus.ACTIVE,
+        offer: {
+          id: 34,
+          job_owner: jobOwner,
+          freelancer: { id: 9 },
+        },
+      } as Contract;
+
+      jest.spyOn(contractsService, 'findOne').mockResolvedValue(activeContract);
+
+      await contractsService.closeContract(jobOwner, activeContract.id);
+      expect(contractsService.closeContract).rejects.toEqual(
+        new InternalServerErrorException(),
+      );
+    });
+  });
+
+  describe('SetContractStatus', () => {
+    jest.spyOn(mockRepository, 'createQueryBuilder');
+
+    it('should set status to closed ', async () => {
+      const activeContract = {
+        id: 3,
+        status: ContractStatus.ACTIVE,
+      } as Contract;
+
+      expect((activeContract.status = ContractStatus.ACTIVE));
+
+      await contractsService.setContractStatus(
+        activeContract.id,
+        ContractStatus.CLOSED,
+      );
+
+      expect(mockRepository.createQueryBuilder).toBeCalledTimes(1);
+      expect((activeContract.status = ContractStatus.CLOSED));
+    });
+
+    it('should set status to active ', async () => {
+      const activeContract = {
+        id: 3,
+        status: null,
+      } as Contract;
+
+      expect((activeContract.status = null));
+
+      await contractsService.setContractStatus(
+        activeContract.id,
+        ContractStatus.ACTIVE,
+      );
+
+      expect(mockRepository.createQueryBuilder).toBeCalledTimes(1);
+      expect((activeContract.status = ContractStatus.ACTIVE));
+    });
+
+    it('should return internal server error in case something went wrong', async () => {
+      const activeContract = {
+        id: 3,
+        status: null,
+      } as Contract;
+
+      await contractsService.setContractStatus(
+        activeContract.id,
+        ContractStatus.ACTIVE,
+      );
+
+      expect(contractsService.setContractStatus).rejects.toEqual(
+        new InternalServerErrorException(),
+      );
     });
   });
 });
