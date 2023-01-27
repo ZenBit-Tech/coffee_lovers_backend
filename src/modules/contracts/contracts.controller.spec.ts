@@ -7,17 +7,21 @@ import { ContractsController } from './contracts.controller';
 import { ContractsService } from './contracts.service';
 import TokenDto from '@/modules/auth/dto/token.dto';
 
-describe('JobsController', () => {
+describe('ContractsController', () => {
   let contractsController: ContractsController;
   let reqUser: ReqUser;
 
   const mockContractsService = {
-    getActiveContracts: jest.fn().mockImplementation((user: User) => ({
-      id: 5,
-    })),
-    getClosedContracts: jest.fn().mockImplementation((user: User) => ({
-      id: 4,
-    })),
+    getActiveContracts: jest.fn().mockImplementation((user: User) => [
+      {
+        id: 5,
+      },
+    ]),
+    getClosedContracts: jest.fn().mockImplementation((user: User) => [
+      {
+        id: 4,
+      },
+    ]),
   };
 
   const mockJwtService = {
@@ -42,7 +46,7 @@ describe('JobsController', () => {
         },
       ],
     })
-      .overrideProvider(ContractsController)
+      .overrideProvider(ContractsService)
       .useValue(mockContractsService)
       .compile();
 
@@ -59,14 +63,25 @@ describe('JobsController', () => {
     jest.clearAllMocks();
   });
 
-  describe('getJobById', () => {
-    it('should return job by id', async (): Promise<void> => {
+  describe('getActiveContracts', () => {
+    it('should return array of active contracts', async (): Promise<void> => {
       const req = { user: reqUser };
       expect(
         await contractsController.getActiveContractsFreelancer(req),
       ).toEqual(mockContractsService.getActiveContracts(reqUser));
 
       expect(mockContractsService.getActiveContracts).toHaveBeenCalledWith(
+        reqUser,
+      );
+    });
+
+    it('should return array of closed contracts', async (): Promise<void> => {
+      const req = { user: reqUser };
+      expect(
+        await contractsController.getClosedContractsFreelancer(req),
+      ).toEqual(mockContractsService.getClosedContracts(reqUser));
+
+      expect(mockContractsService.getClosedContracts).toHaveBeenCalledWith(
         reqUser,
       );
     });
