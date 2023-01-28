@@ -90,6 +90,7 @@ describe('ContractsController (e2e)', () => {
         .post('/contracts/close/')
         .expect(HttpStatus.NOT_FOUND);
     });
+
     it('should return status code 404 ', () => {
       return request(app.getHttpServer())
         .post('/contract/close/7')

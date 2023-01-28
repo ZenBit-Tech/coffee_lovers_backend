@@ -3,9 +3,9 @@ import { User } from '@entities/User.entity';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { ReqUser } from '@/modules/user/dto/get-user-dto.dto';
+import TokenDto from '@/modules/auth/dto/token.dto';
 import { ContractsController } from './contracts.controller';
 import { ContractsService } from './contracts.service';
-import TokenDto from '@/modules/auth/dto/token.dto';
 
 describe('ContractsController', () => {
   let contractsController: ContractsController;
@@ -65,9 +65,8 @@ describe('ContractsController', () => {
 
   describe('getActiveContracts', () => {
     it('should return array of active contracts', async (): Promise<void> => {
-      const req = { user: reqUser };
       expect(
-        await contractsController.getActiveContractsFreelancer(req),
+        await contractsController.getActiveContractsFreelancer(reqUser),
       ).toEqual(mockContractsService.getActiveContracts(reqUser));
 
       expect(mockContractsService.getActiveContracts).toHaveBeenCalledWith(
@@ -76,9 +75,8 @@ describe('ContractsController', () => {
     });
 
     it('should return array of closed contracts', async (): Promise<void> => {
-      const req = { user: reqUser };
       expect(
-        await contractsController.getClosedContractsFreelancer(req),
+        await contractsController.getClosedContractsFreelancer(reqUser),
       ).toEqual(mockContractsService.getClosedContracts(reqUser));
 
       expect(mockContractsService.getClosedContracts).toHaveBeenCalledWith(

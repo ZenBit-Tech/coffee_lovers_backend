@@ -5,6 +5,7 @@ import { Contract } from '@/common/entities/Contract.entity';
 import { User } from '@/common/entities/User.entity';
 import { ContractStatus, Role } from '@/common/constants/entities';
 import { ContractsService } from './contracts.service';
+import { oneTimeCall } from './constants';
 
 describe('ContractsService', () => {
   let contractsService: ContractsService;
@@ -163,8 +164,8 @@ describe('ContractsService', () => {
         .mockImplementation(() => null);
 
       await contractsService.closeContract(freelancer, activeContract.id);
-      expect(contractsService.findOne).toBeCalledTimes(1);
-      expect(contractsService.setContractStatus).toBeCalledTimes(1);
+      expect(contractsService.findOne).toBeCalledTimes(oneTimeCall);
+      expect(contractsService.setContractStatus).toBeCalledTimes(oneTimeCall);
       expect((activeContract.status = ContractStatus.CLOSED));
     });
 
@@ -185,8 +186,8 @@ describe('ContractsService', () => {
         .mockImplementation(() => null);
 
       await contractsService.closeContract(jobOwner, activeContract.id);
-      expect(contractsService.findOne).toBeCalledTimes(1);
-      expect(contractsService.setContractStatus).toBeCalledTimes(1);
+      expect(contractsService.findOne).toBeCalledTimes(oneTimeCall);
+      expect(contractsService.setContractStatus).toBeCalledTimes(oneTimeCall);
       expect((activeContract.status = ContractStatus.CLOSED));
     });
 
@@ -226,7 +227,7 @@ describe('ContractsService', () => {
         ContractStatus.CLOSED,
       );
 
-      expect(mockRepository.createQueryBuilder).toBeCalledTimes(1);
+      expect(mockRepository.createQueryBuilder).toBeCalledTimes(oneTimeCall);
       expect((activeContract.status = ContractStatus.CLOSED));
     });
 
@@ -243,7 +244,7 @@ describe('ContractsService', () => {
         ContractStatus.ACTIVE,
       );
 
-      expect(mockRepository.createQueryBuilder).toBeCalledTimes(1);
+      expect(mockRepository.createQueryBuilder).toBeCalledTimes(oneTimeCall);
       expect((activeContract.status = ContractStatus.ACTIVE));
     });
 
