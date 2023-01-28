@@ -166,7 +166,6 @@ describe('ContractsService', () => {
       await contractsService.closeContract(freelancer, activeContract.id);
       expect(contractsService.findOne).toBeCalledTimes(oneTimeCall);
       expect(contractsService.setContractStatus).toBeCalledTimes(oneTimeCall);
-      expect((activeContract.status = ContractStatus.CLOSED));
     });
 
     it('should set status to closed for contract in case jobOwner is owner and want to close contract', async () => {
@@ -188,7 +187,6 @@ describe('ContractsService', () => {
       await contractsService.closeContract(jobOwner, activeContract.id);
       expect(contractsService.findOne).toBeCalledTimes(oneTimeCall);
       expect(contractsService.setContractStatus).toBeCalledTimes(oneTimeCall);
-      expect((activeContract.status = ContractStatus.CLOSED));
     });
 
     it('should throw internal server error in case something went wrong', async () => {
@@ -220,15 +218,12 @@ describe('ContractsService', () => {
         status: ContractStatus.ACTIVE,
       } as Contract;
 
-      expect((activeContract.status = ContractStatus.ACTIVE));
-
       await contractsService.setContractStatus(
         activeContract.id,
         ContractStatus.CLOSED,
       );
 
       expect(mockRepository.createQueryBuilder).toBeCalledTimes(oneTimeCall);
-      expect((activeContract.status = ContractStatus.CLOSED));
     });
 
     it('should set status to active ', async () => {
@@ -237,15 +232,12 @@ describe('ContractsService', () => {
         status: null,
       } as Contract;
 
-      expect((activeContract.status = null));
-
       await contractsService.setContractStatus(
         activeContract.id,
         ContractStatus.ACTIVE,
       );
 
       expect(mockRepository.createQueryBuilder).toBeCalledTimes(oneTimeCall);
-      expect((activeContract.status = ContractStatus.ACTIVE));
     });
 
     it('should return internal server error in case something went wrong', async () => {
