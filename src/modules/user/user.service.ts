@@ -435,16 +435,24 @@ export class UserService {
       }
 
       if (search) {
-        query.andWhere((qb) =>
-          qb
-            .where(
-              'user.position LIKE :search OR user.category LIKE :search OR user.first_name LIKE :search OR user.last_name LIKE :search',
+        query.andWhere(
+          new Brackets((qb) => {
+            qb.where(
+              "CONCAT(user.first_name, ' ', user.last_name) LIKE :search",
               { search: `%${search}%` },
             )
-            .orWhere(
-              'user.available_time LIKE :search OR user.hourly_rate LIKE :search OR user.english_level LIKE :search',
-              { search: `%${search}%` },
-            ),
+              .orWhere('user.position LIKE :search', { search: `%${search}%` })
+              .orWhere('category.name LIKE :search', { search: `%${search}%` })
+              .orWhere('user.available_time LIKE :search', {
+                search: `%${search}%`,
+              })
+              .orWhere('user.hourly_rate LIKE :search', {
+                search: `%${search}%`,
+              })
+              .orWhere('user.english_level LIKE :search', {
+                search: `%${search}%`,
+              });
+          }),
         );
       }
 

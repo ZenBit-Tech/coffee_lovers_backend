@@ -91,15 +91,20 @@ export class AuthService {
         'password',
         'is_google',
       ]);
+
+      if (user.is_google) {
+        throw new BadRequestException(
+          'please, login with Google authentication',
+        );
+      }
+
       if (!user) {
         throw new BadRequestException('invalid email');
       }
-      if (!user.is_google) {
-        const isPassEquals = await bcrypt.compare(dto.password, user.password);
+      const isPassEquals = await bcrypt.compare(dto.password, user.password);
 
-        if (!isPassEquals) {
-          throw new BadRequestException('invalid password');
-        }
+      if (!isPassEquals) {
+        throw new BadRequestException('invalid password');
       }
 
       return this.createTokens(dto.email);

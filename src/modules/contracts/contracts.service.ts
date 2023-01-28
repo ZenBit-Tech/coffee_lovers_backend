@@ -12,6 +12,8 @@ import { Favorites } from '@/common/entities/Favorites.entity';
 import { User } from '@/common/entities/User.entity';
 import { Contract } from '@/common/entities/Contract.entity';
 import { ContractStatus, Role } from '@/common/constants/entities';
+import { JobOwnerRating } from '@/common/entities/JobOwnerRating.entity';
+import { FreelancerRating } from '@/common/entities/FreelancerRating.entity';
 import { checkAnotherRole, checkUserRole, dateFormat } from './constants';
 import GetHiresDto from './dto/get-hires.dto';
 import FindOneContractDto from './dto/find-one-contract.dto';
@@ -89,7 +91,7 @@ export class ContractsService {
 
   async getClosedContracts(user: User): Promise<Contract[]> {
     try {
-      const closedContracts = await this.contractRepository
+      const closedContracts = this.contractRepository
         .createQueryBuilder('contracts')
         .leftJoinAndSelect('contracts.offer', 'offer')
         .leftJoinAndSelect('offer.job', 'job')
@@ -105,10 +107,27 @@ export class ContractsService {
         .andWhere('contracts.status = :status', {
           status: ContractStatus.CLOSED,
         })
-        .orderBy('contracts.end', 'DESC')
-        .getMany();
+        .orderBy('contracts.end', 'DESC');
 
-      return closedContracts;
+      if (user.role === Role.FREELANCER) {
+        closedContracts.leftJoinAndMapOne(
+          'offer.isRated',
+          JobOwnerRating,
+          'JobOwnerRating',
+          'JobOwnerRating.jobOwnerId = job_owner.id AND JobOwnerRating.freelancerId = :freelancerId AND job.id = JobOwnerRating.job_id',
+          { freelancerId: user.id },
+        );
+      } else if (user.role === Role.JOBOWNER) {
+        closedContracts.leftJoinAndMapOne(
+          'offer.isRated',
+          FreelancerRating,
+          'FreelancerRating',
+          'FreelancerRating.jobOwnerId = :jobOwnerId AND FreelancerRating.freelancerId = freelancer.id AND job.id = FreelancerRating.job_id',
+          { jobOwnerId: user.id },
+        );
+      }
+
+      return await closedContracts.getMany();
     } catch (error) {
       throw new HttpException(
         'Internal error',
