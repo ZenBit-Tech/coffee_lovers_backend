@@ -2,6 +2,7 @@ import { Role } from '@/common/constants/entities';
 import { User } from '@/common/entities/User.entity';
 
 const firstElement = 0;
+export const oneTimeCall = 1;
 
 export const checkAnotherRole = (user: User): string | null => {
   if (user.role === Role.FREELANCER) {
