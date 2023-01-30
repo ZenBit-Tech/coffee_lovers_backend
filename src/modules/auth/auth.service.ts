@@ -57,7 +57,7 @@ export class AuthService {
       }
       await this.userService.setIfGoogle(true, user.id);
 
-      const loginResponse = await this.signIn(dataLogin);
+      const loginResponse = await this.signIn(dataLogin, true);
 
       return { role: true, access_token: loginResponse.access_token };
     } catch (error) {
@@ -85,14 +85,17 @@ export class AuthService {
     }
   }
 
-  async signIn(dto: SignInDto): Promise<AuthResponseDto> {
+  async signIn(
+    dto: SignInDto,
+    isGoogleAuth?: boolean,
+  ): Promise<AuthResponseDto> {
     try {
       const user = await this.userService.findByEmail(dto.email, [
         'password',
         'is_google',
       ]);
 
-      if (user.is_google) {
+      if (user.is_google && !isGoogleAuth) {
         throw new BadRequestException(
           'please, login with Google authentication',
         );
@@ -101,10 +104,13 @@ export class AuthService {
       if (!user) {
         throw new BadRequestException('invalid email');
       }
-      const isPassEquals = await bcrypt.compare(dto.password, user.password);
 
-      if (!isPassEquals) {
-        throw new BadRequestException('invalid password');
+      if (!isGoogleAuth) {
+        const isPassEquals = await bcrypt.compare(dto.password, user.password);
+
+        if (!isPassEquals) {
+          throw new BadRequestException('invalid password');
+        }
       }
 
       return this.createTokens(dto.email);
